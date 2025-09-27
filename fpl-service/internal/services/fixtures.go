@@ -29,11 +29,24 @@ func (s *FixturesApiService) UpdateFixtures() error {
 	}
 
 	for _, f := range fixtures {
-		fixtureJSON, err := json.Marshal(f)
+		// Separate stats from fixture before marshaling
+		fixtureStatsJSON, err := json.Marshal(f.Stats)
+
+		fixtureBytes, err := json.Marshal(f)
 		if err != nil {
 			return fmt.Errorf("failed to marshal fixture with ID: %d: %v", f.ID, err)
 		}
-		err = producer.Publish(ctx, cfg.FplFixturesTopic, []byte(fmt.Sprintf("%d", f.ID)), fixtureJSON)
+
+		var newFixture map[string]interface{}
+		err = json.Unmarshal(fixtureBytes, &newFixture)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal fixture with ID: %d: %v", f.ID, err)
+		}
+
+		delete(newFixture, "stats")
+		fixtureJSON, err := json.Marshal(newFixture)
+
+		err = fixtureProducer.Publish(ctx, cfg.FplFixturesTopic, []byte(fmt.Sprintf("%d", f.ID)), fixtureJSON)
 		if err != nil {
 			return fmt.Errorf("failed to publish fixture with ID: %d to Kafka: %v", f.ID, err)
 		}
