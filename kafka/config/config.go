@@ -57,19 +57,29 @@ type TopicsRetention struct {
 }
 type ConsumersGroupID struct {
 	// Consumer Group IDs
-	Teams                  string `envconfig:"CONSUMERSGROUPID_KAFKA_TEAMS"`
-	Fixtures               string `envconfig:"CONSUMERSGROUPID_KAFKA_FIXTURES"`
-	Players                string `envconfig:"CONSUMERSGROUPID_KAFKA_PLAYERS"`
-	PlayersStats           string `envconfig:"CONSUMERSGROUPID_KAFKA_PLAYERS_STATS"`
-	Live                   string `envconfig:"CONSUMERSGROUPID_KAFKA_LIVE_EVENT"`
-	Entries                string `envconfig:"CONSUMERSGROUPID_KAFKA_ENTRY"`
-	EntriesEvent           string `envconfig:"CONSUMERSGROUPID_KAFKA_ENTRY_EVENT"`
-	EntriesHistory         string `envconfig:"CONSUMERSGROUPID_KAFKA_ENTRY_HISTORY"`
-	EntriesTransfers       string `envconfig:"CONSUMERSGROUPID_KAFKA_ENTRY_TRANSFERS"`
-	EntriesPicks           string `envconfig:"CONSUMERSGROUPID_KAFKA_ENTRY_PICKS"`
-	LeaguesClassicStanding string `envconfig:"CONSUMERSGROUPID_KAFKA_LEAGUES_CLASSIC_STANDING"`
-	LeaguesH2hStanding     string `envconfig:"CONSUMERSGROUPID_KAFKA_LEAGUES_H2H_STANDING"`
-	Test                   string `envconfig:"CONSUMERSGROUPID_KAFKA_TEST"`
+	FplTeams                  string `envconfig:"CONSUMERSGROUPID_FPL_TEAMS"`
+	FplFixtures               string `envconfig:"CONSUMERSGROUPID_FPL_FIXTURES"`
+	FplPlayers                string `envconfig:"CONSUMERSGROUPID_FPL_PLAYERS"`
+	FplPlayersStats           string `envconfig:"CONSUMERSGROUPID_FPL_PLAYERS_STATS"`
+	FplLive                   string `envconfig:"CONSUMERSGROUPID_FPL_LIVE_EVENT"`
+	FplEntries                string `envconfig:"CONSUMERSGROUPID_FPL_ENTRY"`
+	FplEntriesEvent           string `envconfig:"CONSUMERSGROUPID_FPL_ENTRY_EVENT"`
+	FplEntriesHistory         string `envconfig:"CONSUMERSGROUPID_FPL_ENTRY_HISTORY"`
+	FplEntriesTransfers       string `envconfig:"CONSUMERSGROUPID_FPL_ENTRY_TRANSFERS"`
+	FplEntriesPicks           string `envconfig:"CONSUMERSGROUPID_FPL_ENTRY_PICKS"`
+	FplLeaguesClassicStanding string `envconfig:"CONSUMERSGROUPID_FPL_LEAGUES_CLASSIC_STANDING"`
+	FplLeaguesH2hStanding     string `envconfig:"CONSUMERSGROUPID_FPL_LEAGUES_H2H_STANDING"`
+
+	SofascoreLeagueRoundMatches string `envconfig:"CONSUMERSGROUPID_SOFASCORE_LEAGUE_ROUND_MATCHES"`
+	SofascoreMatchLineups       string `envconfig:"CONSUMERSGROUPID_SOFASCORE_MATCH_LINEUPS"`
+	SofascoreMatchH2hHistory    string `envconfig:"CONSUMERSGROUPID_SOFASCORE_MATCH_H2H_HISTORY"`
+	SofascoreTeamOverallStats   string `envconfig:"CONSUMERSGROUPID_SOFASCORE_TEAM_OVERALL_STATS"`
+	SofascoreTeamMatchStats     string `envconfig:"CONSUMERSGROUPID_SOFASCORE_TEAM_MATCH_STATS"`
+	SofascorePlayerTeamStats    string `envconfig:"CONSUMERSGROUPID_SOFASCORE_PLAYER_TEAM_STATS"`
+	SofascorePlayerSeasonsStats string `envconfig:"CONSUMERSGROUPID_SOFASCORE_PLAYER_SEASONS_STATS"`
+	SofascorePlayerAttributes   string `envconfig:"CONSUMERSGROUPID_SOFASCORE_PLAYER_ATTRIBUTES"`
+
+	Test string `envconfig:"CONSUMERSGROUPID_FPL_TEST"`
 }
 
 func LoadConfig() *KafkaConfig {

@@ -2,16 +2,20 @@ package config
 
 import (
 	"log"
-	"path/filepath"
-	"runtime"
 
-	"github.com/spf13/viper"
+	kafka "github.com/imadbelkat1/kafka/config"
+	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
 )
 
-type Config struct {
+type SofascoreConfig struct {
 	SofascoreApi     SofascoreApi
 	TopicsName       TopicsName
 	ConsumersGroupId ConsumersGroupId
+
+	KafkaConfig kafka.KafkaConfig
+
+	PublishWorkerCount int `envconfig:"WORKER_PUBLISH_POOL_SIZE" default:"100"`
 }
 
 type SofascoreApi struct {
@@ -100,24 +104,21 @@ type ConsumersGroupId struct {
 	PlayerAttributes   string `mapstructure:"CONSUMERSGROUPID_SOFASCORE_PLAYER_ATTRIBUTES"`
 }
 
-func LoadConfig() *Config {
-	_, filename, _, _ := runtime.Caller(0)
-	ConfigDir := filepath.Dir(filename)
-	RootDir := filepath.Dir(ConfigDir)
+func LoadConfig() *SofascoreConfig {
+	// Load .env file (tries multiple paths)
+	_ = godotenv.Load(".env")
+	_ = godotenv.Load("../.env")
+	_ = godotenv.Load("../../.env")
+	_ = godotenv.Load("../../../.env")
 
-	viper.SetConfigName(".env")
-	viper.SetConfigType("env")
-	viper.AddConfigPath(RootDir)
-	viper.AutomaticEnv()
+	config := &SofascoreConfig{}
 
-	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("sofascore-service: Error reading config file, %s", err)
+	// Parse FplApi config with validation
+	if err := envconfig.Process("", config); err != nil {
+		log.Fatalf("sofascore-service: Unable to load FPL API config: %s", err)
 	}
 
-	config := &Config{}
-	if err := viper.Unmarshal(config); err != nil {
-		log.Fatalf("sofascore-service: Unable to decode config into struct, %s", err)
-	}
+	config.KafkaConfig = *kafka.LoadConfig()
 
 	return config
 }

@@ -11,7 +11,7 @@ import (
 )
 
 type SofascoreApiClient struct {
-	Config     *config.Config
+	Config     *config.SofascoreConfig
 	HttpClient *http.Client
 	UserAgent  string
 }
