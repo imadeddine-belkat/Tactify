@@ -1,0 +1,3546 @@
+{
+  "seasons": [
+    {
+      "statistics": {
+        "accurateLongBalls": 9,
+        "accurateLongBallsPercentage": 39.13,
+        "accuratePasses": 150,
+        "accuratePassesPercentage": 86.71,
+        "aerialDuelsWon": 14,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "blockedShots": 2,
+        "outfielderBlocks": 2,
+        "cleanSheet": 2,
+        "dribbledPast": 0,
+        "errorLeadToGoal": 0,
+        "expectedAssists": 0.01911367,
+        "expectedGoals": 0.5132,
+        "goals": 1,
+        "goalsAssistsSum": 1,
+        "goalsConceded": 5,
+        "interceptions": 5,
+        "keyPasses": 0,
+        "minutesPlayed": 358,
+        "passToAssist": 0,
+        "rating": 7.2,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 2,
+        "successfulDribbles": 0,
+        "tackles": 8,
+        "totalShots": 3,
+        "yellowCards": 3,
+        "totalRating": 36,
+        "countRating": 5,
+        "totalLongBalls": 23,
+        "totalPasses": 173,
+        "shotsFromInsideTheBox": 3,
+        "appearances": 5,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "25/26",
+      "startYear": 2025,
+      "endYear": 2026,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "LaLiga",
+        "slug": "laliga",
+        "primaryColorHex": "#2f4a89",
+        "secondaryColorHex": "#f4a32e",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 880287,
+        "id": 8,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "الدوري الإسباني",
+            "hi": "ला लिगा",
+            "bn": "লা লীগা"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-league",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "LaLiga 25/26",
+        "year": "25/26",
+        "editor": false,
+        "seasonCoverageInfo": {
+
+        },
+        "id": 77559
+      }
+    },
+    {
+      "statistics": {
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "cleanSheet": 0,
+        "dribbledPast": 0,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 0,
+        "goalsConceded": 0,
+        "interceptions": 0,
+        "keyPasses": 0,
+        "minutesPlayed": 270,
+        "passToAssist": 0,
+        "redCards": 0,
+        "saves": 0,
+        "successfulDribbles": 0,
+        "tackles": 0,
+        "yellowCards": 1,
+        "shotsFromInsideTheBox": 0,
+        "appearances": 3,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "2025",
+      "startYear": 2023,
+      "endYear": 2025,
+      "team": {
+        "id": 4826,
+        "name": "Guinea",
+        "slug": "guinea",
+        "shortName": "Guinea",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 86755,
+        "nameCode": "GUI",
+        "ranking": 81,
+        "disabled": false,
+        "national": true,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ff0000",
+          "secondary": "#fcf200",
+          "text": "#fcf200"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "غينيا",
+            "ru": "Гвинея",
+            "hi": "गिनी",
+            "bn": "গিনি"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "World Cup Qual. CAF ",
+        "slug": "world-championship-qual-caf",
+        "primaryColorHex": "#9a1133",
+        "secondaryColorHex": "#c11541",
+        "category": {
+          "id": 1466,
+          "name": "Africa",
+          "slug": "africa",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "africa",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "أفريقيا"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 92072,
+        "id": 13,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "تصفيات كأس العالم للاتحاد الإفريقي لكرة القدم",
+            "hi": "वर्ल्ड चैंपियनशिप क्वालीफिकेशन सीएएफ",
+            "bn": "ওয়ার্ল্ড চ্যাম্পিয়নশিপ কোয়াল. সিএএফ"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "national"
+      },
+      "season": {
+        "name": "FIFA World Cup, Qualification CAF 2025",
+        "year": "2025",
+        "editor": false,
+        "seasonCoverageInfo": {
+          "editorCoverageLevel": 1
+        },
+        "id": 56249
+      }
+    },
+    {
+      "statistics": {
+        "accurateCrosses": 0,
+        "accurateCrossesPercentage": 0,
+        "accurateLongBalls": 14,
+        "accurateLongBallsPercentage": 34.15,
+        "accuratePasses": 280,
+        "accuratePassesPercentage": 84.59,
+        "aerialDuelsWon": 18,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "blockedShots": 6,
+        "outfielderBlocks": 6,
+        "cleanSheet": 0,
+        "dribbledPast": 2,
+        "errorLeadToGoal": 0,
+        "expectedAssists": 0.05497028,
+        "expectedGoals": 1.297,
+        "goals": 2,
+        "goalsAssistsSum": 2,
+        "goalsConceded": 7,
+        "interceptions": 11,
+        "keyPasses": 1,
+        "minutesPlayed": 659,
+        "passToAssist": 0,
+        "rating": 7.02,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 4,
+        "successfulDribbles": 2,
+        "tackles": 8,
+        "totalShots": 11,
+        "yellowCards": 0,
+        "totalRating": 84.2,
+        "countRating": 12,
+        "totalLongBalls": 41,
+        "totalCross": 1,
+        "totalPasses": 331,
+        "shotsFromInsideTheBox": 11,
+        "appearances": 13,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "24/25",
+      "startYear": 2024,
+      "endYear": 2025,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "LaLiga",
+        "slug": "laliga",
+        "primaryColorHex": "#2f4a89",
+        "secondaryColorHex": "#f4a32e",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 880287,
+        "id": 8,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "الدوري الإسباني",
+            "hi": "ला लिगा",
+            "bn": "লা লীগা"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-league",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "LaLiga 24/25",
+        "year": "24/25",
+        "editor": false,
+        "id": 61643
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 1,
+        "accurateLongBallsPercentage": 16.67,
+        "accuratePasses": 14,
+        "accuratePassesPercentage": 73.68,
+        "aerialDuelsWon": 1,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "outfielderBlocks": 1,
+        "cleanSheet": 0,
+        "dribbledPast": 0,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 0,
+        "goalsConceded": 0,
+        "interceptions": 0,
+        "keyPasses": 1,
+        "minutesPlayed": 64,
+        "passToAssist": 0,
+        "rating": 6.1,
+        "redCards": 0,
+        "saves": 0,
+        "successfulDribbles": 1,
+        "tackles": 1,
+        "yellowCards": 0,
+        "totalRating": 6.1,
+        "countRating": 1,
+        "totalLongBalls": 6,
+        "totalPasses": 19,
+        "shotsFromInsideTheBox": 0,
+        "appearances": 1,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "24/25",
+      "startYear": 2024,
+      "endYear": 2025,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "Copa del Rey",
+        "slug": "copa-del-rey",
+        "primaryColorHex": "#221C35",
+        "secondaryColorHex": "#fe0235",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 179297,
+        "id": 329,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "كأس ملك إسبانيا",
+            "hi": "कोपा डेल रे",
+            "bn": "কোপা দেল রে"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-cup",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "Copa del Rey 24/25",
+        "year": "24/25",
+        "editor": false,
+        "seasonCoverageInfo": {
+          "editorCoverageLevel": 1
+        },
+        "id": 66885
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 29,
+        "accurateLongBallsPercentage": 46.77,
+        "accuratePasses": 475,
+        "accuratePassesPercentage": 87.16,
+        "aerialDuelsWon": 25,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 1,
+        "blockedShots": 7,
+        "outfielderBlocks": 7,
+        "cleanSheet": 3,
+        "dribbledPast": 2,
+        "errorLeadToGoal": 0,
+        "expectedAssists": 0.09344251,
+        "expectedGoals": 0.7244,
+        "goals": 1,
+        "goalsAssistsSum": 1,
+        "goalsConceded": 15,
+        "interceptions": 11,
+        "keyPasses": 2,
+        "minutesPlayed": 1071,
+        "passToAssist": 0,
+        "rating": 6.93,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 3,
+        "successfulDribbles": 4,
+        "tackles": 18,
+        "totalShots": 7,
+        "yellowCards": 6,
+        "totalRating": 97,
+        "countRating": 14,
+        "totalLongBalls": 62,
+        "totalPasses": 545,
+        "shotsFromInsideTheBox": 6,
+        "appearances": 14,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "23/24",
+      "startYear": 2023,
+      "endYear": 2024,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "LaLiga",
+        "slug": "laliga",
+        "primaryColorHex": "#2f4a89",
+        "secondaryColorHex": "#f4a32e",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 880287,
+        "id": 8,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "الدوري الإسباني",
+            "hi": "ला लिगा",
+            "bn": "লা লীগা"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-league",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "LaLiga 23/24",
+        "year": "23/24",
+        "editor": false,
+        "id": 52376
+      }
+    },
+    {
+      "statistics": {
+        "accurateCrosses": 0,
+        "accurateCrossesPercentage": 0,
+        "accurateLongBalls": 18,
+        "accurateLongBallsPercentage": 50,
+        "accuratePasses": 151,
+        "accuratePassesPercentage": 82.51,
+        "aerialDuelsWon": 9,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "blockedShots": 5,
+        "outfielderBlocks": 5,
+        "cleanSheet": 2,
+        "dribbledPast": 2,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 0,
+        "goalsConceded": 4,
+        "interceptions": 4,
+        "keyPasses": 0,
+        "minutesPlayed": 360,
+        "passToAssist": 0,
+        "rating": 7.03,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 1,
+        "successfulDribbles": 1,
+        "tackles": 4,
+        "totalShots": 3,
+        "yellowCards": 1,
+        "totalRating": 28.1,
+        "countRating": 4,
+        "totalLongBalls": 36,
+        "totalCross": 1,
+        "totalPasses": 183,
+        "shotsFromInsideTheBox": 3,
+        "appearances": 4,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "2023",
+      "startYear": 2024,
+      "endYear": 2024,
+      "team": {
+        "id": 4826,
+        "name": "Guinea",
+        "slug": "guinea",
+        "shortName": "Guinea",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 86755,
+        "nameCode": "GUI",
+        "ranking": 81,
+        "disabled": false,
+        "national": true,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ff0000",
+          "secondary": "#fcf200",
+          "text": "#fcf200"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "غينيا",
+            "ru": "Гвинея",
+            "hi": "गिनी",
+            "bn": "গিনি"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "Africa Cup of Nations",
+        "slug": "africa-cup-of-nations",
+        "primaryColorHex": "#00752e",
+        "secondaryColorHex": "#edc73e",
+        "category": {
+          "id": 1466,
+          "name": "Africa",
+          "slug": "africa",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "africa",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "أفريقيا"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 239555,
+        "id": 270,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "كأس الأمم الأفريقية",
+            "hi": "अफ्रीका कप ऑफ नेशंस",
+            "bn": "আফ্রিকা কাপ অফ নেশনস"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "national",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "Africa Cup of Nations 2023",
+        "year": "2023",
+        "editor": false,
+        "id": 56021
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 4,
+        "accurateLongBallsPercentage": 66.67,
+        "accuratePasses": 49,
+        "accuratePassesPercentage": 94.23,
+        "aerialDuelsWon": 1,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "blockedShots": 0,
+        "cleanSheet": 1,
+        "dribbledPast": 1,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 0,
+        "goalsConceded": 0,
+        "interceptions": 1,
+        "keyPasses": 0,
+        "minutesPlayed": 90,
+        "passToAssist": 0,
+        "rating": 7,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 1,
+        "successfulDribbles": 0,
+        "tackles": 0,
+        "totalShots": 1,
+        "yellowCards": 0,
+        "totalRating": 7,
+        "countRating": 1,
+        "totalLongBalls": 6,
+        "totalPasses": 52,
+        "shotsFromInsideTheBox": 1,
+        "appearances": 1,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "23/24",
+      "startYear": 2023,
+      "endYear": 2024,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "Copa del Rey",
+        "slug": "copa-del-rey",
+        "primaryColorHex": "#221C35",
+        "secondaryColorHex": "#fe0235",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 179297,
+        "id": 329,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "كأس ملك إسبانيا",
+            "hi": "कोपा डेल रे",
+            "bn": "কোপা দেল রে"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-cup",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "Copa del Rey 23/24",
+        "year": "23/24",
+        "editor": false,
+        "id": 55373
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 24,
+        "accurateLongBallsPercentage": 52.17,
+        "accuratePasses": 228,
+        "accuratePassesPercentage": 84.13,
+        "aerialDuelsWon": 9,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 1,
+        "blockedShots": 4,
+        "outfielderBlocks": 4,
+        "cleanSheet": 2,
+        "dribbledPast": 0,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 0,
+        "goalsConceded": 6,
+        "interceptions": 3,
+        "keyPasses": 1,
+        "minutesPlayed": 509,
+        "passToAssist": 0,
+        "rating": 6.83,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 1,
+        "successfulDribbles": 2,
+        "tackles": 3,
+        "totalShots": 5,
+        "yellowCards": 0,
+        "totalRating": 41,
+        "countRating": 6,
+        "totalLongBalls": 46,
+        "totalPasses": 271,
+        "shotsFromInsideTheBox": 5,
+        "appearances": 6,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "22/23",
+      "startYear": 2022,
+      "endYear": 2023,
+      "team": {
+        "id": 4826,
+        "name": "Guinea",
+        "slug": "guinea",
+        "shortName": "Guinea",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 86755,
+        "nameCode": "GUI",
+        "ranking": 81,
+        "disabled": false,
+        "national": true,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ff0000",
+          "secondary": "#fcf200",
+          "text": "#fcf200"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "غينيا",
+            "ru": "Гвинея",
+            "hi": "गिनी",
+            "bn": "গিনি"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "Africa Cup of Nations Qual.",
+        "slug": "africa-cup-of-nations-qual",
+        "primaryColorHex": "#00752e",
+        "secondaryColorHex": "#edc73e",
+        "category": {
+          "id": 1466,
+          "name": "Africa",
+          "slug": "africa",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "africa",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "أفريقيا"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 76121,
+        "id": 1848,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "تصفيات كأس أمم أفريقيا",
+            "hi": "अफ्रीका कप ऑफ नेशंस क्वालिफिकेशन.",
+            "bn": "আফ্রিকা কাপ অফ নেশনস কোয়ালিফাইং."
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "national"
+      },
+      "season": {
+        "name": "Africa Cup of Nations, Qualification 2023",
+        "year": "2023",
+        "editor": false,
+        "id": 41862
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 4,
+        "accurateLongBallsPercentage": 57.14,
+        "accuratePasses": 36,
+        "accuratePassesPercentage": 83.72,
+        "aerialDuelsWon": 1,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "cleanSheet": 0,
+        "dribbledPast": 0,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 0,
+        "goalsConceded": 4,
+        "interceptions": 0,
+        "keyPasses": 0,
+        "minutesPlayed": 90,
+        "passToAssist": 0,
+        "rating": 6.4,
+        "redCards": 0,
+        "saves": 0,
+        "successfulDribbles": 0,
+        "tackles": 2,
+        "yellowCards": 0,
+        "totalRating": 6.4,
+        "countRating": 1,
+        "totalLongBalls": 7,
+        "totalPasses": 43,
+        "shotsFromInsideTheBox": 0,
+        "appearances": 1,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "2023",
+      "startYear": 2023,
+      "endYear": 2023,
+      "team": {
+        "id": 4826,
+        "name": "Guinea",
+        "slug": "guinea",
+        "shortName": "Guinea",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 86755,
+        "nameCode": "GUI",
+        "ranking": 81,
+        "disabled": false,
+        "national": true,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ff0000",
+          "secondary": "#fcf200",
+          "text": "#fcf200"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "غينيا",
+            "ru": "Гвинея",
+            "hi": "गिनी",
+            "bn": "গিনি"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "International Friendly Games",
+        "slug": "int-friendly-games",
+        "primaryColorHex": "#25497d",
+        "secondaryColorHex": "#d38f1d",
+        "category": {
+          "id": 1468,
+          "name": "World",
+          "slug": "world",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "international",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "العالم",
+              "hi": "विश्व",
+              "bn": "বিশ্ব"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 74486,
+        "id": 851,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "مباريات ودية دولية",
+            "hi": "इंटरनेशनल फ्रेंडली गेम्स",
+            "bn": "ইন্টারন্যাশনাল ফ্রেন্ডলি গেমস"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "national"
+      },
+      "season": {
+        "name": "Int. Friendly Games 2023",
+        "year": "2023",
+        "editor": false,
+        "id": 47776
+      }
+    },
+    {
+      "statistics": {
+        "accurateCrosses": 0,
+        "accurateCrossesPercentage": 0,
+        "accurateLongBalls": 84,
+        "accurateLongBallsPercentage": 47.19,
+        "accuratePasses": 970,
+        "accuratePassesPercentage": 82.13,
+        "aerialDuelsWon": 47,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 2,
+        "blockedShots": 17,
+        "outfielderBlocks": 17,
+        "cleanSheet": 4,
+        "dribbledPast": 7,
+        "errorLeadToGoal": 1,
+        "expectedAssists": 0.37913238,
+        "expectedGoals": 2.6801,
+        "goals": 3,
+        "goalsAssistsSum": 3,
+        "goalsConceded": 29,
+        "interceptions": 20,
+        "keyPasses": 5,
+        "minutesPlayed": 2448,
+        "passToAssist": 0,
+        "rating": 6.88,
+        "redCards": 1,
+        "saves": 0,
+        "shotsOnTarget": 7,
+        "successfulDribbles": 5,
+        "tackles": 30,
+        "totalShots": 21,
+        "yellowCards": 6,
+        "totalRating": 192.6,
+        "countRating": 28,
+        "totalLongBalls": 178,
+        "totalCross": 1,
+        "totalPasses": 1181,
+        "shotsFromInsideTheBox": 20,
+        "appearances": 29,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "22/23",
+      "startYear": 2022,
+      "endYear": 2023,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "LaLiga",
+        "slug": "laliga",
+        "primaryColorHex": "#2f4a89",
+        "secondaryColorHex": "#f4a32e",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 880287,
+        "id": 8,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "الدوري الإسباني",
+            "hi": "ला लिगा",
+            "bn": "লা লীগা"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-league",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "LaLiga 22/23",
+        "year": "22/23",
+        "editor": false,
+        "seasonCoverageInfo": {
+
+        },
+        "id": 42409
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 3,
+        "accurateLongBallsPercentage": 50,
+        "accuratePasses": 34,
+        "accuratePassesPercentage": 79.07,
+        "aerialDuelsWon": 1,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "cleanSheet": 0,
+        "dribbledPast": 0,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 0,
+        "goalsConceded": 2,
+        "interceptions": 0,
+        "keyPasses": 0,
+        "minutesPlayed": 45,
+        "passToAssist": 0,
+        "rating": 6.6,
+        "redCards": 0,
+        "saves": 0,
+        "successfulDribbles": 1,
+        "tackles": 1,
+        "yellowCards": 1,
+        "totalRating": 6.6,
+        "countRating": 1,
+        "totalLongBalls": 6,
+        "totalPasses": 43,
+        "shotsFromInsideTheBox": 0,
+        "appearances": 1,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "22/23",
+      "startYear": 2022,
+      "endYear": 2023,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "Copa del Rey",
+        "slug": "copa-del-rey",
+        "primaryColorHex": "#221C35",
+        "secondaryColorHex": "#fe0235",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 179297,
+        "id": 329,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "كأس ملك إسبانيا",
+            "hi": "कोपा डेल रे",
+            "bn": "কোপা দেল রে"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-cup",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "Copa del Rey 22/23",
+        "year": "22/23",
+        "editor": false,
+        "id": 46493
+      }
+    },
+    {
+      "statistics": {
+        "accurateCrosses": 1,
+        "accurateCrossesPercentage": 20,
+        "accurateLongBalls": 72,
+        "accurateLongBallsPercentage": 39.78,
+        "accuratePasses": 538,
+        "accuratePassesPercentage": 74.72,
+        "aerialDuelsWon": 33,
+        "assists": 1,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "blockedShots": 17,
+        "outfielderBlocks": 17,
+        "cleanSheet": 5,
+        "dribbledPast": 10,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 1,
+        "goalsConceded": 35,
+        "interceptions": 30,
+        "keyPasses": 4,
+        "minutesPlayed": 1964,
+        "passToAssist": 0,
+        "rating": 6.67,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 2,
+        "successfulDribbles": 13,
+        "tackles": 35,
+        "totalShots": 8,
+        "yellowCards": 11,
+        "totalRating": 186.8,
+        "countRating": 28,
+        "totalLongBalls": 181,
+        "totalCross": 5,
+        "totalPasses": 720,
+        "shotsFromInsideTheBox": 8,
+        "appearances": 29,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "21/22",
+      "startYear": 2021,
+      "endYear": 2022,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "LaLiga",
+        "slug": "laliga",
+        "primaryColorHex": "#2f4a89",
+        "secondaryColorHex": "#f4a32e",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 880287,
+        "id": 8,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "الدوري الإسباني",
+            "hi": "ला लिगा",
+            "bn": "লা লীগা"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-league",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "LaLiga 21/22",
+        "year": "21/22",
+        "editor": false,
+        "id": 37223
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 32,
+        "accurateLongBallsPercentage": 47.06,
+        "accuratePasses": 219,
+        "accuratePassesPercentage": 76.04,
+        "aerialDuelsWon": 21,
+        "assists": 1,
+        "bigChancesCreated": 1,
+        "bigChancesMissed": 1,
+        "blockedShots": 4,
+        "outfielderBlocks": 4,
+        "cleanSheet": 3,
+        "dribbledPast": 5,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 1,
+        "goalsConceded": 4,
+        "interceptions": 10,
+        "keyPasses": 2,
+        "minutesPlayed": 735,
+        "passToAssist": 0,
+        "rating": 7,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 1,
+        "successfulDribbles": 1,
+        "tackles": 11,
+        "totalShots": 5,
+        "yellowCards": 4,
+        "totalRating": 56,
+        "countRating": 8,
+        "totalLongBalls": 68,
+        "totalPasses": 288,
+        "shotsFromInsideTheBox": 5,
+        "appearances": 8,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "21/22",
+      "startYear": 2021,
+      "endYear": 2022,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "Copa del Rey",
+        "slug": "copa-del-rey",
+        "primaryColorHex": "#221C35",
+        "secondaryColorHex": "#fe0235",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 179297,
+        "id": 329,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "كأس ملك إسبانيا",
+            "hi": "कोपा डेल रे",
+            "bn": "কোপা দেল রে"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-cup",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "Copa del Rey 21/22",
+        "year": "21/22",
+        "editor": false,
+        "id": 39457
+      }
+    },
+    {
+      "statistics": {
+        "accurateCrosses": 0,
+        "accurateCrossesPercentage": 0,
+        "accurateLongBalls": 68,
+        "accurateLongBallsPercentage": 47.55,
+        "accuratePasses": 840,
+        "accuratePassesPercentage": 85.02,
+        "aerialDuelsWon": 46,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 2,
+        "blockedShots": 21,
+        "outfielderBlocks": 21,
+        "cleanSheet": 4,
+        "dribbledPast": 4,
+        "errorLeadToGoal": 1,
+        "goals": 1,
+        "goalsAssistsSum": 1,
+        "goalsConceded": 33,
+        "interceptions": 27,
+        "keyPasses": 1,
+        "minutesPlayed": 2082,
+        "passToAssist": 0,
+        "rating": 6.75,
+        "redCards": 1,
+        "saves": 0,
+        "shotsOnTarget": 4,
+        "successfulDribbles": 7,
+        "tackles": 16,
+        "totalShots": 11,
+        "yellowCards": 4,
+        "totalRating": 175.5,
+        "countRating": 26,
+        "totalLongBalls": 143,
+        "totalCross": 1,
+        "totalPasses": 988,
+        "shotsFromInsideTheBox": 9,
+        "appearances": 26,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "20/21",
+      "startYear": 2020,
+      "endYear": 2021,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "LaLiga",
+        "slug": "laliga",
+        "primaryColorHex": "#2f4a89",
+        "secondaryColorHex": "#f4a32e",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 880287,
+        "id": 8,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "الدوري الإسباني",
+            "hi": "ला लिगा",
+            "bn": "লা লীগা"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-league",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "LaLiga 20/21",
+        "year": "20/21",
+        "editor": false,
+        "id": 32501
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 0,
+        "accurateLongBallsPercentage": 0,
+        "accuratePasses": 10,
+        "accuratePassesPercentage": 76.92,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "cleanSheet": 0,
+        "dribbledPast": 0,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 0,
+        "goalsConceded": 0,
+        "interceptions": 0,
+        "keyPasses": 0,
+        "minutesPlayed": 24,
+        "passToAssist": 0,
+        "rating": 6.6,
+        "redCards": 0,
+        "saves": 0,
+        "successfulDribbles": 0,
+        "tackles": 0,
+        "yellowCards": 0,
+        "totalRating": 6.6,
+        "countRating": 1,
+        "totalLongBalls": 2,
+        "totalPasses": 13,
+        "shotsFromInsideTheBox": 0,
+        "appearances": 1,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "20/21",
+      "startYear": 2020,
+      "endYear": 2021,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "Copa del Rey",
+        "slug": "copa-del-rey",
+        "primaryColorHex": "#221C35",
+        "secondaryColorHex": "#fe0235",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 179297,
+        "id": 329,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "كأس ملك إسبانيا",
+            "hi": "कोपा डेल रे",
+            "bn": "কোপা দেল রে"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-cup",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "Copa del Rey 20/21",
+        "year": "20/21",
+        "editor": false,
+        "id": 34681
+      }
+    },
+    {
+      "statistics": {
+        "accurateCrosses": 1,
+        "accurateCrossesPercentage": 100,
+        "accurateLongBalls": 32,
+        "accurateLongBallsPercentage": 46.38,
+        "accuratePasses": 715,
+        "accuratePassesPercentage": 88.82,
+        "aerialDuelsWon": 38,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "blockedShots": 15,
+        "outfielderBlocks": 15,
+        "cleanSheet": 3,
+        "dribbledPast": 3,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 0,
+        "goalsConceded": 23,
+        "interceptions": 11,
+        "keyPasses": 2,
+        "minutesPlayed": 1445,
+        "passToAssist": 0,
+        "rating": 6.78,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 1,
+        "successfulDribbles": 6,
+        "tackles": 11,
+        "totalShots": 1,
+        "yellowCards": 5,
+        "totalRating": 128.9,
+        "countRating": 19,
+        "totalLongBalls": 69,
+        "totalCross": 1,
+        "totalPasses": 805,
+        "shotsFromInsideTheBox": 1,
+        "appearances": 21,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "19/20",
+      "startYear": 2019,
+      "endYear": 2020,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "LaLiga",
+        "slug": "laliga",
+        "primaryColorHex": "#2f4a89",
+        "secondaryColorHex": "#f4a32e",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 880287,
+        "id": 8,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "الدوري الإسباني",
+            "hi": "ला लिगा",
+            "bn": "লা লীগা"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-league",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "LaLiga 19/20",
+        "year": "19/20",
+        "editor": false,
+        "id": 24127
+      }
+    },
+    {
+      "statistics": {
+        "accurateCrosses": 0,
+        "accurateCrossesPercentage": 0,
+        "accurateLongBalls": 10,
+        "accurateLongBallsPercentage": 47.62,
+        "accuratePasses": 118,
+        "accuratePassesPercentage": 85.51,
+        "aerialDuelsWon": 4,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "outfielderBlocks": 6,
+        "cleanSheet": 1,
+        "dribbledPast": 1,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 0,
+        "goalsConceded": 6,
+        "interceptions": 5,
+        "keyPasses": 1,
+        "minutesPlayed": 310,
+        "passToAssist": 0,
+        "rating": 6.6,
+        "redCards": 1,
+        "saves": 0,
+        "successfulDribbles": 2,
+        "tackles": 7,
+        "yellowCards": 2,
+        "totalRating": 26.4,
+        "countRating": 4,
+        "totalLongBalls": 21,
+        "totalCross": 1,
+        "totalPasses": 138,
+        "shotsFromInsideTheBox": 0,
+        "appearances": 5,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "19/20",
+      "startYear": 2019,
+      "endYear": 2020,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "UEFA Champions League",
+        "slug": "uefa-champions-league",
+        "primaryColorHex": "#062b5c",
+        "secondaryColorHex": "#086aab",
+        "category": {
+          "id": 1465,
+          "name": "Europe",
+          "slug": "europe",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "europe",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "أوروبا",
+              "hi": "यूरोप",
+              "bn": "ইউরোপ"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 1204364,
+        "id": 7,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "دوري أبطال أوروبا",
+            "hi": "यूईएफए चैंपियंस लीग",
+            "bn": "উয়েফা চ্যাম্পিয়ন্স লীগ"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "international-cup",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "UEFA Champions League 19/20",
+        "year": "19/20",
+        "editor": false,
+        "id": 23766
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 14,
+        "accurateLongBallsPercentage": 63.64,
+        "accuratePasses": 162,
+        "accuratePassesPercentage": 88.04,
+        "aerialDuelsWon": 9,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "blockedShots": 8,
+        "outfielderBlocks": 8,
+        "cleanSheet": 2,
+        "dribbledPast": 1,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 0,
+        "goalsConceded": 2,
+        "interceptions": 6,
+        "keyPasses": 0,
+        "minutesPlayed": 299,
+        "passToAssist": 0,
+        "rating": 7.5,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 0,
+        "successfulDribbles": 0,
+        "tackles": 2,
+        "totalShots": 2,
+        "yellowCards": 0,
+        "totalRating": 22.5,
+        "countRating": 3,
+        "totalLongBalls": 22,
+        "totalPasses": 184,
+        "shotsFromInsideTheBox": 2,
+        "appearances": 3,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "19/20",
+      "startYear": 2019,
+      "endYear": 2020,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "Copa del Rey",
+        "slug": "copa-del-rey",
+        "primaryColorHex": "#221C35",
+        "secondaryColorHex": "#fe0235",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 179297,
+        "id": 329,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "كأس ملك إسبانيا",
+            "hi": "कोपा डेल रे",
+            "bn": "কোপা দেল রে"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-cup",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "Copa del Rey 19/20",
+        "year": "19/20",
+        "editor": false,
+        "id": 26137
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 19,
+        "accurateLongBallsPercentage": 73.08,
+        "accuratePasses": 255,
+        "accuratePassesPercentage": 90.43,
+        "aerialDuelsWon": 17,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "blockedShots": 3,
+        "outfielderBlocks": 3,
+        "cleanSheet": 2,
+        "dribbledPast": 1,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 0,
+        "goalsConceded": 4,
+        "interceptions": 5,
+        "keyPasses": 0,
+        "minutesPlayed": 467,
+        "passToAssist": 0,
+        "rating": 6.99,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 2,
+        "successfulDribbles": 1,
+        "tackles": 7,
+        "totalShots": 5,
+        "yellowCards": 1,
+        "totalRating": 48.9,
+        "countRating": 7,
+        "totalLongBalls": 26,
+        "totalPasses": 282,
+        "shotsFromInsideTheBox": 1,
+        "appearances": 7,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "18/19",
+      "startYear": 2018,
+      "endYear": 2019,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "Copa del Rey",
+        "slug": "copa-del-rey",
+        "primaryColorHex": "#221C35",
+        "secondaryColorHex": "#fe0235",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 179297,
+        "id": 329,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "كأس ملك إسبانيا",
+            "hi": "कोपा डेल रे",
+            "bn": "কোপা দেল রে"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-cup",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "Copa del Rey 18/19",
+        "year": "18/19",
+        "editor": false,
+        "id": 18173
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 51,
+        "accurateLongBallsPercentage": 54.84,
+        "accuratePasses": 592,
+        "accuratePassesPercentage": 85.06,
+        "aerialDuelsWon": 36,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 2,
+        "blockedShots": 16,
+        "outfielderBlocks": 16,
+        "cleanSheet": 8,
+        "dribbledPast": 5,
+        "errorLeadToGoal": 1,
+        "goals": 2,
+        "goalsAssistsSum": 2,
+        "goalsConceded": 18,
+        "interceptions": 20,
+        "keyPasses": 0,
+        "minutesPlayed": 1574,
+        "passToAssist": 0,
+        "rating": 6.8,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 4,
+        "successfulDribbles": 5,
+        "tackles": 14,
+        "totalShots": 11,
+        "yellowCards": 9,
+        "totalRating": 149.5,
+        "countRating": 22,
+        "totalLongBalls": 93,
+        "totalPasses": 696,
+        "shotsFromInsideTheBox": 8,
+        "appearances": 22,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "18/19",
+      "startYear": 2018,
+      "endYear": 2019,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "LaLiga",
+        "slug": "laliga",
+        "primaryColorHex": "#2f4a89",
+        "secondaryColorHex": "#f4a32e",
+        "category": {
+          "id": 32,
+          "name": "Spain",
+          "slug": "spain",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "spain",
+          "alpha2": "ES",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "إسبانيا",
+              "hi": "स्पेन",
+              "bn": "স্পেন"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 880287,
+        "id": 8,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "الدوري الإسباني",
+            "hi": "ला लिगा",
+            "bn": "লা লীগা"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-league",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "LaLiga 18/19",
+        "year": "18/19",
+        "editor": false,
+        "id": 18020
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 20,
+        "accurateLongBallsPercentage": 68.97,
+        "accuratePasses": 235,
+        "accuratePassesPercentage": 91.09,
+        "aerialDuelsWon": 11,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "blockedShots": 6,
+        "outfielderBlocks": 6,
+        "cleanSheet": 3,
+        "dribbledPast": 1,
+        "errorLeadToGoal": 0,
+        "goals": 1,
+        "goalsAssistsSum": 1,
+        "goalsConceded": 5,
+        "interceptions": 8,
+        "keyPasses": 2,
+        "minutesPlayed": 540,
+        "passToAssist": 0,
+        "rating": 7.23,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 1,
+        "successfulDribbles": 0,
+        "tackles": 6,
+        "totalShots": 2,
+        "yellowCards": 2,
+        "totalRating": 43.4,
+        "countRating": 6,
+        "totalLongBalls": 29,
+        "totalPasses": 258,
+        "shotsFromInsideTheBox": 2,
+        "appearances": 6,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "18/19",
+      "startYear": 2018,
+      "endYear": 2019,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "UEFA Europa League",
+        "slug": "uefa-europa-league",
+        "secondaryColorHex": "#f37d25",
+        "category": {
+          "id": 1465,
+          "name": "Europe",
+          "slug": "europe",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "europe",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "أوروبا",
+              "hi": "यूरोप",
+              "bn": "ইউরোপ"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 496336,
+        "id": 679,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "الدوري الأوروبي",
+            "hi": "यूईएफए यूरोपा लीग",
+            "bn": "উয়েফা ইউরোপা লীগ"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "international-cup",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "UEFA Europa League 18/19",
+        "year": "18/19",
+        "editor": false,
+        "id": 17352
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 7,
+        "accurateLongBallsPercentage": 46.67,
+        "accuratePasses": 118,
+        "accuratePassesPercentage": 84.89,
+        "aerialDuelsWon": 3,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "blockedShots": 3,
+        "outfielderBlocks": 3,
+        "cleanSheet": 0,
+        "dribbledPast": 0,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 0,
+        "goalsConceded": 3,
+        "interceptions": 5,
+        "keyPasses": 1,
+        "minutesPlayed": 270,
+        "passToAssist": 0,
+        "rating": 7,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 1,
+        "successfulDribbles": 0,
+        "tackles": 8,
+        "totalShots": 1,
+        "yellowCards": 1,
+        "totalRating": 21,
+        "countRating": 3,
+        "totalLongBalls": 15,
+        "totalPasses": 139,
+        "shotsFromInsideTheBox": 0,
+        "appearances": 3,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "18/19",
+      "startYear": 2018,
+      "endYear": 2019,
+      "team": {
+        "id": 2828,
+        "name": "Valencia",
+        "slug": "valencia",
+        "shortName": "Valencia",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 329984,
+        "nameCode": "VCF",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#000000",
+          "text": "#000000"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "فالنسيا",
+            "ru": "Валенсия",
+            "hi": "वेलेंसिया",
+            "bn": "ভ্যালেন্সিয়া"
+          },
+          "shortNameTranslation": {
+
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "UEFA Champions League",
+        "slug": "uefa-champions-league",
+        "primaryColorHex": "#062b5c",
+        "secondaryColorHex": "#086aab",
+        "category": {
+          "id": 1465,
+          "name": "Europe",
+          "slug": "europe",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "europe",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "أوروبا",
+              "hi": "यूरोप",
+              "bn": "ইউরোপ"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 1204364,
+        "id": 7,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "دوري أبطال أوروبا",
+            "hi": "यूईएफए चैंपियंस लीग",
+            "bn": "উয়েফা চ্যাম্পিয়ন্স লীগ"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "international-cup",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "UEFA Champions League 18/19",
+        "year": "18/19",
+        "editor": false,
+        "id": 17351
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 24,
+        "accurateLongBallsPercentage": 58.54,
+        "accuratePasses": 369,
+        "accuratePassesPercentage": 88.28,
+        "aerialDuelsWon": 22,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 2,
+        "blockedShots": 9,
+        "outfielderBlocks": 9,
+        "cleanSheet": 2,
+        "dribbledPast": 3,
+        "errorLeadToGoal": 1,
+        "goals": 1,
+        "goalsAssistsSum": 1,
+        "goalsConceded": 17,
+        "interceptions": 12,
+        "keyPasses": 0,
+        "minutesPlayed": 725,
+        "passToAssist": 0,
+        "rating": 6.83,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 1,
+        "successfulDribbles": 7,
+        "tackles": 10,
+        "totalShots": 4,
+        "yellowCards": 2,
+        "totalRating": 82,
+        "countRating": 12,
+        "totalLongBalls": 41,
+        "totalPasses": 418,
+        "shotsFromInsideTheBox": 0,
+        "appearances": 12,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "17/18",
+      "startYear": 2017,
+      "endYear": 2018,
+      "team": {
+        "id": 1649,
+        "name": "Olympique Lyonnais",
+        "slug": "olympique-lyonnais",
+        "shortName": "Lyon",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 403425,
+        "nameCode": "OLY",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#004080",
+          "text": "#004080"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "أولمبيك ليون",
+            "ru": "Лион"
+          },
+          "shortNameTranslation": {
+            "ar": "ليون",
+            "hi": "लियोन",
+            "bn": "লিওন"
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "Ligue 1",
+        "slug": "ligue-1",
+        "primaryColorHex": "#091c3e",
+        "secondaryColorHex": "#a9c011",
+        "category": {
+          "id": 7,
+          "name": "France",
+          "slug": "france",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "france",
+          "alpha2": "FR",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "فرنسا",
+              "hi": "फ्रांस",
+              "bn": "ফ্রান্স"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 448129,
+        "id": 34,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "الدوري الفرنسي",
+            "hi": "लीग 1",
+            "bn": "লীগ 1"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-league",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "Ligue 1 17/18",
+        "year": "17/18",
+        "editor": false,
+        "id": 13384
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 16,
+        "accurateLongBallsPercentage": 51.61,
+        "accuratePasses": 262,
+        "accuratePassesPercentage": 88.22,
+        "aerialDuelsWon": 13,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "blockedShots": 5,
+        "outfielderBlocks": 5,
+        "cleanSheet": 2,
+        "dribbledPast": 2,
+        "errorLeadToGoal": 0,
+        "goals": 1,
+        "goalsAssistsSum": 1,
+        "goalsConceded": 5,
+        "interceptions": 11,
+        "keyPasses": 2,
+        "minutesPlayed": 450,
+        "passToAssist": 0,
+        "rating": 7.18,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 1,
+        "successfulDribbles": 5,
+        "tackles": 4,
+        "totalShots": 1,
+        "yellowCards": 0,
+        "totalRating": 35.9,
+        "countRating": 5,
+        "totalLongBalls": 31,
+        "totalPasses": 297,
+        "shotsFromInsideTheBox": 0,
+        "appearances": 5,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "17/18",
+      "startYear": 2017,
+      "endYear": 2018,
+      "team": {
+        "id": 1649,
+        "name": "Olympique Lyonnais",
+        "slug": "olympique-lyonnais",
+        "shortName": "Lyon",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 403425,
+        "nameCode": "OLY",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#004080",
+          "text": "#004080"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "أولمبيك ليون",
+            "ru": "Лион"
+          },
+          "shortNameTranslation": {
+            "ar": "ليون",
+            "hi": "लियोन",
+            "bn": "লিওন"
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "UEFA Europa League",
+        "slug": "uefa-europa-league",
+        "secondaryColorHex": "#f37d25",
+        "category": {
+          "id": 1465,
+          "name": "Europe",
+          "slug": "europe",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "europe",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "أوروبا",
+              "hi": "यूरोप",
+              "bn": "ইউরোপ"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 496336,
+        "id": 679,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "الدوري الأوروبي",
+            "hi": "यूईएफए यूरोपा लीग",
+            "bn": "উয়েফা ইউরোপা লীগ"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "international-cup",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "UEFA Europa League 17/18",
+        "year": "17/18",
+        "editor": false,
+        "id": 13416
+      }
+    },
+    {
+      "statistics": {
+        "accurateCrosses": 0,
+        "accurateCrossesPercentage": 0,
+        "accurateLongBalls": 65,
+        "accurateLongBallsPercentage": 54.62,
+        "accuratePasses": 1001,
+        "accuratePassesPercentage": 87.81,
+        "aerialDuelsWon": 59,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 4,
+        "blockedShots": 14,
+        "outfielderBlocks": 14,
+        "cleanSheet": 6,
+        "dribbledPast": 5,
+        "errorLeadToGoal": 1,
+        "goals": 1,
+        "goalsAssistsSum": 1,
+        "goalsConceded": 28,
+        "interceptions": 36,
+        "keyPasses": 3,
+        "minutesPlayed": 1930,
+        "passToAssist": 0,
+        "rating": 7.13,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 5,
+        "successfulDribbles": 6,
+        "tackles": 29,
+        "totalShots": 23,
+        "yellowCards": 5,
+        "totalRating": 156.9,
+        "countRating": 22,
+        "totalLongBalls": 119,
+        "totalCross": 1,
+        "totalPasses": 1140,
+        "shotsFromInsideTheBox": 0,
+        "appearances": 22,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "16/17",
+      "startYear": 2016,
+      "endYear": 2017,
+      "team": {
+        "id": 1649,
+        "name": "Olympique Lyonnais",
+        "slug": "olympique-lyonnais",
+        "shortName": "Lyon",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 403425,
+        "nameCode": "OLY",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#004080",
+          "text": "#004080"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "أولمبيك ليون",
+            "ru": "Лион"
+          },
+          "shortNameTranslation": {
+            "ar": "ليون",
+            "hi": "लियोन",
+            "bn": "লিওন"
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "Ligue 1",
+        "slug": "ligue-1",
+        "primaryColorHex": "#091c3e",
+        "secondaryColorHex": "#a9c011",
+        "category": {
+          "id": 7,
+          "name": "France",
+          "slug": "france",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "france",
+          "alpha2": "FR",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "فرنسا",
+              "hi": "फ्रांस",
+              "bn": "ফ্রান্স"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 448129,
+        "id": 34,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "الدوري الفرنسي",
+            "hi": "लीग 1",
+            "bn": "লীগ 1"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-league",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "Ligue 1 16/17",
+        "year": "16/17",
+        "editor": false,
+        "id": 11648
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 23,
+        "accurateLongBallsPercentage": 45.1,
+        "accuratePasses": 261,
+        "accuratePassesPercentage": 82.33,
+        "aerialDuelsWon": 17,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 4,
+        "blockedShots": 8,
+        "outfielderBlocks": 8,
+        "cleanSheet": 0,
+        "dribbledPast": 2,
+        "errorLeadToGoal": 1,
+        "goals": 3,
+        "goalsAssistsSum": 3,
+        "goalsConceded": 14,
+        "interceptions": 21,
+        "keyPasses": 0,
+        "minutesPlayed": 750,
+        "passToAssist": 0,
+        "rating": 7.16,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 7,
+        "successfulDribbles": 2,
+        "tackles": 10,
+        "totalShots": 12,
+        "yellowCards": 1,
+        "totalRating": 57.3,
+        "countRating": 8,
+        "totalLongBalls": 51,
+        "totalPasses": 317,
+        "shotsFromInsideTheBox": 0,
+        "appearances": 8,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "16/17",
+      "startYear": 2016,
+      "endYear": 2017,
+      "team": {
+        "id": 1649,
+        "name": "Olympique Lyonnais",
+        "slug": "olympique-lyonnais",
+        "shortName": "Lyon",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 403425,
+        "nameCode": "OLY",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#004080",
+          "text": "#004080"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "أولمبيك ليون",
+            "ru": "Лион"
+          },
+          "shortNameTranslation": {
+            "ar": "ليون",
+            "hi": "लियोन",
+            "bn": "লিওন"
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "UEFA Europa League",
+        "slug": "uefa-europa-league",
+        "secondaryColorHex": "#f37d25",
+        "category": {
+          "id": 1465,
+          "name": "Europe",
+          "slug": "europe",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "europe",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "أوروبا",
+              "hi": "यूरोप",
+              "bn": "ইউরোপ"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 496336,
+        "id": 679,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "الدوري الأوروبي",
+            "hi": "यूईएफए यूरोपा लीग",
+            "bn": "উয়েফা ইউরোপা লীগ"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "international-cup",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "UEFA Europa League 16/17",
+        "year": "16/17",
+        "editor": false,
+        "id": 11774
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 2,
+        "accurateLongBallsPercentage": 40,
+        "accuratePasses": 60,
+        "accuratePassesPercentage": 89.55,
+        "aerialDuelsWon": 2,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "blockedShots": 1,
+        "outfielderBlocks": 1,
+        "cleanSheet": 1,
+        "dribbledPast": 0,
+        "errorLeadToGoal": 0,
+        "goals": 1,
+        "goalsAssistsSum": 1,
+        "goalsConceded": 0,
+        "interceptions": 2,
+        "keyPasses": 1,
+        "minutesPlayed": 90,
+        "passToAssist": 0,
+        "rating": 8.6,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 1,
+        "successfulDribbles": 0,
+        "tackles": 3,
+        "totalShots": 1,
+        "yellowCards": 0,
+        "totalRating": 8.6,
+        "countRating": 1,
+        "totalLongBalls": 5,
+        "totalPasses": 67,
+        "shotsFromInsideTheBox": 0,
+        "appearances": 1,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "16/17",
+      "startYear": 2016,
+      "endYear": 2017,
+      "team": {
+        "id": 1649,
+        "name": "Olympique Lyonnais",
+        "slug": "olympique-lyonnais",
+        "shortName": "Lyon",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 403425,
+        "nameCode": "OLY",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#004080",
+          "text": "#004080"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "أولمبيك ليون",
+            "ru": "Лион"
+          },
+          "shortNameTranslation": {
+            "ar": "ليون",
+            "hi": "लियोन",
+            "bn": "লিওন"
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "Coupe de France",
+        "slug": "coupe-de-france",
+        "primaryColorHex": "#062b5c",
+        "secondaryColorHex": "#ff0000",
+        "category": {
+          "id": 7,
+          "name": "France",
+          "slug": "france",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "france",
+          "alpha2": "FR",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "فرنسا",
+              "hi": "फ्रांस",
+              "bn": "ফ্রান্স"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 47672,
+        "id": 335,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "كأس فرنسا",
+            "hi": "कूप डी फ्रांस",
+            "bn": "কুপে ডি ফ্রান্স"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "domestic-cup",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "Coupe de France 16/17",
+        "year": "16/17",
+        "editor": false,
+        "id": 12636
+      }
+    },
+    {
+      "statistics": {
+        "accurateLongBalls": 9,
+        "accurateLongBallsPercentage": 56.25,
+        "accuratePasses": 114,
+        "accuratePassesPercentage": 89.76,
+        "aerialDuelsWon": 4,
+        "assists": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "blockedShots": 2,
+        "outfielderBlocks": 2,
+        "cleanSheet": 1,
+        "dribbledPast": 1,
+        "errorLeadToGoal": 0,
+        "goals": 0,
+        "goalsAssistsSum": 0,
+        "goalsConceded": 2,
+        "interceptions": 8,
+        "keyPasses": 1,
+        "minutesPlayed": 270,
+        "passToAssist": 0,
+        "rating": 7.23,
+        "redCards": 0,
+        "saves": 0,
+        "shotsOnTarget": 0,
+        "successfulDribbles": 0,
+        "tackles": 6,
+        "totalShots": 2,
+        "yellowCards": 1,
+        "totalRating": 21.7,
+        "countRating": 3,
+        "totalLongBalls": 16,
+        "totalPasses": 127,
+        "shotsFromInsideTheBox": 0,
+        "appearances": 3,
+        "type": "overall",
+        "id": 0
+      },
+      "year": "16/17",
+      "startYear": 2016,
+      "endYear": 2017,
+      "team": {
+        "id": 1649,
+        "name": "Olympique Lyonnais",
+        "slug": "olympique-lyonnais",
+        "shortName": "Lyon",
+        "gender": "M",
+        "sport": {
+          "name": "Football",
+          "slug": "football",
+          "id": 1
+        },
+        "userCount": 403425,
+        "nameCode": "OLY",
+        "disabled": false,
+        "national": false,
+        "type": 0,
+        "teamColors": {
+          "primary": "#ffffff",
+          "secondary": "#004080",
+          "text": "#004080"
+        },
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "أولمبيك ليون",
+            "ru": "Лион"
+          },
+          "shortNameTranslation": {
+            "ar": "ليون",
+            "hi": "लियोन",
+            "bn": "লিওন"
+          }
+        }
+      },
+      "uniqueTournament": {
+        "name": "UEFA Champions League",
+        "slug": "uefa-champions-league",
+        "primaryColorHex": "#062b5c",
+        "secondaryColorHex": "#086aab",
+        "category": {
+          "id": 1465,
+          "name": "Europe",
+          "slug": "europe",
+          "sport": {
+            "name": "Football",
+            "slug": "football",
+            "id": 1
+          },
+          "flag": "europe",
+          "fieldTranslations": {
+            "nameTranslation": {
+              "ar": "أوروبا",
+              "hi": "यूरोप",
+              "bn": "ইউরোপ"
+            },
+            "shortNameTranslation": {
+
+            }
+          }
+        },
+        "userCount": 1204364,
+        "id": 7,
+        "displayInverseHomeAwayTeams": false,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "دوري أبطال أوروبا",
+            "hi": "यूईएफए चैंपियंस लीग",
+            "bn": "উয়েফা চ্যাম্পিয়ন্স লীগ"
+          },
+          "shortNameTranslation": {
+
+          }
+        },
+        "competitionType": "international-cup",
+        "majorTrophy": true
+      },
+      "season": {
+        "name": "UEFA Champions League 16/17",
+        "year": "16/17",
+        "editor": false,
+        "id": 11773
+      }
+    }
+  ],
+  "typesMap": {
+    "7": [
+      "overall",
+      "home",
+      "away"
+    ],
+    "8": [
+      "overall",
+      "home",
+      "away"
+    ],
+    "13": [
+      "overall",
+      "home",
+      "away"
+    ],
+    "34": [
+      "overall",
+      "home",
+      "away"
+    ],
+    "270": [
+      "overall",
+      "home",
+      "away"
+    ],
+    "329": [
+      "overall",
+      "home",
+      "away"
+    ],
+    "335": [
+      "overall",
+      "home"
+    ],
+    "679": [
+      "overall",
+      "home",
+      "away"
+    ],
+    "851": [
+      "overall",
+      "away"
+    ],
+    "1848": [
+      "overall",
+      "home",
+      "away"
+    ]
+  }
+}

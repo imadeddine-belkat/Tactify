@@ -6,32 +6,45 @@ import (
 	"strconv"
 	"sync"
 
+	"github.com/imadbelkat1/fpl-service/config"
 	fpl_api "github.com/imadbelkat1/fpl-service/internal/api"
 	"github.com/imadbelkat1/fpl-service/internal/models"
+	"github.com/imadbelkat1/kafka"
 )
 
 type LiveEventApiService struct {
-	Client *fpl_api.FplApiClient
+	Config   *config.FplConfig
+	Client   *fpl_api.FplApiClient
+	Producer *kafka.Producer
 }
 
-func (s *LiveEventApiService) UpdateLiveEvent(eventID string) error {
+func (s *LiveEventApiService) GetLiveEvent(ctx context.Context, eventID string) (*models.LiveEvent, error) {
 	var liveEvent models.LiveEvent
-	ctx := context.Background()
 
-	endpoint := fmt.Sprintf(liveEventEndpoint, eventID)
+	endpoint := fmt.Sprintf(s.Config.FplApi.LiveEvent, eventID)
 
 	if err := s.Client.GetAndUnmarshal(ctx, endpoint, &liveEvent); err != nil {
-		return fmt.Errorf("failed to fetch live event data: %v", err)
+		return nil, fmt.Errorf("failed to fetch live event data: %v", err)
 	}
 
-	if err := publishLiveEvent(ctx, liveEvent, eventID); err != nil {
+	return &liveEvent, nil
+}
+
+func (s *LiveEventApiService) UpdateLiveEvent(ctx context.Context, eventID string) error {
+	liveEvent, err := s.GetLiveEvent(ctx, eventID)
+	if err != nil {
+		return fmt.Errorf("failed to get live event data: %v", err)
+	}
+
+	if err := s.publishLiveEvent(ctx, liveEvent, eventID); err != nil {
 		return fmt.Errorf("failed to publish live event data: %v", err)
 	}
 
 	return nil
 }
 
-func publishLiveEvent(ctx context.Context, liveEvent models.LiveEvent, eventID string) error {
+func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *models.LiveEvent, eventID string) error {
+	liveEventTopic := s.Config.KafkaConfig.TopicsName.FplLiveEvent
 	gameweek, err := strconv.Atoi(eventID)
 	if err != nil {
 		return fmt.Errorf("invalid event ID: %v", err)
@@ -39,56 +52,43 @@ func publishLiveEvent(ctx context.Context, liveEvent models.LiveEvent, eventID s
 
 	toDelete := []string{"explain", "modified"}
 
-	const deleteWorkers = 10
-	const publishWorkers = 10
-
 	jobs := make(chan models.LiveElement, len(liveEvent.Elements))
-	elements := make(chan ProcessedModel, len(liveEvent.Elements))
-	results := make(chan error, len(liveEvent.Elements)*2) // delete + publish
+	elements := make(chan config.ProcessedModel, len(liveEvent.Elements))
 
 	// delete stage
 	var deleteWg sync.WaitGroup
-	for i := 0; i < deleteWorkers; i++ {
+	for i := 0; i < s.Config.DeleteWorkerCount; i++ {
 		deleteWg.Add(1)
 		go func() {
 			defer deleteWg.Done()
 			for element := range jobs {
 				element.Gameweek = gameweek
-				processed, err := processDelete(element, toDelete)
+				processed, err := s.Config.ProcessDelete(element, toDelete)
 				if err != nil {
-					results <- err
 					continue
 				}
-				elements <- ProcessedModel{ID: element.ID, Data: processed}
+				elements <- config.ProcessedModel{ID: element.ID, Data: processed}
 			}
 		}()
 	}
 
-	// close elements after delete stage finishes
 	go func() {
 		deleteWg.Wait()
 		close(elements)
 	}()
 
-	// publish stage
 	var publishWg sync.WaitGroup
-	for i := 0; i < publishWorkers; i++ {
+	for i := 0; i < s.Config.PublishWorkerCount; i++ {
 		publishWg.Add(1)
 		go func() {
 			defer publishWg.Done()
 			for element := range elements {
 				key := []byte(fmt.Sprintf("%d-%d", gameweek, element.ID))
-				err := Publish(ctx, liveEventProducer, liveEventTopic, key, element.Data)
-				results <- err
+				_ = s.Producer.Publish(ctx, liveEventTopic, key, element.Data)
+
 			}
 		}()
 	}
-
-	// close results after publish stage finishes
-	go func() {
-		publishWg.Wait()
-		close(results)
-	}()
 
 	// feed jobs
 	for _, element := range liveEvent.Elements {
@@ -96,12 +96,6 @@ func publishLiveEvent(ctx context.Context, liveEvent models.LiveEvent, eventID s
 	}
 	close(jobs)
 
-	// check results
-	for err := range results {
-		if err != nil {
-			return err
-		}
-	}
-
+	publishWg.Wait()
 	return nil
 }

@@ -3,6 +3,8 @@ module github.com/imadbelkat1/kafka
 go 1.24
 
 require (
+	github.com/joho/godotenv v1.5.1
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/segmentio/kafka-go v0.4.49
 	github.com/spf13/viper v1.21.0
 )

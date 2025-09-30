@@ -4,86 +4,70 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sync"
 
-	"github.com/imadbelkat1/fpl-service/internal/api"
+	"github.com/imadbelkat1/fpl-service/config"
+	fpl_api "github.com/imadbelkat1/fpl-service/internal/api"
 	"github.com/imadbelkat1/fpl-service/internal/models"
+	"github.com/imadbelkat1/kafka"
 )
 
 type TeamApiService struct {
-	Client *fpl_api.FplApiClient
+	Config   *config.FplConfig
+	Client   *fpl_api.FplApiClient
+	Producer *kafka.Producer
 }
 
 func (s *TeamApiService) getBootstrapData(ctx context.Context) (*models.BootstrapResponse, error) {
 	var bootstrap models.BootstrapResponse
-	if err := s.Client.GetAndUnmarshal(ctx, bootstrapEndpoint, &bootstrap); err != nil {
+	endpoint := s.Config.FplApi.Bootstrap
+
+	if err := s.Client.GetAndUnmarshal(ctx, endpoint, &bootstrap); err != nil {
 		return nil, err
 	}
 	return &bootstrap, nil
 }
 
-func (s *TeamApiService) UpdateTeams() error {
-	ctx := context.Background()
+func (s *TeamApiService) UpdateTeams(ctx context.Context) error {
 	bootstrap, err := s.getBootstrapData(ctx)
-
-	if err = s.Client.GetAndUnmarshal(ctx, bootstrapEndpoint, &bootstrap); err != nil {
-		return err
+	if err != nil {
+		return fmt.Errorf("fetching bootstrap data: %w", err)
 	}
 
-	for _, t := range bootstrap.Teams {
-		teamJSON, err := json.Marshal(t)
-		if err != nil {
-			return fmt.Errorf("marshaling team: %w", err)
-		}
-		err = Publish(ctx, teamProducer, teamsTopic, []byte(fmt.Sprintf("%d", t.ID)), teamJSON)
-		if err != nil {
-			return fmt.Errorf("publishing team to Kafka error: %w", err)
-		}
+	if err := s.publishTeams(ctx, bootstrap.Teams); err != nil {
+		return fmt.Errorf("publishing teams: %w", err)
 	}
 
 	return nil
 }
 
-func (s *TeamApiService) GetTeam(id int) (*models.Team, error) {
-	var bootstrap models.BootstrapResponse
-	ctx := context.Background()
+func (s *TeamApiService) publishTeams(ctx context.Context, teams []models.Team) error {
+	teamsTopic := s.Config.KafkaConfig.TopicsName.FplTeams
 
-	if err := s.Client.GetAndUnmarshal(ctx, bootstrapEndpoint, bootstrap); err != nil {
-		return nil, err
+	jobs := make(chan models.Team, len(teams))
+
+	var publishWg sync.WaitGroup
+	for i := 0; i < s.Config.PublishWorkerCount; i++ {
+		publishWg.Add(1)
+		go func() {
+			defer publishWg.Done()
+			for team := range jobs {
+				teamJSON, err := json.Marshal(team)
+				if err != nil {
+					continue
+				}
+				key := []byte(fmt.Sprintf("%d", team.ID))
+				_ = s.Producer.Publish(ctx, teamsTopic, key, teamJSON)
+			}
+		}()
 	}
 
-	for _, t := range bootstrap.Teams {
-		if t.ID == id {
-			return &t, nil
-		}
+	for _, team := range teams {
+		jobs <- team
 	}
+	close(jobs)
 
-	return nil, fmt.Errorf("team with id %d not found", id)
-}
+	publishWg.Wait()
 
-func (s *TeamApiService) GetAllTeams(ctx context.Context) ([]models.Team, error) {
-	var bootstrap models.BootstrapResponse
-
-	if err := s.Client.GetAndUnmarshal(ctx, bootstrapEndpoint, &bootstrap); err != nil {
-		return nil, err
-	}
-
-	return bootstrap.Teams, nil
-}
-
-func (s *TeamApiService) GetTeamsByStrength(minStrength int) ([]models.Team, error) {
-	var bootstrap models.BootstrapResponse
-	ctx := context.Background()
-
-	if err := s.Client.GetAndUnmarshal(ctx, bootstrapEndpoint, &bootstrap); err != nil {
-		return nil, err
-	}
-
-	var filteredTeams []models.Team
-	for _, t := range bootstrap.Teams {
-		if t.Strength >= minStrength {
-			filteredTeams = append(filteredTeams, t)
-		}
-	}
-
-	return filteredTeams, nil
+	return nil
 }

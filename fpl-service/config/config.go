@@ -1,117 +1,95 @@
 package config
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
-	"path/filepath"
-	"reflect"
-	"runtime"
 
-	"github.com/spf13/viper"
+	kafkaConfig "github.com/imadbelkat1/kafka/config"
+	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
 )
 
-type Config struct {
-	FplApi           FplApi
-	TopicsName       TopicsName
-	Topics           TopicsRetention
-	ConsumersGroupID ConsumersGroupID
+type FplConfig struct {
+	FplApi      FplApi
+	KafkaConfig kafkaConfig.KafkaConfig
+
+	DeleteWorkerCount  int `envconfig:"WORKER_DELETE_POOL_SIZE" default:"10"`
+	PublishWorkerCount int `envconfig:"WORKER_PUBLISH_POOL_SIZE" default:"100"`
 }
 
 type FplApi struct {
-	//fpl api
-	BaseUrl               string `mapstructure:"FPLAPI_BASE_URL"`
-	Bootstrap             string `mapstructure:"FPLAPI_BOOTSTRAP"`
-	Fixtures              string `mapstructure:"FPLAPI_FIXTURES"`
-	PlayerSummary         string `mapstructure:"FPLAPI_PLAYER_SUMMARY"`
-	Entry                 string `mapstructure:"FPLAPI_ENTRY"`
-	EntryEvent            string `mapstructure:"FPLAPI_ENTRY_EVENT"`
-	EntryHistory          string `mapstructure:"FPLAPI_ENTRY_HISTORY"`
-	EntryTransfers        string `mapstructure:"FPLAPI_ENTRY_TRANSFERS"`
-	EntryPicks            string `mapstructure:"FPLAPI_ENTRY_PICKS"`
-	LiveEvent             string `mapstructure:"FPLAPI_LIVE_EVENT"`
-	LeagueClassicStanding string `mapstructure:"FPLAPI_LEAGUE_CLASSIC_STANDING"`
-	LeagueH2hStanding     string `mapstructure:"FPLAPI_LEAGUE_H2H_STANDING"`
-}
-type TopicsName struct {
-	// FPL Core Data Topics
-	FplPlayers               string `mapstructure:"TOPICSNAME_FPL_PLAYERS"`
-	FplTeams                 string `mapstructure:"TOPICSNAME_FPL_TEAMS"`
-	FplFixtures              string `mapstructure:"TOPICSNAME_FPL_FIXTURES"`
-	FplFixtureDetails        string `mapstructure:"TOPICSNAME_FPL_FIXTURE_DETAILS"`
-	FplPlayerMatchStats      string `mapstructure:"TOPICSNAME_FPL_PLAYER_MATCH_STATS"`
-	FplLiveEvent             string `mapstructure:"TOPICSNAME_FPL_LIVE_EVENT"`
-	FplEntry                 string `mapstructure:"TOPICSNAME_FPL_ENTRY"`
-	FplEntryEvent            string `mapstructure:"TOPICSNAME_FPL_ENTRY_EVENT"`
-	FplEntryHistory          string `mapstructure:"TOPICSNAME_FPL_ENTRY_HISTORY"`
-	FplEntryTransfers        string `mapstructure:"TOPICSNAME_FPL_ENTRY_TRANSFERS"`
-	FplEntryPicks            string `mapstructure:"TOPICSNAME_FPL_ENTRY_PICKS"`
-	FplLeagueClassicStanding string `mapstructure:"TOPICSNAME_FPL_LEAGUE_CLASSIC_STANDING"`
-	FplLeagueH2hStanding     string `mapstructure:"TOPICSNAME_FPL_LEAGUE_H2H_STANDING"`
-}
-type TopicsRetention struct {
-	FplPlayers               string `mapstructure:"TOPICSRETENTION_FPL_PLAYERS"`
-	FplTeams                 string `mapstructure:"TOPICSRETENTION_FPL_TEAMS"`
-	FplFixtures              string `mapstructure:"TOPICSRETENTION_FPL_FIXTURES"`
-	FplPlayerMatchStats      string `mapstructure:"TOPICSRETENTION_FPL_PLAYER_MATCH_STATS"`
-	FplEntry                 string `mapstructure:"TOPICSRETENTION_FPL_ENTRY"`
-	FplEntryEvent            string `mapstructure:"TOPICSRETENTION_FPL_ENTRY_EVENT"`
-	FplEntryHistory          string `mapstructure:"TOPICSRETENTION_FPL_ENTRY_HISTORY"`
-	FplEntryTransfers        string `mapstructure:"TOPICSRETENTION_FPL_ENTRY_TRANSFERS"`
-	FplEntryPicks            string `mapstructure:"TOPICSRETENTION_FPL_ENTRY_PICKS"`
-	FplLeagueClassicStanding string `mapstructure:"TOPICSRETENTION_FPL_LEAGUE_CLASSIC_STANDING"`
-	FplLeagueH2hStanding     string `mapstructure:"TOPICSRETENTION_FPL_LEAGUE_H2H_STANDING"`
-}
-type ConsumersGroupID struct {
-	// Consumer Group IDs
-	Teams                  string `mapstructure:"CONSUMERSGROUPID_KAFKA_TEAMS"`
-	Fixtures               string `mapstructure:"CONSUMERSGROUPID_KAFKA_FIXTURES"`
-	Players                string `mapstructure:"CONSUMERSGROUPID_KAFKA_PLAYERS"`
-	PlayersStats           string `mapstructure:"CONSUMERSGROUPID_KAFKA_PLAYERS_STATS"`
-	Live                   string `mapstructure:"CONSUMERSGROUPID_KAFKA_LIVE_EVENT"`
-	Entries                string `mapstructure:"CONSUMERSGROUPID_KAFKA_ENTRY"`
-	EntriesEvent           string `mapstructure:"CONSUMERSGROUPID_KAFKA_ENTRY_EVENT"`
-	EntriesHistory         string `mapstructure:"CONSUMERSGROUPID_KAFKA_ENTRY_HISTORY"`
-	EntriesTransfers       string `mapstructure:"CONSUMERSGROUPID_KAFKA_ENTRY_TRANSFERS"`
-	EntriesPicks           string `mapstructure:"CONSUMERSGROUPID_KAFKA_ENTRY_PICKS"`
-	LeaguesClassicStanding string `mapstructure:"CONSUMERSGROUPID_KAFKA_LEAGUES_CLASSIC_STANDING"`
-	LeaguesH2hStanding     string `mapstructure:"CONSUMERSGROUPID_KAFKA_LEAGUES_H2H_STANDING"`
-	Test                   string `mapstructure:"CONSUMERSGROUPID_KAFKA_TEST"`
+	BaseUrl               string `envconfig:"FPLAPI_BASE_URL" required:"true"`
+	Bootstrap             string `envconfig:"FPLAPI_BOOTSTRAP" required:"true"`
+	Fixtures              string `envconfig:"FPLAPI_FIXTURES" required:"true"`
+	PlayerSummary         string `envconfig:"FPLAPI_PLAYER_SUMMARY" required:"true"`
+	Entry                 string `envconfig:"FPLAPI_ENTRY" required:"true"`
+	EntryEvent            string `envconfig:"FPLAPI_ENTRY_EVENT" required:"true"`
+	EntryHistory          string `envconfig:"FPLAPI_ENTRY_HISTORY" required:"true"`
+	EntryTransfers        string `envconfig:"FPLAPI_ENTRY_TRANSFERS" required:"true"`
+	EntryPicks            string `envconfig:"FPLAPI_ENTRY_PICKS" required:"true"`
+	LiveEvent             string `envconfig:"FPLAPI_LIVE_EVENT" required:"true"`
+	LeagueClassicStanding string `envconfig:"FPLAPI_LEAGUE_CLASSIC_STANDING" required:"true"`
+	LeagueH2hStanding     string `envconfig:"FPLAPI_LEAGUE_H2H_STANDING" required:"true"`
 }
 
-func LoadConfig() *Config {
-	_, filename, _, _ := runtime.Caller(0)
-	ConfigDir := filepath.Dir(filename)
-	RootDir := filepath.Dir(ConfigDir)
+type ProcessedModel struct {
+	ID   int
+	Data []byte
+}
 
-	viper.SetConfigName(".env")
-	viper.SetConfigType("env")
-	viper.AddConfigPath(RootDir)
-	viper.AutomaticEnv()
+func LoadConfig() *FplConfig {
+	// Load .env file (tries multiple paths)
+	_ = godotenv.Load(".env")
+	_ = godotenv.Load("../.env")
+	_ = godotenv.Load("../../.env")
+	_ = godotenv.Load("../../../.env")
 
-	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("fpl-service: Error reading config file, %s", err)
+	config := &FplConfig{}
+
+	// Parse FplApi config with validation
+	if err := envconfig.Process("", config); err != nil {
+		log.Fatalf("fpl-service: Unable to load FPL API config: %s", err)
 	}
 
-	config := &Config{}
-	mapViperToStruct(config)
+	config.KafkaConfig = *kafkaConfig.LoadConfig()
+
 	return config
 }
 
-func mapViperToStruct(v interface{}) {
-	val := reflect.ValueOf(v).Elem()
-
-	for i := 0; i < val.NumField(); i++ {
-		field := val.Field(i)
-		if field.Kind() == reflect.Struct && field.CanSet() {
-			mapStructFields(field)
-		}
+func (c *FplConfig) DeleteKey(T any, key []string) (map[string]interface{}, error) {
+	Bytes, err := json.Marshal(T)
+	if err != nil {
+		fmt.Println("Error marshaling struct:", err)
+		return nil, err
 	}
+
+	var data map[string]interface{}
+	err = json.Unmarshal(Bytes, &data)
+	if err != nil {
+		fmt.Println("Error unmarshaling to map:", err)
+		return nil, err
+	}
+
+	for _, k := range key {
+		delete(data, k)
+	}
+
+	return data, nil
 }
 
-func mapStructFields(structField reflect.Value) {
-	for i := 0; i < structField.NumField(); i++ {
-		field := structField.Field(i)
-		if tag := structField.Type().Field(i).Tag.Get("mapstructure"); tag != "" && field.CanSet() {
-			field.SetString(viper.GetString(tag))
-		}
+func (c *FplConfig) ProcessDelete(model interface{}, toBeDeleted []string) ([]byte, error) {
+	newElement, err := c.DeleteKey(model, toBeDeleted)
+	if err != nil {
+		fmt.Errorf("failed to delete keys from newElement: %v", err)
+		return nil, err
 	}
+
+	elementJSON, err := json.Marshal(newElement)
+	if err != nil {
+		fmt.Errorf("failed to marshal elementJSON: %v", err)
+		return nil, err
+	}
+
+	return elementJSON, nil
 }

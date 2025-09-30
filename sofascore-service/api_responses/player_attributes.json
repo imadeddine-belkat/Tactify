@@ -1,0 +1,56 @@
+{
+  "playerAttributeOverviews": [
+    {
+      "attacking": 44,
+      "technical": 51,
+      "tactical": 68,
+      "defending": 87,
+      "creativity": 38,
+      "position": "D",
+      "yearShift": 0,
+      "id": 198869
+    },
+    {
+      "attacking": 38,
+      "technical": 47,
+      "tactical": 64,
+      "defending": 76,
+      "creativity": 39,
+      "position": "D",
+      "yearShift": 1,
+      "id": 198870
+    },
+    {
+      "attacking": 40,
+      "technical": 47,
+      "tactical": 58,
+      "defending": 68,
+      "creativity": 41,
+      "position": "D",
+      "yearShift": 2,
+      "id": 198871
+    },
+    {
+      "attacking": 37,
+      "technical": 44,
+      "tactical": 68,
+      "defending": 72,
+      "creativity": 41,
+      "position": "D",
+      "yearShift": 3,
+      "id": 198872
+    }
+  ],
+  "averageAttributeOverviews": [
+    {
+      "attacking": 38,
+      "technical": 47,
+      "tactical": 47,
+      "defending": 60,
+      "creativity": 42,
+      "position": "D",
+      "yearShift": 0,
+      "id": 19810
+    }
+  ]
+}

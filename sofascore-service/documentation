@@ -1,0 +1,14 @@
+la liga id: 36
+season 2526 id: 77559
+
+api:
+(la liga) matches id and info : https://www.sofascore.com/api/v1/unique-tournament/8/season/77559/events/round/38
+
+team overall stats of season (team id): https://www.sofascore.com/api/v1/team/2859/unique-tournament/8/season/77559/statistics/overall
+match stats (match id: 14083569): https://www.sofascore.com/api/v1/event/14083569/statistics
+team event lineup (match id: 14083569): https://www.sofascore.com/api/v1/event/14083569/lineups
+team top players (team id: 2828): https://www.sofascore.com/api/v1/team/2828/unique-tournament/8/season/77559/top-players/overall
+team vs team h2h: https://www.sofascore.com/api/v1/event/14311407/h2h
+
+player season + history stats (player id: 797306): https://www.sofascore.com/api/v1/player/797306/statistics
+player attributes (player id: 797306) : https://www.sofascore.com/api/v1/player/797306/attribute-overviews

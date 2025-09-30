@@ -1,36 +1,40 @@
 package main
 
 import (
+	"context"
 	"log"
 	"testing"
 	"time"
 
-	fplApi "github.com/imadbelkat1/fpl-service/internal/api"
+	"github.com/imadbelkat1/fpl-service/config"
+	fpl_api "github.com/imadbelkat1/fpl-service/internal/api"
 	fixutreService "github.com/imadbelkat1/fpl-service/internal/services"
+	"github.com/imadbelkat1/kafka"
 )
 
-func TestFixturesApiService_RealAPI(t *testing.T) {
+func TestFixturesApiService(t *testing.T) {
+	ctx := context.Background()
 	if testing.Short() {
 		t.Skip("Skipping real API test")
 	}
 
-	// Setup service with real client
 	service := &fixutreService.FixturesApiService{
-		Client: fplApi.NewFplApiClient(),
+		Config:   config.LoadConfig(),
+		Client:   fpl_api.NewFplApiClient(config.LoadConfig()),
+		Producer: kafka.NewProducer(),
 	}
 
-	// Wait for consumer to start
 	time.Sleep(200 * time.Millisecond)
 
-	// Test with real API
 	log.Println("Calling FPL API...")
-	err := service.UpdateFixtures()
+	start := time.Now()
+	err := service.UpdateFixtures(ctx)
+	elapsed := time.Since(start)
+
 	if err != nil {
 		t.Fatalf("UpdateFixtures with API failed: %v", err)
 	}
 
-	// Wait for messages to be processed
-	time.Sleep(3 * time.Second)
-
+	log.Printf("Publishing completed in: %v", elapsed)
 	t.Log("Real API test completed successfully")
 }
