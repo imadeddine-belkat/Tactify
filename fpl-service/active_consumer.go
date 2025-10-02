@@ -21,10 +21,10 @@ func main() {
 	}
 
 	consumerGrp := map[string]string{
-		kafkaCfg.TopicsName.FplTeams:            kafkaCfg.ConsumersGroupID.Teams,
-		kafkaCfg.TopicsName.FplFixtures:         kafkaCfg.ConsumersGroupID.Fixtures,
-		kafkaCfg.TopicsName.FplPlayerMatchStats: kafkaCfg.ConsumersGroupID.PlayersStats,
-		kafkaCfg.TopicsName.FplLiveEvent:        kafkaCfg.ConsumersGroupID.Live,
+		kafkaCfg.TopicsName.FplTeams:            kafkaCfg.ConsumersGroupID.FplTeams,
+		kafkaCfg.TopicsName.FplFixtures:         kafkaCfg.ConsumersGroupID.FplFixtures,
+		kafkaCfg.TopicsName.FplPlayerMatchStats: kafkaCfg.ConsumersGroupID.FplPlayersStats,
+		kafkaCfg.TopicsName.FplLiveEvent:        kafkaCfg.ConsumersGroupID.FplLive,
 	}
 
 	for _, topic := range topics {

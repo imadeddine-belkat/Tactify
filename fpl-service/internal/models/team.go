@@ -27,30 +27,28 @@ type Team struct {
 	StrengthDefenceAway int `json:"strength_defence_away" db:"strength_defence_away"`
 }
 
-// isValid performs basic sanity checks on Team fields.
-func (t Team) isValid() bool {
-	if t.ID <= 0 || t.Code <= 0 {
-		return false
-	}
-	if t.Name == "" || t.ShortName == "" {
-		return false
-	}
-	if t.Strength < 0 || t.Position < 0 || t.Points < 0 || t.Played < 0 || t.Win < 0 || t.Draw < 0 || t.Loss < 0 {
-		return false
-	}
-	if t.TeamDivision != nil && *t.TeamDivision < 0 {
-		return false
-	}
-	if t.PulseID < 0 {
-		return false
-	}
-	if t.StrengthOverallHome < 0 || t.StrengthOverallAway < 0 ||
-		t.StrengthAttackHome < 0 || t.StrengthAttackAway < 0 ||
-		t.StrengthDefenceHome < 0 || t.StrengthDefenceAway < 0 {
-		return false
-	}
-	if t.Played > 0 && (t.Win+t.Draw+t.Loss) != t.Played {
-		return false
-	}
-	return true
+type TeamDTO struct {
+	ID        int    `json:"id" db:"id"`
+	Code      int    `json:"code" db:"code"`
+	Name      string `json:"name" db:"name"`
+	ShortName string `json:"short_name" db:"short_name"`
+
+	Strength int     `json:"strength" db:"strength"`
+	Form     *string `json:"form" db:"form"`
+	Position int     `json:"position" db:"position"`
+	Points   int     `json:"points" db:"points"`
+	Played   int     `json:"played" db:"played"`
+	Win      int     `json:"win" db:"win"`
+	Draw     int     `json:"draw" db:"draw"`
+	Loss     int     `json:"loss" db:"loss"`
+
+	TeamDivision *int `json:"team_division" db:"team_division"`
+	Unavailable  bool `json:"unavailable" db:"unavailable"`
+
+	StrengthOverallHome int `json:"strength_overall_home" db:"strength_overall_home"`
+	StrengthOverallAway int `json:"strength_overall_away" db:"strength_overall_away"`
+	StrengthAttackHome  int `json:"strength_attack_home" db:"strength_attack_home"`
+	StrengthAttackAway  int `json:"strength_attack_away" db:"strength_attack_away"`
+	StrengthDefenceHome int `json:"strength_defence_home" db:"strength_defence_home"`
+	StrengthDefenceAway int `json:"strength_defence_away" db:"strength_defence_away"`
 }

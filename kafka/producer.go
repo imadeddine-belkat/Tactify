@@ -2,6 +2,9 @@ package kafka
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"log"
 	"time"
 
 	kafkaConfig "github.com/imadbelkat1/kafka/config"
@@ -47,4 +50,19 @@ func (p *Producer) Publish(ctx context.Context, topic string, key, value []byte)
 
 func (p *Producer) Close() error {
 	return p.writer.Close()
+}
+
+func (p *Producer) PublishWithProcess(ctx context.Context, model any, topic string, key, value []byte) error {
+
+	if err := json.Unmarshal(value, &model); err != nil {
+		log.Fatal(err)
+	}
+
+	// re-encode
+	out, _ := json.Marshal(model)
+	err := p.Publish(ctx, topic, key, out)
+	if err != nil {
+		fmt.Errorf("failed to publish with delete: %v", err)
+	}
+	return nil
 }

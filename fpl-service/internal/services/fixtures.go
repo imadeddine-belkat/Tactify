@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"sync"
@@ -52,39 +53,39 @@ func (s *FixturesApiService) UpdateFixtures(ctx context.Context) error {
 
 func (s *FixturesApiService) publishFixtures(ctx context.Context, fixtures *models.Fixtures) error {
 	fixturesTopic := s.Config.KafkaConfig.TopicsName.FplFixtures
-	toDelete := []string{"stats"}
 
 	jobs := make(chan models.Fixture, len(*fixtures))
-	fixturesChan := make(chan config.ProcessedModel, len(*fixtures))
-
-	var deleteWg sync.WaitGroup
-	for i := 0; i < s.Config.DeleteWorkerCount; i++ {
-		deleteWg.Add(1)
-		go func() {
-			defer deleteWg.Done()
-			for element := range jobs {
-				processed, err := s.Config.ProcessDelete(element, toDelete)
-				if err != nil {
-					continue
-				}
-				fixturesChan <- config.ProcessedModel{ID: element.ID, Data: processed}
-			}
-		}()
-	}
-
-	go func() {
-		deleteWg.Wait()
-		close(fixturesChan)
-	}()
 
 	var publishWg sync.WaitGroup
 	for i := 0; i < s.Config.PublishWorkerCount; i++ {
 		publishWg.Add(1)
 		go func() {
 			defer publishWg.Done()
-			for element := range fixturesChan {
+			for element := range jobs {
+				dto := models.FixtureDTO{
+					Code:                 element.Code,
+					Event:                element.Event,
+					Finished:             element.Finished,
+					FinishedProvisional:  element.FinishedProvisional,
+					ID:                   element.ID,
+					KickoffTime:          element.KickoffTime,
+					Minutes:              element.Minutes,
+					ProvisionalStartTime: element.ProvisionalStartTime,
+					Started:              element.Started,
+					TeamA:                element.TeamA,
+					TeamAScore:           element.TeamAScore,
+					TeamH:                element.TeamH,
+					TeamHScore:           element.TeamHScore,
+					TeamHDifficulty:      element.TeamHDifficulty,
+					TeamADifficulty:      element.TeamADifficulty,
+					PulseID:              element.PulseID,
+				}
+				value, err := json.Marshal(dto)
+				if err != nil {
+					continue
+				}
 				key := []byte(fmt.Sprintf("%d", element.ID))
-				_ = s.Producer.Publish(ctx, fixturesTopic, key, element.Data)
+				_ = s.Producer.Publish(ctx, fixturesTopic, key, value)
 			}
 		}()
 	}

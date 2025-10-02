@@ -28,11 +28,12 @@ type KafkaConfig struct {
 
 type TopicsName struct {
 	// FPL Core Data TopicsRetention
-	FplPlayers               string `envconfig:"TOPICSNAME_FPL_PLAYERS"`
+	FplPlayersStats          string `envconfig:"TOPICSNAME_FPL_PLAYERS_STATS"`
+	FplPlayerMatchStats      string `envconfig:"TOPICSNAME_FPL_PLAYER_MATCH_HISTORY_STATS"`
+	FplPlayerHistoryStats    string `envconfig:"TOPICSNAME_FPL_PLAYER_PAST_HISTORY_STATS"`
 	FplTeams                 string `envconfig:"TOPICSNAME_FPL_TEAMS"`
 	FplFixtures              string `envconfig:"TOPICSNAME_FPL_FIXTURES"`
 	FplFixtureDetails        string `envconfig:"TOPICSNAME_FPL_FIXTURE_DETAILS"`
-	FplPlayerMatchStats      string `envconfig:"TOPICSNAME_FPL_PLAYER_MATCH_STATS"`
 	FplLiveEvent             string `envconfig:"TOPICSNAME_FPL_LIVE_EVENT"`
 	FplEntry                 string `envconfig:"TOPICSNAME_FPL_ENTRY"`
 	FplEntryEvent            string `envconfig:"TOPICSNAME_FPL_ENTRY_EVENT"`
@@ -41,6 +42,16 @@ type TopicsName struct {
 	FplEntryPicks            string `envconfig:"TOPICSNAME_FPL_ENTRY_PICKS"`
 	FplLeagueClassicStanding string `envconfig:"TOPICSNAME_FPL_LEAGUE_CLASSIC_STANDING"`
 	FplLeagueH2hStanding     string `envconfig:"TOPICSNAME_FPL_LEAGUE_H2H_STANDING"`
+
+	// Sofascore Data Topics
+	SofascoreLeagueRoundMatches string `envconfig:"TOPICSNAME_SOFASCORE_LEAGUE_ROUND_MATCHES"`
+	SofascoreMatchLineups       string `envconfig:"TOPICSNAME_SOFASCORE_MATCH_LINEUPS"`
+	SofascoreMatchH2hHistory    string `envconfig:"TOPICSNAME_SOFASCORE_MATCH_H2H_HISTORY"`
+	SofascoreTeamOverallStats   string `envconfig:"TOPICSNAME_SOFASCORE_TEAM_OVERALL_STATS"`
+	SofascoreTeamMatchStats     string `envconfig:"TOPICSNAME_SOFASCORE_TEAM_MATCH_STATS"`
+	SofascorePlayerTeamStats    string `envconfig:"TOPICSNAME_SOFASCORE_PLAYER_TEAM_STATS"`
+	SofascorePlayerSeasonsStats string `envconfig:"TOPICSNAME_SOFASCORE_PLAYER_SEASONS_STATS"`
+	SofascorePlayerAttributes   string `envconfig:"TOPICSNAME_SOFASCORE_PLAYER_ATTRIBUTES"`
 }
 type TopicsRetention struct {
 	FplPlayers               string `envconfig:"TOPICSRETENTION_FPL_PLAYERS"`

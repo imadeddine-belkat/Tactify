@@ -4,8 +4,13 @@ type LiveEvent struct {
 	Elements []LiveElement `json:"elements"`
 }
 
+type LiveElementDTO struct {
+	Event int       `json:"event"`
+	Stats LiveStats `json:"stats"`
+	// add/remove fields as required
+}
+
 type LiveElement struct {
-	Gameweek int           `json:"gameweek"`
 	ID       int           `json:"id" db:"player_id"`
 	Stats    LiveStats     `json:"stats"`
 	Explain  []ExplainItem `json:"explain"`
