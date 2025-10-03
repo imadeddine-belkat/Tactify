@@ -26,7 +26,7 @@ func TestLiveEventApiService(t *testing.T) {
 
 	// Test with real API
 	log.Println("Calling FPL API...")
-	err := service.UpdateLiveEvent(ctx, "1")
+	err := service.UpdateLiveEvent(ctx, 6)
 	if err != nil {
 		t.Fatalf("UpdateLiveEvent(Test) with API failed: %v", err)
 	}

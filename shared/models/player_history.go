@@ -1,11 +1,16 @@
 package models
 
-type PlayerPastHistory struct {
-	PlayerCode  int    `json:"element_code" db:"player_code"`
-	SeasonName  string `json:"season_name" db:"season_name"`
-	StartCost   int    `json:"start_cost" db:"start_cost"`
-	EndCost     int    `json:"end_cost" db:"end_cost"`
-	TotalPoints int    `json:"total_points" db:"total_points"`
+type PlayerHistory struct {
+	PlayerID     int    `json:"element" db:"player_id"`
+	FixtureID    int    `json:"fixture" db:"fixture_id"`
+	OpponentTeam int    `json:"opponent_team" db:"opponent_team_id"`
+	Round        int    `json:"round" db:"round"`
+	KickoffTime  string `json:"kickoff_time" db:"kickoff_time"`
+	WasHome      bool   `json:"was_home" db:"was_home"`
+
+	TeamHScore int  `json:"team_h_score" db:"team_h_score"`
+	TeamAScore int  `json:"team_a_score" db:"team_a_score"`
+	Modified   bool `json:"modified" db:"modified"`
 
 	Minutes         int `json:"minutes" db:"minutes"`
 	GoalsScored     int `json:"goals_scored" db:"goals_scored"`
@@ -36,4 +41,10 @@ type PlayerPastHistory struct {
 	ExpectedAssists          string `json:"expected_assists" db:"expected_assists"`
 	ExpectedGoalInvolvements string `json:"expected_goal_involvements" db:"expected_goal_involvements"`
 	ExpectedGoalsConceded    string `json:"expected_goals_conceded" db:"expected_goals_conceded"`
+
+	Value            int `json:"value" db:"value"`
+	TransfersBalance int `json:"transfers_balance" db:"transfers_balance"`
+	Selected         int `json:"selected" db:"selected"`
+	TransfersIn      int `json:"transfers_in" db:"transfers_in"`
+	TransfersOut     int `json:"transfers_out" db:"transfers_out"`
 }

@@ -1,12 +1,23 @@
 package models
 
-type PlayerPastHistory struct {
-	PlayerCode  int    `json:"element_code" db:"player_code"`
-	SeasonName  string `json:"season_name" db:"season_name"`
-	StartCost   int    `json:"start_cost" db:"start_cost"`
-	EndCost     int    `json:"end_cost" db:"end_cost"`
-	TotalPoints int    `json:"total_points" db:"total_points"`
+type LiveEvent struct {
+	Elements []LiveElement `json:"elements"`
+}
 
+type LiveElementDTO struct {
+	Event int       `json:"event"`
+	Stats LiveStats `json:"stats"`
+	// add/remove fields as required
+}
+
+type LiveElement struct {
+	ID       int           `json:"id" db:"player_id"`
+	Stats    LiveStats     `json:"stats"`
+	Explain  []ExplainItem `json:"explain"`
+	Modified bool          `json:"modified" db:"modified"`
+}
+
+type LiveStats struct {
 	Minutes         int `json:"minutes" db:"minutes"`
 	GoalsScored     int `json:"goals_scored" db:"goals_scored"`
 	Assists         int `json:"assists" db:"assists"`
@@ -36,4 +47,19 @@ type PlayerPastHistory struct {
 	ExpectedAssists          string `json:"expected_assists" db:"expected_assists"`
 	ExpectedGoalInvolvements string `json:"expected_goal_involvements" db:"expected_goal_involvements"`
 	ExpectedGoalsConceded    string `json:"expected_goals_conceded" db:"expected_goals_conceded"`
+
+	TotalPoints int  `json:"total_points" db:"total_points"`
+	InDreamteam bool `json:"in_dreamteam" db:"in_dreamteam"`
+}
+
+type ExplainItem struct {
+	Fixture int               `json:"fixture" db:"fixture_id"`
+	Stats   []ExplainStatItem `json:"stats"`
+}
+
+type ExplainStatItem struct {
+	Identifier         string `json:"identifier" db:"identifier"`
+	Points             int    `json:"points" db:"points"`
+	Value              int    `json:"value" db:"value"`
+	PointsModification int    `json:"points_modification" db:"points_modification"`
 }

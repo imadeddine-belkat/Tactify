@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"sync"
 
 	"github.com/imadbelkat1/fpl-service/config"
@@ -19,7 +18,7 @@ type LiveEventApiService struct {
 	Producer *kafka.Producer
 }
 
-func (s *LiveEventApiService) UpdateLiveEvent(ctx context.Context, eventID string) error {
+func (s *LiveEventApiService) UpdateLiveEvent(ctx context.Context, eventID int) error {
 	liveEvent, err := s.GetLiveEvent(ctx, eventID)
 	if err != nil {
 		return fmt.Errorf("failed to get live event data: %v", err)
@@ -32,7 +31,7 @@ func (s *LiveEventApiService) UpdateLiveEvent(ctx context.Context, eventID strin
 	return nil
 }
 
-func (s *LiveEventApiService) GetLiveEvent(ctx context.Context, eventID string) (*models.LiveEvent, error) {
+func (s *LiveEventApiService) GetLiveEvent(ctx context.Context, eventID int) (*models.LiveEvent, error) {
 	var liveEvent models.LiveEvent
 
 	endpoint := fmt.Sprintf(s.Config.FplApi.LiveEvent, eventID)
@@ -44,12 +43,8 @@ func (s *LiveEventApiService) GetLiveEvent(ctx context.Context, eventID string) 
 	return &liveEvent, nil
 }
 
-func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *models.LiveEvent, eventID string) error {
+func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *models.LiveEvent, eventID int) error {
 	liveEventTopic := s.Config.KafkaConfig.TopicsName.FplLiveEvent
-	gameweek, err := strconv.Atoi(eventID)
-	if err != nil {
-		return fmt.Errorf("invalid event ID: %v", err)
-	}
 
 	jobs := make(chan models.LiveElement, len(liveEvent.Elements))
 
@@ -60,10 +55,10 @@ func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *m
 			defer publishWg.Done()
 			for element := range jobs {
 				dto := models.LiveElementDTO{
-					Event: gameweek,
+					Event: eventID,
 					Stats: element.Stats,
 				}
-				key := []byte(fmt.Sprintf("%d-%d", gameweek, element.ID))
+				key := []byte(fmt.Sprintf("%d-%d", eventID, element.ID))
 				value, err := json.Marshal(dto)
 				if err != nil {
 					continue
