@@ -1,5 +1,9 @@
 package models
 
+type EntryMessage struct {
+	Entry    Entry `json:"entry"`
+	SeasonId int   `json:"season_id" db:"season_id"`
+}
 type Entry struct {
 	ID                int    `json:"id" db:"manager_id"`
 	Name              string `json:"name" db:"manager_name"`

@@ -8,8 +8,8 @@ import (
 
 	"github.com/imadbelkat1/fpl-service/config"
 	fpl_api "github.com/imadbelkat1/fpl-service/internal/api"
-	"github.com/imadbelkat1/fpl-service/internal/models"
 	"github.com/imadbelkat1/kafka"
+	"github.com/imadbelkat1/shared/models"
 )
 
 type TeamApiService struct {
@@ -52,29 +52,11 @@ func (s *TeamApiService) publishTeams(ctx context.Context, teams []models.Team) 
 		go func() {
 			defer publishWg.Done()
 			for team := range jobs {
-				dto := models.TeamDTO{
-					ID:                  team.ID,
-					Code:                team.Code,
-					Name:                team.Name,
-					ShortName:           team.ShortName,
-					Strength:            team.Strength,
-					Form:                team.Form,
-					Position:            team.Position,
-					Points:              team.Points,
-					Played:              team.Played,
-					Win:                 team.Win,
-					Draw:                team.Draw,
-					Loss:                team.Loss,
-					TeamDivision:        team.TeamDivision,
-					Unavailable:         team.Unavailable,
-					StrengthOverallHome: team.StrengthOverallHome,
-					StrengthOverallAway: team.StrengthOverallAway,
-					StrengthAttackHome:  team.StrengthAttackHome,
-					StrengthAttackAway:  team.StrengthAttackAway,
-					StrengthDefenceHome: team.StrengthDefenceHome,
-					StrengthDefenceAway: team.StrengthDefenceAway,
+				message := models.TeamMessage{
+					Team:     team,
+					SeasonID: s.Config.FplApi.Season2526,
 				}
-				value, err := json.Marshal(dto)
+				value, err := json.Marshal(message)
 				if err != nil {
 					continue
 				}

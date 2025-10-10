@@ -2,35 +2,31 @@ package main
 
 import (
 	"context"
-	"log"
 	"testing"
 
 	"github.com/imadbelkat1/fpl-service/config"
 	fpl_api "github.com/imadbelkat1/fpl-service/internal/api"
+	. "github.com/imadbelkat1/fpl-service/internal/services"
 	"github.com/imadbelkat1/kafka"
-
-	teamService "github.com/imadbelkat1/fpl-service/internal/services"
 )
 
-func TestTeamApiService(t *testing.T) {
+func TestManagersApiService(t *testing.T) {
 	ctx := context.Background()
 	if testing.Short() {
 		t.Skip("Skipping real API test")
 	}
 
-	// Setup service with real client
-	service := &teamService.TeamApiService{
+	service := &ManagersApiService{
 		Config:   config.LoadConfig(),
 		Client:   fpl_api.NewFplApiClient(config.LoadConfig()),
 		Producer: kafka.NewProducer(),
 	}
 
-	// Test with real API
-	log.Println("Calling FPL API...")
-	err := service.UpdateTeams(ctx)
+	err := service.UpdateManager(ctx, 2839296, 6)
 	if err != nil {
-		log.Fatalf("UpdateTeams with API failed: %v", err)
+		t.Fatalf("UpdateManager with API failed: %v", err)
 	}
 
-	log.Println("Real API test completed successfully")
+	t.Logf("Real API test completed successfully")
+
 }

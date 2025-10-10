@@ -2,6 +2,7 @@ package models
 
 type PlayerPastHistory struct {
 	PlayerCode  int    `json:"element_code" db:"player_code"`
+	SeasonId    int    `json:"season_id" db:"season_id"`
 	SeasonName  string `json:"season_name" db:"season_name"`
 	StartCost   int    `json:"start_cost" db:"start_cost"`
 	EndCost     int    `json:"end_cost" db:"end_cost"`
@@ -36,4 +37,9 @@ type PlayerPastHistory struct {
 	ExpectedAssists          string `json:"expected_assists" db:"expected_assists"`
 	ExpectedGoalInvolvements string `json:"expected_goal_involvements" db:"expected_goal_involvements"`
 	ExpectedGoalsConceded    string `json:"expected_goals_conceded" db:"expected_goals_conceded"`
+}
+
+type PlayerPastHistoryMessage struct {
+	PlayerCode        int                 `json:"element_code" db:"player_code"`
+	PlayerPastHistory []PlayerPastHistory `json:"past_history" db:"past_history"`
 }

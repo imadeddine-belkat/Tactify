@@ -7,6 +7,7 @@ type PlayerHistory struct {
 	Round        int    `json:"round" db:"round"`
 	KickoffTime  string `json:"kickoff_time" db:"kickoff_time"`
 	WasHome      bool   `json:"was_home" db:"was_home"`
+	TotalPoints  int    `json:"total_points" db:"total_points"`
 
 	TeamHScore int  `json:"team_h_score" db:"team_h_score"`
 	TeamAScore int  `json:"team_a_score" db:"team_a_score"`
@@ -47,4 +48,10 @@ type PlayerHistory struct {
 	Selected         int `json:"selected" db:"selected"`
 	TransfersIn      int `json:"transfers_in" db:"transfers_in"`
 	TransfersOut     int `json:"transfers_out" db:"transfers_out"`
+}
+
+type PlayerHistoryMessage struct {
+	PlayerID int             `json:"player_id"`
+	SeasonID int             `json:"season_id"`
+	History  []PlayerHistory `json:"history"`
 }

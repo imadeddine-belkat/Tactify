@@ -104,3 +104,8 @@ type PlayerBootstrap struct {
 	SelectedRank          int `json:"selected_rank" db:"selected_rank"`
 	SelectedRankType      int `json:"selected_rank_type" db:"selected_rank_type"`
 }
+
+type PlayerBootstrapMessage struct {
+	Player   PlayerBootstrap `json:"player"`
+	SeasonID int             `json:"season_id"`
+}

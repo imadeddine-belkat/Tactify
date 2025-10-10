@@ -1,6 +1,12 @@
 package models
 
-type EntryEvent struct {
+type EntryEventPicksMessage struct {
+	EntryId int             `json:"entry_id" db:"manager_id"`
+	EventId int             `json:"event" db:"event"`
+	Picks   EntryEventPicks `json:"picks"`
+}
+
+type EntryEventPicks struct {
 	ActiveChip    *string             `json:"active_chip"`
 	AutomaticSubs []AutomaticSub      `json:"automatic_subs"`
 	EntryHistory  EntryHistoryCurrent `json:"entry_history"`
@@ -8,7 +14,7 @@ type EntryEvent struct {
 }
 
 type AutomaticSub struct {
-	Entry      int `json:"entry" db:"entry_id"`
+	Entry      int `json:"entry" db:"manager_id"`
 	ElementIn  int `json:"element_in" db:"element_in"`   // player id in
 	ElementOut int `json:"element_out" db:"element_out"` // player id out
 	Event      int `json:"event" db:"event"`

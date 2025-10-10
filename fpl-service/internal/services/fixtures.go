@@ -10,8 +10,8 @@ import (
 
 	"github.com/imadbelkat1/fpl-service/config"
 	fpl_api "github.com/imadbelkat1/fpl-service/internal/api"
-	"github.com/imadbelkat1/fpl-service/internal/models"
 	"github.com/imadbelkat1/kafka"
+	"github.com/imadbelkat1/shared/models"
 )
 
 type FixturesApiService struct {
@@ -53,6 +53,7 @@ func (s *FixturesApiService) UpdateFixtures(ctx context.Context) error {
 
 func (s *FixturesApiService) publishFixtures(ctx context.Context, fixtures *models.Fixtures) error {
 	fixturesTopic := s.Config.KafkaConfig.TopicsName.FplFixtures
+	//fixtureDetailsTopic := s.Config.KafkaConfig.TopicsName.FplFixtureDetails
 
 	jobs := make(chan models.Fixture, len(*fixtures))
 
@@ -61,37 +62,35 @@ func (s *FixturesApiService) publishFixtures(ctx context.Context, fixtures *mode
 		publishWg.Add(1)
 		go func() {
 			defer publishWg.Done()
-			for element := range jobs {
-				dto := models.FixtureDTO{
-					Code:                 element.Code,
-					Event:                element.Event,
-					Finished:             element.Finished,
-					FinishedProvisional:  element.FinishedProvisional,
-					ID:                   element.ID,
-					KickoffTime:          element.KickoffTime,
-					Minutes:              element.Minutes,
-					ProvisionalStartTime: element.ProvisionalStartTime,
-					Started:              element.Started,
-					TeamA:                element.TeamA,
-					TeamAScore:           element.TeamAScore,
-					TeamH:                element.TeamH,
-					TeamHScore:           element.TeamHScore,
-					TeamHDifficulty:      element.TeamHDifficulty,
-					TeamADifficulty:      element.TeamADifficulty,
-					PulseID:              element.PulseID,
+			for fixture := range jobs {
+				fixtureMessage := models.FixtureMessage{
+					Fixture:  fixture,
+					SeasonID: s.Config.FplApi.CurrentSeasonID,
 				}
-				value, err := json.Marshal(dto)
+				value, err := json.Marshal(fixtureMessage)
 				if err != nil {
 					continue
 				}
-				key := []byte(fmt.Sprintf("%d", element.ID))
+
+				/*dtoStats := models.FixtureStatDTO{
+					ID:          fixture.ID,
+					FixtureStat: fixture.Stats,
+				}
+				valueStats, err := json.Marshal(dtoStats)
+				if err != nil {
+					continue
+				}*/
+
+				key := []byte(fmt.Sprintf("%d", fixture.ID))
 				_ = s.Producer.Publish(ctx, fixturesTopic, key, value)
+				//_ = s.Producer.Publish(ctx, fixtureDetailsTopic, key, valueStats)
 			}
+
 		}()
 	}
 
-	for _, element := range *fixtures {
-		jobs <- element
+	for _, fixture := range *fixtures {
+		jobs <- fixture
 	}
 	close(jobs)
 

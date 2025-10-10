@@ -28,6 +28,7 @@ type KafkaConfig struct {
 
 type TopicsName struct {
 	// FPL Core Data TopicsRetention
+	FplPlayersBootstrap      string `envconfig:"TOPICSNAME_FPL_PLAYERS_BOOTSTRAP"`
 	FplPlayersStats          string `envconfig:"TOPICSNAME_FPL_PLAYERS_STATS"`
 	FplPlayerMatchStats      string `envconfig:"TOPICSNAME_FPL_PLAYER_MATCH_HISTORY_STATS"`
 	FplPlayerHistoryStats    string `envconfig:"TOPICSNAME_FPL_PLAYER_PAST_HISTORY_STATS"`
@@ -36,7 +37,6 @@ type TopicsName struct {
 	FplFixtureDetails        string `envconfig:"TOPICSNAME_FPL_FIXTURE_DETAILS"`
 	FplLiveEvent             string `envconfig:"TOPICSNAME_FPL_LIVE_EVENT"`
 	FplEntry                 string `envconfig:"TOPICSNAME_FPL_ENTRY"`
-	FplEntryEvent            string `envconfig:"TOPICSNAME_FPL_ENTRY_EVENT"`
 	FplEntryHistory          string `envconfig:"TOPICSNAME_FPL_ENTRY_HISTORY"`
 	FplEntryTransfers        string `envconfig:"TOPICSNAME_FPL_ENTRY_TRANSFERS"`
 	FplEntryPicks            string `envconfig:"TOPICSNAME_FPL_ENTRY_PICKS"`

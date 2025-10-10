@@ -8,8 +8,8 @@ import (
 
 	"github.com/imadbelkat1/fpl-service/config"
 	fpl_api "github.com/imadbelkat1/fpl-service/internal/api"
-	"github.com/imadbelkat1/fpl-service/internal/models"
 	"github.com/imadbelkat1/kafka"
+	"github.com/imadbelkat1/shared/models"
 )
 
 type LiveEventApiService struct {
@@ -54,9 +54,10 @@ func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *m
 		go func() {
 			defer publishWg.Done()
 			for element := range jobs {
-				dto := models.LiveElementDTO{
-					Event: eventID,
-					Stats: element.Stats,
+				dto := models.LiveElementMessage{
+					PlayerID: element.ID,
+					Event:    eventID,
+					Stats:    element.Stats,
 				}
 				key := []byte(fmt.Sprintf("%d-%d", eventID, element.ID))
 				value, err := json.Marshal(dto)

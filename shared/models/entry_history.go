@@ -1,5 +1,10 @@
 package models
 
+type EntryHistoryMessage struct {
+	EntryHistory EntryHistory `json:"entry_history"`
+	EntryId      int          `json:"entry_id" db:"manager_id"`
+	SeasonId     int          `json:"season_id" db:"season_id"`
+}
 type EntryHistory struct {
 	Current []EntryHistoryCurrent `json:"current"`
 	Past    []EntryHistoryPast    `json:"past"`

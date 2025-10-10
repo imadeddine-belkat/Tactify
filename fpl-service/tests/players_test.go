@@ -32,9 +32,9 @@ func TestPlayersApiService(t *testing.T) {
 	elapsed := time.Since(start)
 
 	if err != nil {
-		t.Fatalf("UpdatePlayer with API failed: %v", err)
+		log.Fatalf("UpdatePlayer with API failed: %v", err)
 	}
 
 	log.Printf("Publishing completed in: %v", elapsed)
-	t.Log("Real API test completed successfully")
+	log.Printf("Real API test completed successfully")
 }

@@ -13,19 +13,17 @@ type IndexerConfig struct {
 	Kafka         kafkaConfig.KafkaConfig
 	Postgres      PostgresConfig
 	WorkerCount   int
-	BatchSize     int
-	FlushInterval time.Duration
+	BatchSize     int           `envconfig:"DB_BATCH_SIZE" default:"100"`
+	FlushInterval time.Duration `envconfig:"DB_FLUSH_INTERVAL" default:"30s"`
 }
 
 type PostgresConfig struct {
-	Host           string
-	Port           int
-	Database       string
-	User           string
-	Password       string
-	MaxConnections int
-	MinConnections int
-	MaxIdleTime    time.Duration
+	Host              string `envconfig:"DB_HOST" default:"localhost"`
+	Port              int    `envconfig:"DB_PORT" default:"5432"`
+	FplDatabase       string `envconfig:"DB_NAME" default:"fpl"`
+	SofascoreDatabase string `envconfig:"DB_SOFA_DB_NAME" default:"sofascore"`
+	User              string `envconfig:"DB_USER" default:"tactify"`
+	Password          string `envconfig:"DB_PASSWORD" default:"admin"`
 }
 
 func LoadConfig() *IndexerConfig {

@@ -4,9 +4,10 @@ type LiveEvent struct {
 	Elements []LiveElement `json:"elements"`
 }
 
-type LiveElementDTO struct {
-	Event int       `json:"event"`
-	Stats LiveStats `json:"stats"`
+type LiveElementMessage struct {
+	PlayerID int       `json:"player_id"`
+	Event    int       `json:"event"`
+	Stats    LiveStats `json:"stats"`
 	// add/remove fields as required
 }
 

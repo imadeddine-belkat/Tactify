@@ -24,13 +24,30 @@ type FplApi struct {
 	Fixtures              string `envconfig:"FPLAPI_FIXTURES" required:"true"`
 	PlayerSummary         string `envconfig:"FPLAPI_PLAYER_SUMMARY" required:"true"`
 	Entry                 string `envconfig:"FPLAPI_ENTRY" required:"true"`
-	EntryEvent            string `envconfig:"FPLAPI_ENTRY_EVENT" required:"true"`
 	EntryHistory          string `envconfig:"FPLAPI_ENTRY_HISTORY" required:"true"`
 	EntryTransfers        string `envconfig:"FPLAPI_ENTRY_TRANSFERS" required:"true"`
 	EntryPicks            string `envconfig:"FPLAPI_ENTRY_PICKS" required:"true"`
 	LiveEvent             string `envconfig:"FPLAPI_LIVE_EVENT" required:"true"`
 	LeagueClassicStanding string `envconfig:"FPLAPI_LEAGUE_CLASSIC_STANDING" required:"true"`
 	LeagueH2hStanding     string `envconfig:"FPLAPI_LEAGUE_H2H_STANDING" required:"true"`
+
+	CurrentSeasonID int `envconfig:"FPL_CURRENT_SEASON_ID" required:"true"`
+	Season2526      int `envconfig:"FPL_2526_SEASON_ID" required:"true"`
+	Season2425      int `envconfig:"FPL_2425_SEASON_ID" required:"true"`
+	Season2324      int `envconfig:"FPL_2324_SEASON_ID" required:"true"`
+	Season2223      int `envconfig:"FPL_2223_SEASON_ID" required:"true"`
+	Season2122      int `envconfig:"FPL_2122_SEASON_ID" required:"true"`
+	Season2021      int `envconfig:"FPL_2021_SEASON_ID" required:"true"`
+	Season1920      int `envconfig:"FPL_1920_SEASON_ID" required:"true"`
+	Season1819      int `envconfig:"FPL_1819_SEASON_ID" required:"true"`
+	Season1718      int `envconfig:"FPL_1718_SEASON_ID" required:"true"`
+	Season1617      int `envconfig:"FPL_1617_SEASON_ID" required:"true"`
+	Season1516      int `envconfig:"FPL_1516_SEASON_ID" required:"true"`
+	Season1415      int `envconfig:"FPL_1415_SEASON_ID" required:"true"`
+	Season1314      int `envconfig:"FPL_1314_SEASON_ID" required:"true"`
+	Season1213      int `envconfig:"FPL_1213_SEASON_ID" required:"true"`
+	Season1112      int `envconfig:"FPL_1112_SEASON_ID" required:"true"`
+	Season1011      int `envconfig:"FPL_1011_SEASON_ID" required:"true"`
 }
 
 type ProcessedModel struct {
