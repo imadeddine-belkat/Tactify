@@ -54,10 +54,13 @@ func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *m
 		go func() {
 			defer publishWg.Done()
 			for element := range jobs {
-				dto := models.LiveElementMessage{
+				dto := models.LiveEventMessage{
 					PlayerID: element.ID,
 					Event:    eventID,
+					SeasonID: s.Config.FplApi.CurrentSeasonID,
 					Stats:    element.Stats,
+					Explain:  element.Explain,
+					Modified: false,
 				}
 				key := []byte(fmt.Sprintf("%d-%d", eventID, element.ID))
 				value, err := json.Marshal(dto)

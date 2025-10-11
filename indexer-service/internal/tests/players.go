@@ -67,12 +67,14 @@ func main() {
 	h.Route(ctx, cfg.Kafka.TopicsName.FplPlayersStats)
 	h.Route(ctx, cfg.Kafka.TopicsName.FplPlayerMatchStats)
 	h.Route(ctx, cfg.Kafka.TopicsName.FplPlayerHistoryStats)
+	h.Route(ctx, cfg.Kafka.TopicsName.FplLiveEvent)
 
 	log.Println("✅ Player indexer started, listening for player data...")
 	log.Println("   - Player bootstrap topic:", cfg.Kafka.TopicsName.FplPlayersBootstrap)
 	log.Println("   - Player stats topic:", cfg.Kafka.TopicsName.FplPlayersStats)
 	log.Println("   - Player match stats topic:", cfg.Kafka.TopicsName.FplPlayerMatchStats)
 	log.Println("   - Player past history topic:", cfg.Kafka.TopicsName.FplPlayerHistoryStats)
+	log.Println("   - Live event topic:", cfg.Kafka.TopicsName.FplLiveEvent)
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)

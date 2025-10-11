@@ -135,6 +135,7 @@ func (s *ManagersApiService) GetManagerPicks(ctx context.Context, managerId int,
 
 	entryEvent.EventId = eventId
 	entryEvent.EntryId = managerId
+	entryEvent.SeasonId = s.Config.FplApi.CurrentSeasonID
 
 	return &entryEvent, nil
 }

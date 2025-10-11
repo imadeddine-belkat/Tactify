@@ -373,7 +373,7 @@ func (r *PlayerRepo) InsertPlayerRankings(players []models.PlayerBootstrapMessag
 }
 
 // InsertPlayerGameweekStats inserts/updates player gameweek performance stats
-func (r *PlayerRepo) InsertPlayerGameweekStats(playerID int, history models.PlayerHistoryMessage) error {
+func (r *PlayerRepo) InsertPlayerGameweekStats(history models.PlayerHistoryMessage) error {
 	playerHistory := history.History
 
 	if len(playerHistory) == 0 {
@@ -434,7 +434,7 @@ func (r *PlayerRepo) InsertPlayerGameweekStats(playerID int, history models.Play
 
 	for _, h := range playerHistory {
 		query = query.Values(
-			playerID, h.FixtureID, history.SeasonID, h.Round, h.OpponentTeam, h.KickoffTime,
+			h.PlayerID, h.FixtureID, history.SeasonID, h.Round, h.OpponentTeam, h.KickoffTime,
 			h.WasHome, h.TeamHScore, h.TeamAScore, h.Minutes, h.GoalsScored,
 			h.Assists, h.CleanSheets, h.GoalsConceded, h.OwnGoals,
 			h.PenaltiesSaved, h.PenaltiesMissed, h.YellowCards, h.RedCards,
@@ -461,20 +461,20 @@ func (r *PlayerRepo) InsertPlayerGameweekStats(playerID int, history models.Play
 }
 
 // InsertPlayerPastSeasons inserts/updates player past season history
-func (r *PlayerRepo) InsertPlayerPastSeasons(playerCode int, pastHistory []models.PlayerPastHistory) error {
+func (r *PlayerRepo) InsertPlayerPastSeasons(pastHistory []models.PlayerPastHistoryMessage) error {
 	if len(pastHistory) == 0 {
 		return nil
 	}
 
 	query := sq.Insert("player_past_seasons").Columns(
-		"player_code", "season_name", "start_cost", "end_cost", "total_points",
+		"player_code", "season_name", "season_id", "start_cost", "end_cost", "total_points",
 		"minutes", "goals_scored", "assists", "clean_sheets", "goals_conceded",
 		"own_goals", "penalties_saved", "penalties_missed", "yellow_cards", "red_cards",
 		"saves", "bonus", "bps", "starts", "clearances_blocks_interceptions",
 		"recoveries", "tackles", "defensive_contribution", "influence", "creativity",
 		"threat", "ict_index", "expected_goals", "expected_assists",
 		"expected_goal_involvements", "expected_goals_conceded",
-	).Suffix("ON CONFLICT (player_code, season_name) DO UPDATE SET " +
+	).Suffix("ON CONFLICT (player_code, season_id) DO UPDATE SET " +
 		"start_cost = EXCLUDED.start_cost, " +
 		"end_cost = EXCLUDED.end_cost, " +
 		"total_points = EXCLUDED.total_points, " +
@@ -503,19 +503,22 @@ func (r *PlayerRepo) InsertPlayerPastSeasons(playerCode int, pastHistory []model
 		"expected_goals = EXCLUDED.expected_goals, " +
 		"expected_assists = EXCLUDED.expected_assists, " +
 		"expected_goal_involvements = EXCLUDED.expected_goal_involvements, " +
-		"expected_goals_conceded = EXCLUDED.expected_goals_conceded").
+		"expected_goals_conceded = EXCLUDED.expected_goals_conceded," +
+		"updated_at = CURRENT_TIMESTAMP").
 		PlaceholderFormat(sq.Dollar)
 
 	for _, past := range pastHistory {
-		query = query.Values(
-			playerCode, past.SeasonName, past.StartCost, past.EndCost, past.TotalPoints,
-			past.Minutes, past.GoalsScored, past.Assists, past.CleanSheets, past.GoalsConceded,
-			past.OwnGoals, past.PenaltiesSaved, past.PenaltiesMissed, past.YellowCards, past.RedCards,
-			past.Saves, past.Bonus, past.BPS, past.Starts, past.ClearancesBlocksInterceptions,
-			past.Recoveries, past.Tackles, past.DefensiveContribution, past.Influence, past.Creativity,
-			past.Threat, past.ICTIndex, past.ExpectedGoals, past.ExpectedAssists,
-			past.ExpectedGoalInvolvements, past.ExpectedGoalsConceded,
-		)
+		for _, ph := range past.PlayerPastHistory {
+			query = query.Values(
+				past.PlayerCode, ph.SeasonName, ph.SeasonId, ph.StartCost, ph.EndCost, ph.TotalPoints,
+				ph.Minutes, ph.GoalsScored, ph.Assists, ph.CleanSheets, ph.GoalsConceded,
+				ph.OwnGoals, ph.PenaltiesSaved, ph.PenaltiesMissed, ph.YellowCards, ph.RedCards,
+				ph.Saves, ph.Bonus, ph.BPS, ph.Starts, ph.ClearancesBlocksInterceptions,
+				ph.Recoveries, ph.Tackles, ph.DefensiveContribution, ph.Influence, ph.Creativity,
+				ph.Threat, ph.ICTIndex, ph.ExpectedGoals, ph.ExpectedAssists,
+				ph.ExpectedGoalInvolvements, ph.ExpectedGoalsConceded,
+			)
+		}
 	}
 
 	sqlQuery, args, err := query.ToSql()
@@ -526,6 +529,45 @@ func (r *PlayerRepo) InsertPlayerPastSeasons(playerCode int, pastHistory []model
 	_, err = r.db.Exec(sqlQuery, args...)
 	if err != nil {
 		return fmt.Errorf("executing player_past_seasons insert: %w", err)
+	}
+	return nil
+}
+
+func (r *PlayerRepo) InsertPlayerGameweekExplain(explain []models.LiveEventMessage) error {
+	if len(explain) == 0 {
+		return nil
+	}
+
+	query := sq.Insert("player_gameweek_explain").Columns(
+		"player_id", "fixture_id", "season_id", "event", "points",
+		"identifier", "value", "points_modification",
+	).Suffix("ON CONFLICT (player_id, season_id, fixture_id, identifier) DO UPDATE SET " +
+		"event = EXCLUDED.event," +
+		"points = EXCLUDED.points," +
+		"value = EXCLUDED.value," +
+		"points_modification = EXCLUDED.points_modification," +
+		"updated_at = CURRENT_TIMESTAMP",
+	).PlaceholderFormat(sq.Dollar)
+
+	for _, e := range explain {
+		for _, ev := range e.Explain {
+			for _, detail := range ev.Stats {
+				query = query.Values(
+					e.PlayerID, ev.Fixture, e.SeasonID, e.Event, detail.Points,
+					detail.Identifier, detail.Value, detail.PointsModification,
+				)
+			}
+		}
+	}
+
+	sqlQuery, args, err := query.ToSql()
+	if err != nil {
+		return fmt.Errorf("building player_gameweek_explain insert query: %w", err)
+	}
+
+	_, err = r.db.Exec(sqlQuery, args...)
+	if err != nil {
+		return fmt.Errorf("executing player_gameweek_explain insert: %w", err)
 	}
 	return nil
 }

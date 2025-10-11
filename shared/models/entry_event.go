@@ -1,9 +1,10 @@
 package models
 
 type EntryEventPicksMessage struct {
-	EntryId int             `json:"entry_id" db:"manager_id"`
-	EventId int             `json:"event" db:"event"`
-	Picks   EntryEventPicks `json:"picks"`
+	EntryId  int             `json:"entry_id" db:"manager_id"`
+	EventId  int             `json:"event" db:"event"`
+	SeasonId int             `json:"season_id" db:"season_id"`
+	Picks    EntryEventPicks `json:"picks"`
 }
 
 type EntryEventPicks struct {

@@ -16,7 +16,7 @@ import (
 type Handler struct {
 	config      *config.IndexerConfig
 	kafkaConfig *kafkaConfig.KafkaConfig
-	consumer    *kafka.Consumer
+	consumers   map[string]*kafka.Consumer
 	playerRepo  *fpl_repositories.PlayerRepo
 	teamRepo    *fpl_repositories.TeamRepo
 	fixtureRepo *fpl_repositories.FixtureRepo
@@ -31,14 +31,92 @@ func NewHandler(
 	fixtureRepo *fpl_repositories.FixtureRepo,
 	managerRepo *fpl_repositories.ManagerRepo,
 ) *Handler {
-	return &Handler{
+	h := &Handler{
 		config:      config,
 		kafkaConfig: kafkaConfig,
 		playerRepo:  playerRepo,
 		teamRepo:    teamRepo,
 		fixtureRepo: fixtureRepo,
 		managerRepo: managerRepo,
+		consumers:   make(map[string]*kafka.Consumer),
 	}
+
+	// Pre-create consumers only for non-nil repositories
+	if fixtureRepo != nil {
+		h.consumers[kafkaConfig.TopicsName.FplFixtures] = kafka.NewConsumer(
+			kafkaConfig,
+			kafkaConfig.TopicsName.FplFixtures,
+			kafkaConfig.ConsumersGroupID.FplFixtures,
+		)
+	}
+
+	if teamRepo != nil {
+		h.consumers[kafkaConfig.TopicsName.FplTeams] = kafka.NewConsumer(
+			kafkaConfig,
+			kafkaConfig.TopicsName.FplTeams,
+			kafkaConfig.ConsumersGroupID.FplTeams,
+		)
+	}
+
+	if playerRepo != nil {
+		h.consumers[kafkaConfig.TopicsName.FplPlayersBootstrap] = kafka.NewConsumer(
+			kafkaConfig,
+			kafkaConfig.TopicsName.FplPlayersBootstrap,
+			kafkaConfig.ConsumersGroupID.FplPlayers,
+		)
+
+		h.consumers[kafkaConfig.TopicsName.FplPlayersStats] = kafka.NewConsumer(
+			kafkaConfig,
+			kafkaConfig.TopicsName.FplPlayersStats,
+			kafkaConfig.ConsumersGroupID.FplPlayersStats,
+		)
+
+		h.consumers[kafkaConfig.TopicsName.FplPlayerMatchStats] = kafka.NewConsumer(
+			kafkaConfig,
+			kafkaConfig.TopicsName.FplPlayerMatchStats,
+			kafkaConfig.ConsumersGroupID.FplPlayersStats,
+		)
+
+		h.consumers[kafkaConfig.TopicsName.FplPlayerHistoryStats] = kafka.NewConsumer(
+			kafkaConfig,
+			kafkaConfig.TopicsName.FplPlayerHistoryStats,
+			kafkaConfig.ConsumersGroupID.FplPlayersStats,
+		)
+
+		h.consumers[kafkaConfig.TopicsName.FplLiveEvent] = kafka.NewConsumer(
+			kafkaConfig,
+			kafkaConfig.TopicsName.FplLiveEvent,
+			kafkaConfig.ConsumersGroupID.FplLive,
+		)
+	}
+
+	if managerRepo != nil {
+		h.consumers[kafkaConfig.TopicsName.FplEntry] = kafka.NewConsumer(
+			kafkaConfig,
+			kafkaConfig.TopicsName.FplEntry,
+			kafkaConfig.ConsumersGroupID.FplEntries,
+		)
+
+		h.consumers[kafkaConfig.TopicsName.FplEntryPicks] = kafka.NewConsumer(
+			kafkaConfig,
+			kafkaConfig.TopicsName.FplEntryPicks,
+			kafkaConfig.ConsumersGroupID.FplEntriesPicks,
+		)
+
+		h.consumers[kafkaConfig.TopicsName.FplEntryTransfers] = kafka.NewConsumer(
+			kafkaConfig,
+			kafkaConfig.TopicsName.FplEntryTransfers,
+			kafkaConfig.ConsumersGroupID.FplEntriesTransfers,
+		)
+
+		h.consumers[kafkaConfig.TopicsName.FplEntryHistory] = kafka.NewConsumer(
+			kafkaConfig,
+			kafkaConfig.TopicsName.FplEntryHistory,
+			kafkaConfig.ConsumersGroupID.FplEntriesHistory,
+		)
+	}
+
+	return h
 }
 
 type HandlerFunc func(ctx context.Context)
@@ -51,7 +129,11 @@ func (h *Handler) Route(ctx context.Context, topic string) {
 		h.kafkaConfig.TopicsName.FplPlayersStats:       h.handlePlayerStats,
 		h.kafkaConfig.TopicsName.FplPlayerMatchStats:   h.handlePlayerMatchStats,
 		h.kafkaConfig.TopicsName.FplPlayerHistoryStats: h.handlePlayerPastHistory,
+		h.kafkaConfig.TopicsName.FplLiveEvent:          h.handlePlayerExplain,
 		h.kafkaConfig.TopicsName.FplEntry:              h.handleManagers,
+		h.kafkaConfig.TopicsName.FplEntryPicks:         h.handleManagerPicks,
+		h.kafkaConfig.TopicsName.FplEntryTransfers:     h.handleManagerTransfers,
+		h.kafkaConfig.TopicsName.FplEntryHistory:       h.handleManagerHistory,
 	}
 
 	if fn, ok := handlers[topic]; ok {
@@ -59,153 +141,188 @@ func (h *Handler) Route(ctx context.Context, topic string) {
 	}
 }
 
-func (h *Handler) handleFixtures(ctx context.Context) {
-	batch := make(map[int]models.FixtureMessage)
-	fixtureConsumer := kafka.NewConsumer(h.kafkaConfig, h.kafkaConfig.TopicsName.FplFixtures, h.kafkaConfig.ConsumersGroupID.FplFixtures)
-	messages, errors := fixtureConsumer.Subscribe(ctx)
-
-	flushTicker := time.NewTicker(h.config.FlushInterval)
+// Generic batch processor - handles all the common batching logic
+func batchProcess[T any, K comparable](
+	ctx context.Context,
+	consumer *kafka.Consumer,
+	batchSize int,
+	flushInterval time.Duration,
+	topicName string,
+	getKey func(T) K,
+	process func(T) error,
+) {
+	messages, errors := consumer.Subscribe(ctx)
+	batch := make(map[K]T)
+	flushTicker := time.NewTicker(flushInterval)
 	defer flushTicker.Stop()
+
+	flushBatch := func(logContext string) {
+		if len(batch) == 0 {
+			return
+		}
+
+		for _, item := range batch {
+			if err := process(item); err != nil {
+				log.Printf("Error %s for %s: %v\n", logContext, topicName, err)
+			}
+		}
+		batch = make(map[K]T)
+	}
 
 	for {
 		select {
 		case msg := <-messages:
-			var fixture models.FixtureMessage
-			err := json.Unmarshal(msg.Value, &fixture)
-			if err != nil {
-				log.Printf("Error unmarshaling fixture message: %v, raw: %s\n", err, string(msg.Value))
+			var item T
+			if err := json.Unmarshal(msg.Value, &item); err != nil {
+				log.Printf("Error unmarshaling %s message: %v, raw: %s\n", topicName, err, string(msg.Value))
 				continue
 			}
-			batch[fixture.Fixture.ID] = fixture
+			batch[getKey(item)] = item
 
-			if len(batch) >= h.config.BatchSize {
-				fixtures := make([]models.FixtureMessage, 0, len(batch))
-				for _, f := range batch {
-					fixtures = append(fixtures, f)
-				}
-				err := h.fixtureRepo.InsertFixtures(fixtures)
-				if err != nil {
-					log.Println("Error inserting fixtures batch:", err)
-				}
-				batch = make(map[int]models.FixtureMessage)
+			if len(batch) >= batchSize {
+				flushBatch("inserting")
 			}
 
 		case <-flushTicker.C:
-			if len(batch) > 0 {
-				fixtures := make([]models.FixtureMessage, 0, len(batch))
-				for _, f := range batch {
-					fixtures = append(fixtures, f)
-				}
-				if err := h.fixtureRepo.InsertFixtures(fixtures); err != nil {
-					log.Println("Error flushing fixtures batch:", err)
-				}
-				batch = make(map[int]models.FixtureMessage)
-			}
+			flushBatch("flushing")
 
 		case err := <-errors:
 			if err != nil {
-				log.Println("Error consuming fixture message:", err)
+				log.Printf("Error consuming %s message: %v\n", topicName, err)
 			}
 
 		case <-ctx.Done():
-			if len(batch) > 0 {
-				fixtures := make([]models.FixtureMessage, 0, len(batch))
-				for _, f := range batch {
-					fixtures = append(fixtures, f)
-				}
-				err := h.fixtureRepo.InsertFixtures(fixtures)
-				if err != nil {
-					log.Println("Error inserting fixtures batch:", err)
-				}
-			}
+			flushBatch("inserting on shutdown")
 			return
 		}
 	}
+}
+
+// Generic batch processor with slice conversion - for handlers that need to convert map to slice
+func batchProcessWithSlice[T any, K comparable](
+	ctx context.Context,
+	consumer *kafka.Consumer,
+	batchSize int,
+	flushInterval time.Duration,
+	topicName string,
+	getKey func(T) K,
+	processBatch func([]T) error,
+) {
+	messages, errors := consumer.Subscribe(ctx)
+	batch := make(map[K]T)
+	flushTicker := time.NewTicker(flushInterval)
+	defer flushTicker.Stop()
+
+	flushBatch := func(logContext string) {
+		if len(batch) == 0 {
+			return
+		}
+
+		items := make([]T, 0, len(batch))
+		for _, item := range batch {
+			items = append(items, item)
+		}
+
+		if err := processBatch(items); err != nil {
+			log.Printf("Error %s batch for %s: %v\n", logContext, topicName, err)
+		}
+		batch = make(map[K]T)
+	}
+
+	for {
+		select {
+		case msg := <-messages:
+			var item T
+			if err := json.Unmarshal(msg.Value, &item); err != nil {
+				log.Printf("Error unmarshaling %s message: %v, raw: %s\n", topicName, err, string(msg.Value))
+				continue
+			}
+			batch[getKey(item)] = item
+
+			if len(batch) >= batchSize {
+				flushBatch("inserting")
+			}
+
+		case <-flushTicker.C:
+			flushBatch("flushing")
+
+		case err := <-errors:
+			if err != nil {
+				log.Printf("Error consuming %s message: %v\n", topicName, err)
+			}
+
+		case <-ctx.Done():
+			flushBatch("inserting on shutdown")
+			return
+		}
+	}
+}
+
+func (h *Handler) handleFixtures(ctx context.Context) {
+	batchProcessWithSlice(
+		ctx,
+		h.consumers[h.kafkaConfig.TopicsName.FplFixtures],
+		h.config.BatchSize,
+		h.config.FlushInterval,
+		h.kafkaConfig.TopicsName.FplFixtures,
+		func(f models.FixtureMessage) int { return f.Fixture.ID },
+		h.fixtureRepo.InsertFixtures,
+	)
 }
 
 func (h *Handler) handleTeams(ctx context.Context) {
-	batch := make(map[int]models.TeamMessage)
-	teamConsumer := kafka.NewConsumer(h.kafkaConfig, h.kafkaConfig.TopicsName.FplTeams, h.kafkaConfig.ConsumersGroupID.FplTeams)
-	messages, errors := teamConsumer.Subscribe(ctx)
-
-	flushTicker := time.NewTicker(h.config.FlushInterval)
-	defer flushTicker.Stop()
-
-	for {
-		select {
-		case msg := <-messages:
-			var team models.TeamMessage
-			err := json.Unmarshal(msg.Value, &team)
-			if err != nil {
-				log.Printf("Error unmarshaling team message: %v, raw: %s\n", err, string(msg.Value))
-				continue
-			}
-			batch[team.Team.ID] = team
-
-			if len(batch) >= h.config.BatchSize {
-				teams := make([]models.TeamMessage, 0, len(batch))
-				for _, t := range batch {
-					teams = append(teams, t)
-				}
-				err := h.teamRepo.InsertTeams(teams)
-				if err != nil {
-					log.Println("Error inserting teams batch:", err)
-				}
-				batch = make(map[int]models.TeamMessage)
-			}
-
-		case <-flushTicker.C:
-			if len(batch) > 0 {
-				teams := make([]models.TeamMessage, 0, len(batch))
-				for _, t := range batch {
-					teams = append(teams, t)
-				}
-				if err := h.teamRepo.InsertTeams(teams); err != nil {
-					log.Println("Error flushing teams batch:", err)
-				}
-				batch = make(map[int]models.TeamMessage)
-			}
-
-		case err := <-errors:
-			if err != nil {
-				log.Println("Error consuming team message:", err)
-			}
-
-		case <-ctx.Done():
-			if len(batch) > 0 {
-				teams := make([]models.TeamMessage, 0, len(batch))
-				for _, t := range batch {
-					teams = append(teams, t)
-				}
-				err := h.teamRepo.InsertTeams(teams)
-				if err != nil {
-					log.Println("Error inserting teams batch:", err)
-				}
-			}
-			return
-		}
-	}
+	batchProcessWithSlice(
+		ctx,
+		h.consumers[h.kafkaConfig.TopicsName.FplTeams],
+		h.config.BatchSize,
+		h.config.FlushInterval,
+		h.kafkaConfig.TopicsName.FplTeams,
+		func(t models.TeamMessage) int { return t.Team.ID },
+		h.teamRepo.InsertTeams,
+	)
 }
 
 func (h *Handler) handlePlayerBootstrap(ctx context.Context) {
-	batch := make(map[int]models.PlayerBootstrapMessage)
-	consumer := kafka.NewConsumer(h.kafkaConfig, h.kafkaConfig.TopicsName.FplPlayersBootstrap, h.kafkaConfig.ConsumersGroupID.FplPlayers)
+	consumer := h.consumers[h.kafkaConfig.TopicsName.FplPlayersBootstrap]
 	messages, errors := consumer.Subscribe(ctx)
+	batch := make(map[int]models.PlayerBootstrapMessage)
 
 	flushTicker := time.NewTicker(h.config.FlushInterval)
-	verifyTicker := time.NewTicker(30 * time.Second) // Verify every 30 seconds
+	verifyTicker := time.NewTicker(30 * time.Second)
 	defer flushTicker.Stop()
 	defer verifyTicker.Stop()
 
 	totalReceived := 0
 	totalProcessed := 0
 
+	flushBatch := func(logContext string) {
+		if len(batch) == 0 {
+			return
+		}
+
+		players := make([]models.PlayerBootstrapMessage, 0, len(batch))
+		for _, p := range batch {
+			players = append(players, p)
+		}
+
+		if err := h.playerRepo.InsertPlayerBootstrapComplete(players); err != nil {
+			log.Printf("❌ Error %s player bootstrap batch: %v", logContext, err)
+		} else {
+			totalProcessed += len(players)
+			if logContext == "inserting" {
+				log.Printf("✅ Batch processed. Total received: %d, Total processed: %d", totalReceived, totalProcessed)
+			} else if logContext == "flushing" {
+				log.Printf("✅ Flush completed. Total received: %d, Total processed: %d", totalReceived, totalProcessed)
+			}
+		}
+		batch = make(map[int]models.PlayerBootstrapMessage)
+	}
+
 	for {
 		select {
 		case msg := <-messages:
 			var player models.PlayerBootstrapMessage
-			err := json.Unmarshal(msg.Value, &player)
-			if err != nil {
+			if err := json.Unmarshal(msg.Value, &player); err != nil {
 				log.Printf("Error unmarshaling player bootstrap message: %v, raw: %s\n", err, string(msg.Value))
 				continue
 			}
@@ -213,36 +330,13 @@ func (h *Handler) handlePlayerBootstrap(ctx context.Context) {
 			totalReceived++
 
 			if len(batch) >= h.config.BatchSize {
-				players := make([]models.PlayerBootstrapMessage, 0, len(batch))
-				for _, p := range batch {
-					players = append(players, p)
-				}
-				if err := h.playerRepo.InsertPlayerBootstrapComplete(players); err != nil {
-					log.Printf("❌ Error inserting player bootstrap batch: %v", err)
-				} else {
-					totalProcessed += len(players)
-					log.Printf("✅ Batch processed. Total received: %d, Total processed: %d", totalReceived, totalProcessed)
-				}
-				batch = make(map[int]models.PlayerBootstrapMessage)
+				flushBatch("inserting")
 			}
 
 		case <-flushTicker.C:
-			if len(batch) > 0 {
-				players := make([]models.PlayerBootstrapMessage, 0, len(batch))
-				for _, p := range batch {
-					players = append(players, p)
-				}
-				if err := h.playerRepo.InsertPlayerBootstrapComplete(players); err != nil {
-					log.Printf("❌ Error flushing player bootstrap batch: %v", err)
-				} else {
-					totalProcessed += len(players)
-					log.Printf("✅ Flush completed. Total received: %d, Total processed: %d", totalReceived, totalProcessed)
-				}
-				batch = make(map[int]models.PlayerBootstrapMessage)
-			}
+			flushBatch("flushing")
 
 		case <-verifyTicker.C:
-			// Verify how many players are actually in the database
 			if h.playerRepo != nil {
 				count, err := h.playerRepo.CountPlayers()
 				if err != nil {
@@ -258,19 +352,7 @@ func (h *Handler) handlePlayerBootstrap(ctx context.Context) {
 			}
 
 		case <-ctx.Done():
-			if len(batch) > 0 {
-				players := make([]models.PlayerBootstrapMessage, 0, len(batch))
-				for _, p := range batch {
-					players = append(players, p)
-				}
-				if err := h.playerRepo.InsertPlayerBootstrapComplete(players); err != nil {
-					log.Printf("❌ Error inserting player bootstrap batch on shutdown: %v", err)
-				} else {
-					totalProcessed += len(players)
-				}
-			}
-
-			// Final count
+			flushBatch("inserting on shutdown")
 			if h.playerRepo != nil {
 				count, _ := h.playerRepo.CountPlayers()
 				log.Printf("🏁 Final stats - Players in DB: %d, Received: %d, Processed: %d", count, totalReceived, totalProcessed)
@@ -281,248 +363,108 @@ func (h *Handler) handlePlayerBootstrap(ctx context.Context) {
 }
 
 func (h *Handler) handlePlayerStats(ctx context.Context) {
-	batch := make(map[int]models.PlayerBootstrapMessage)
-	consumer := kafka.NewConsumer(h.kafkaConfig, h.kafkaConfig.TopicsName.FplPlayersStats, h.kafkaConfig.ConsumersGroupID.FplPlayersStats)
-	messages, errors := consumer.Subscribe(ctx)
-
-	flushTicker := time.NewTicker(h.config.FlushInterval)
-	defer flushTicker.Stop()
-
-	for {
-		select {
-		case msg := <-messages:
-			var player models.PlayerBootstrapMessage
-			err := json.Unmarshal(msg.Value, &player)
-			if err != nil {
-				log.Printf("Error unmarshaling player stats message: %v, raw: %s\n", err, string(msg.Value))
-				continue
-			}
-			batch[player.Player.ID] = player
-
-			if len(batch) >= h.config.BatchSize {
-				players := make([]models.PlayerBootstrapMessage, 0, len(batch))
-				for _, p := range batch {
-					players = append(players, p)
-				}
-				if err := h.playerRepo.InsertPlayerBootstrapComplete(players); err != nil {
-					log.Println("Error inserting player stats batch:", err)
-				}
-				batch = make(map[int]models.PlayerBootstrapMessage)
-			}
-
-		case <-flushTicker.C:
-			if len(batch) > 0 {
-				players := make([]models.PlayerBootstrapMessage, 0, len(batch))
-				for _, p := range batch {
-					players = append(players, p)
-				}
-				if err := h.playerRepo.InsertPlayerBootstrapComplete(players); err != nil {
-					log.Println("Error flushing player stats batch:", err)
-				}
-				batch = make(map[int]models.PlayerBootstrapMessage)
-			}
-
-		case err := <-errors:
-			if err != nil {
-				log.Println("Error consuming player stats message:", err)
-			}
-
-		case <-ctx.Done():
-			if len(batch) > 0 {
-				players := make([]models.PlayerBootstrapMessage, 0, len(batch))
-				for _, p := range batch {
-					players = append(players, p)
-				}
-				if err := h.playerRepo.InsertPlayerBootstrapComplete(players); err != nil {
-					log.Println("Error inserting player stats batch on shutdown:", err)
-				}
-			}
-			return
-		}
-	}
+	batchProcessWithSlice(
+		ctx,
+		h.consumers[h.kafkaConfig.TopicsName.FplPlayersStats],
+		h.config.BatchSize,
+		h.config.FlushInterval,
+		h.kafkaConfig.TopicsName.FplPlayersStats,
+		func(p models.PlayerBootstrapMessage) int { return p.Player.ID },
+		h.playerRepo.InsertPlayerBootstrapComplete,
+	)
 }
 
 func (h *Handler) handlePlayerMatchStats(ctx context.Context) {
-	batch := make(map[int]models.PlayerHistoryMessage)
-
-	consumer := kafka.NewConsumer(h.kafkaConfig, h.kafkaConfig.TopicsName.FplPlayerMatchStats, h.kafkaConfig.ConsumersGroupID.FplPlayersStats)
-	messages, errors := consumer.Subscribe(ctx)
-
-	flushTicker := time.NewTicker(h.config.FlushInterval)
-	defer flushTicker.Stop()
-
-	for {
-		select {
-		case msg := <-messages:
-			var historyMsg models.PlayerHistoryMessage
-			err := json.Unmarshal(msg.Value, &historyMsg)
-			if err != nil {
-				log.Printf("Error unmarshaling player match stats message: %v, raw: %s\n", err, string(msg.Value))
-				continue
-			}
-			batch[historyMsg.PlayerID] = historyMsg
-
-			if len(batch) >= h.config.BatchSize {
-				for playerID, histMsg := range batch {
-					if err := h.playerRepo.InsertPlayerGameweekStats(playerID, histMsg); err != nil {
-						log.Printf("Error inserting player match stats for player %d: %v\n", playerID, err)
-					}
-				}
-				batch = make(map[int]models.PlayerHistoryMessage)
-			}
-
-		case <-flushTicker.C:
-			if len(batch) > 0 {
-				for playerID, histMsg := range batch {
-					if err := h.playerRepo.InsertPlayerGameweekStats(playerID, histMsg); err != nil {
-						log.Printf("Error flushing player match stats for player %d: %v\n", playerID, err)
-					}
-				}
-				batch = make(map[int]models.PlayerHistoryMessage)
-			}
-
-		case err := <-errors:
-			if err != nil {
-				log.Println("Error consuming player match stats message:", err)
-			}
-
-		case <-ctx.Done():
-			if len(batch) > 0 {
-				for playerID, histMsg := range batch {
-					if err := h.playerRepo.InsertPlayerGameweekStats(playerID, histMsg); err != nil {
-						log.Printf("Error inserting player match stats for player %d on shutdown: %v\n", playerID, err)
-					}
-				}
-			}
-			return
-		}
-	}
+	batchProcess(
+		ctx,
+		h.consumers[h.kafkaConfig.TopicsName.FplPlayerMatchStats],
+		h.config.BatchSize,
+		h.config.FlushInterval,
+		h.kafkaConfig.TopicsName.FplPlayerMatchStats,
+		func(msg models.PlayerHistoryMessage) int { return msg.PlayerID },
+		func(histMsg models.PlayerHistoryMessage) error {
+			return h.playerRepo.InsertPlayerGameweekStats(histMsg)
+		},
+	)
 }
 
 func (h *Handler) handlePlayerPastHistory(ctx context.Context) {
-	type PlayerPastMessage struct {
-		PlayerCode  int                        `json:"player_code"`
-		PastHistory []models.PlayerPastHistory `json:"past_history"`
-	}
 
-	batch := make(map[int]PlayerPastMessage)
-	consumer := kafka.NewConsumer(h.kafkaConfig, h.kafkaConfig.TopicsName.FplPlayerHistoryStats, h.kafkaConfig.ConsumersGroupID.FplPlayersStats)
-	messages, errors := consumer.Subscribe(ctx)
+	batchProcessWithSlice(
+		ctx,
+		h.consumers[h.kafkaConfig.TopicsName.FplPlayerHistoryStats],
+		h.config.BatchSize,
+		h.config.FlushInterval,
+		h.kafkaConfig.TopicsName.FplPlayerHistoryStats,
+		func(p models.PlayerPastHistoryMessage) int { return p.PlayerCode },
+		h.playerRepo.InsertPlayerPastSeasons,
+	)
+}
 
-	flushTicker := time.NewTicker(h.config.FlushInterval)
-	defer flushTicker.Stop()
-
-	for {
-		select {
-		case msg := <-messages:
-			var pastMsg PlayerPastMessage
-			err := json.Unmarshal(msg.Value, &pastMsg)
-			if err != nil {
-				log.Printf("Error unmarshaling player past history message: %v, raw: %s\n", err, string(msg.Value))
-				continue
-			}
-			batch[pastMsg.PlayerCode] = pastMsg
-
-			if len(batch) >= h.config.BatchSize {
-				for playerCode, pMsg := range batch {
-					if err := h.playerRepo.InsertPlayerPastSeasons(playerCode, pMsg.PastHistory); err != nil {
-						log.Printf("Error inserting player past history for player code %d: %v\n", playerCode, err)
-					}
-				}
-				batch = make(map[int]PlayerPastMessage)
-			}
-
-		case <-flushTicker.C:
-			if len(batch) > 0 {
-				for playerCode, pMsg := range batch {
-					if err := h.playerRepo.InsertPlayerPastSeasons(playerCode, pMsg.PastHistory); err != nil {
-						log.Printf("Error flushing player past history for player code %d: %v\n", playerCode, err)
-					}
-				}
-				batch = make(map[int]PlayerPastMessage)
-			}
-
-		case err := <-errors:
-			if err != nil {
-				log.Println("Error consuming player past history message:", err)
-			}
-
-		case <-ctx.Done():
-			if len(batch) > 0 {
-				for playerCode, pMsg := range batch {
-					if err := h.playerRepo.InsertPlayerPastSeasons(playerCode, pMsg.PastHistory); err != nil {
-						log.Printf("Error inserting player past history for player code %d on shutdown: %v\n", playerCode, err)
-					}
-				}
-			}
-			return
-		}
-	}
+func (h *Handler) handlePlayerExplain(ctx context.Context) {
+	batchProcessWithSlice(
+		ctx,
+		h.consumers[h.kafkaConfig.TopicsName.FplLiveEvent],
+		h.config.BatchSize,
+		h.config.FlushInterval,
+		h.kafkaConfig.TopicsName.FplLiveEvent,
+		func(p models.LiveEventMessage) int { return p.PlayerID },
+		h.playerRepo.InsertPlayerGameweekExplain,
+	)
 }
 
 func (h *Handler) handleManagers(ctx context.Context) {
-	batch := make(map[int]models.EntryMessage)
-	consumer := kafka.NewConsumer(h.kafkaConfig, h.kafkaConfig.TopicsName.FplEntry, h.kafkaConfig.ConsumersGroupID.FplEntries)
-	messages, errors := consumer.Subscribe(ctx)
+	batchProcess(
+		ctx,
+		h.consumers[h.kafkaConfig.TopicsName.FplEntry],
+		h.config.BatchSize,
+		h.config.FlushInterval,
+		h.kafkaConfig.TopicsName.FplEntry,
+		func(e models.EntryMessage) int { return e.Entry.ID },
+		func(e models.EntryMessage) error {
+			return h.managerRepo.InsertManagerInfo(&e)
+		},
+	)
+}
 
-	flushTicker := time.NewTicker(h.config.FlushInterval)
-	defer flushTicker.Stop()
+func (h *Handler) handleManagerPicks(ctx context.Context) {
+	batchProcess(
+		ctx,
+		h.consumers[h.kafkaConfig.TopicsName.FplEntryPicks],
+		h.config.BatchSize,
+		h.config.FlushInterval,
+		h.kafkaConfig.TopicsName.FplEntryPicks,
+		func(p models.EntryEventPicksMessage) int { return p.EntryId },
+		func(p models.EntryEventPicksMessage) error {
+			return h.managerRepo.InsertManagerPicks(&p)
+		},
+	)
+}
 
-	for {
-		select {
-		case msg := <-messages:
-			var entry models.EntryMessage
-			err := json.Unmarshal(msg.Value, &entry)
-			if err != nil {
-				log.Printf("Error unmarshaling manager message: %v, raw: %s\n", err, string(msg.Value))
-				continue
-			}
-			batch[entry.Entry.ID] = entry
-			if len(batch) >= h.config.BatchSize {
-				entries := make([]models.EntryMessage, 0, len(batch))
-				for _, e := range batch {
-					entries = append(entries, e)
-				}
-				for _, e := range entries {
-					if err := h.managerRepo.InsertManagerInfo(&e); err != nil {
-						log.Printf("Error inserting manager info for manager %d: %v\n", e.Entry.ID, err)
-					}
-				}
-				batch = make(map[int]models.EntryMessage)
-			}
+func (h *Handler) handleManagerTransfers(ctx context.Context) {
+	batchProcess(
+		ctx,
+		h.consumers[h.kafkaConfig.TopicsName.FplEntryTransfers],
+		h.config.BatchSize,
+		h.config.FlushInterval,
+		h.kafkaConfig.TopicsName.FplEntryTransfers,
+		func(t models.EntryTransfersMessage) int { return t.EntryId },
+		func(t models.EntryTransfersMessage) error {
+			return h.managerRepo.InsertManagerTransfers(&t)
+		},
+	)
+}
 
-		case <-flushTicker.C:
-			if len(batch) > 0 {
-				entries := make([]models.EntryMessage, 0, len(batch))
-				for _, e := range batch {
-					entries = append(entries, e)
-				}
-				for _, e := range entries {
-					if err := h.managerRepo.InsertManagerInfo(&e); err != nil {
-						log.Printf("Error flushing manager info for manager %d: %v\n", e.Entry.ID, err)
-					}
-				}
-				batch = make(map[int]models.EntryMessage)
-			}
-
-		case err := <-errors:
-			if err != nil {
-				log.Println("Error consuming manager message:", err)
-			}
-
-		case <-ctx.Done():
-			if len(batch) > 0 {
-				entries := make([]models.EntryMessage, 0, len(batch))
-				for _, e := range batch {
-					entries = append(entries, e)
-				}
-				for _, e := range entries {
-					if err := h.managerRepo.InsertManagerInfo(&e); err != nil {
-						log.Printf("Error inserting manager info for manager %d on shutdown: %v\n", e.Entry.ID, err)
-					}
-				}
-			}
-			return
-		}
-	}
+func (h *Handler) handleManagerHistory(ctx context.Context) {
+	batchProcess(
+		ctx,
+		h.consumers[h.kafkaConfig.TopicsName.FplEntryHistory],
+		h.config.BatchSize,
+		h.config.FlushInterval,
+		h.kafkaConfig.TopicsName.FplEntryHistory,
+		func(hi models.EntryHistoryMessage) int { return hi.EntryId },
+		func(hi models.EntryHistoryMessage) error {
+			return h.managerRepo.InsertManagerFullHistory(&hi)
+		},
+	)
 }

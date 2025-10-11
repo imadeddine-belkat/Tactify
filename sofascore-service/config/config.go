@@ -62,6 +62,10 @@ type SeasonsIDs struct {
 	PremierLeague1213 int `envconfig:"SOFASCOREAPI_PREMIERLEAGUE_1213_SEASON_ID"`
 	PremierLeague1112 int `envconfig:"SOFASCOREAPI_PREMIERLEAGUE_1112_SEASON_ID"`
 	PremierLeague1011 int `envconfig:"SOFASCOREAPI_PREMIERLEAGUE_1011_SEASON_ID"`
+	PremierLeague0910 int `envconfig:"SOFASCOREAPI_PREMIERLEAGUE_0910_SEASON_ID"`
+	PremierLeague0809 int `envconfig:"SOFASCOREAPI_PREMIERLEAGUE_0809_SEASON_ID"`
+	PremierLeague0708 int `envconfig:"SOFASCOREAPI_PREMIERLEAGUE_0708_SEASON_ID"`
+	PremierLeague0607 int `envconfig:"SOFASCOREAPI_PREMIERLEAGUE_0607_SEASON_ID"`
 }
 
 type LeaguesIDs struct {

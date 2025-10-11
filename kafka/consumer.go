@@ -3,6 +3,7 @@ package kafka
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/imadbelkat1/kafka/config"
 	"github.com/segmentio/kafka-go"
@@ -15,17 +16,20 @@ type Consumer struct {
 func NewConsumer(cfg *config.KafkaConfig, topic string, groupID string) *Consumer {
 	return &Consumer{
 		reader: kafka.NewReader(kafka.ReaderConfig{
-			Brokers:  []string{cfg.KafkaBroker},
-			Topic:    topic,
-			GroupID:  groupID,
-			MinBytes: 10e3,
-			MaxBytes: 10e6,
+			Brokers:        []string{cfg.KafkaBroker},
+			Topic:          topic,
+			GroupID:        groupID,
+			MinBytes:       1,                      // Changed: Process messages immediately (was 10e3)
+			MaxBytes:       10e6,                   // Keep: Max 10MB per fetch
+			MaxWait:        100 * time.Millisecond, // Added: Max wait time 100ms
+			CommitInterval: time.Second,            // Added: Auto-commit every second
+			StartOffset:    kafka.LastOffset,       // Added: Start from latest (or use kafka.FirstOffset for all messages)
 		}),
 	}
 }
 
 func (c *Consumer) Subscribe(ctx context.Context) (<-chan kafka.Message, <-chan error) {
-	messages := make(chan kafka.Message, 100) // Reduced buffer size
+	messages := make(chan kafka.Message, 100)
 	errors := make(chan error, 10)
 
 	go func() {
@@ -50,6 +54,13 @@ func (c *Consumer) Subscribe(ctx context.Context) (<-chan kafka.Message, <-chan 
 
 			select {
 			case messages <- msg:
+				// Auto-commit the message after successful delivery to channel
+				if err := c.reader.CommitMessages(ctx, msg); err != nil {
+					select {
+					case errors <- fmt.Errorf("committing message: %w", err):
+					default:
+					}
+				}
 			case <-ctx.Done():
 				return
 			}
@@ -59,7 +70,7 @@ func (c *Consumer) Subscribe(ctx context.Context) (<-chan kafka.Message, <-chan 
 	return messages, errors
 }
 
-// CommitMessage commits a single message
+// CommitMessage commits a single message (kept for backward compatibility)
 func (c *Consumer) CommitMessage(ctx context.Context, msg kafka.Message) error {
 	if err := c.reader.CommitMessages(ctx, msg); err != nil {
 		return fmt.Errorf("committing message: %w", err)

@@ -63,9 +63,15 @@ func main() {
 	defer cancel()
 
 	h.Route(ctx, cfg.Kafka.TopicsName.FplEntry)
+	h.Route(ctx, cfg.Kafka.TopicsName.FplEntryPicks)
+	h.Route(ctx, cfg.Kafka.TopicsName.FplEntryTransfers)
+	h.Route(ctx, cfg.Kafka.TopicsName.FplEntryHistory)
 
 	log.Println("✅ Manager indexer started, listening for manager data...")
 	log.Println("   - Manager Info topic:", cfg.Kafka.TopicsName.FplEntry)
+	log.Println("   - Manager Picks topic:", cfg.Kafka.TopicsName.FplEntryPicks)
+	log.Println("   - Manager Transfers topic:", cfg.Kafka.TopicsName.FplEntryTransfers)
+	log.Println("   - Manager History topic:", cfg.Kafka.TopicsName.FplEntryHistory)
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)

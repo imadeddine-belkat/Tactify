@@ -46,6 +46,10 @@ type FplApi struct {
 	Season1213      int `envconfig:"FPL_1213_SEASON_ID" required:"true"`
 	Season1112      int `envconfig:"FPL_1112_SEASON_ID" required:"true"`
 	Season1011      int `envconfig:"FPL_1011_SEASON_ID" required:"true"`
+	Season0910      int `envconfig:"FPL_0910_SEASON_ID" required:"true"`
+	Season0809      int `envconfig:"FPL_0809_SEASON_ID" required:"true"`
+	Season0708      int `envconfig:"FPL_0708_SEASON_ID" required:"true"`
+	Season0607      int `envconfig:"FPL_0607_SEASON_ID" required:"true"`
 }
 
 type ProcessedModel struct {
@@ -106,6 +110,15 @@ func (c *FplConfig) MapSeasonNameToID(seasons string) int {
 		return c.FplApi.Season1112
 	case "2010/11":
 		return c.FplApi.Season1011
+	case "2009/10":
+		return c.FplApi.Season0910
+	case "2008/09":
+		return c.FplApi.Season0809
+	case "2007/08":
+		return c.FplApi.Season0708
+	case "2006/07":
+		return c.FplApi.Season0607
+
 	default:
 		return 0 // Unknown season
 	}

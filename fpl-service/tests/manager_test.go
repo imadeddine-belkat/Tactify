@@ -22,7 +22,7 @@ func TestManagersApiService(t *testing.T) {
 		Producer: kafka.NewProducer(),
 	}
 
-	err := service.UpdateManager(ctx, 2839296, 6)
+	err := service.UpdateManager(ctx, 2839296, 2)
 	if err != nil {
 		t.Fatalf("UpdateManager with API failed: %v", err)
 	}
