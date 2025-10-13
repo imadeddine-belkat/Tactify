@@ -8,6 +8,7 @@ require (
 	github.com/imadbelkat1/shared v0.0.0-00010101000000-000000000000
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
+	golang.org/x/sync v0.17.0
 )
 
 require (

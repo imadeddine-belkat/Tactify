@@ -2,6 +2,7 @@
 api:
 (la liga) matches id and info : https://www.sofascore.com/api/v1/unique-tournament/8/season/77559/events/round/38
 
+league standings : https://www.sofascore.com/api/v1/unique-tournament/17/season/76986/standings/total
 team overall stats of season (team id): https://www.sofascore.com/api/v1/team/2859/unique-tournament/8/season/77559/statistics/overall
 match stats (match id: 14083569): https://www.sofascore.com/api/v1/event/14083569/statistics
 team event lineup (match id: 14083569): https://www.sofascore.com/api/v1/event/14083569/lineups

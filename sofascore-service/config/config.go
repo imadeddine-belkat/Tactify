@@ -73,24 +73,23 @@ type LeaguesIDs struct {
 	PremierLeague int `envconfig:"SOFASCOREAPI_PREMIERLEAGUE_ID"`
 }
 type LeagueEndpoints struct {
-	LeagueRoundMatches string `envconfig:"SOFASCOREAPI_LEAGUE_ROUND_MATCHES_ENDPOINT"`
-	LaLigaId           string `envconfig:"SOFASCOREAPI_LALIGA_ID"`
-	PremierLeagueId    string `envconfig:"SOFASCOREAPI_PREMIERLEAGUE_ID"`
+	LeagueSeasonStandings string `envconfig:"SOFASCOREAPI_LEAGUE_SEASON_STANDINGS_ENDPOINT"` // /unique-tournament/%d/season/%d/standings/total
+	LeagueRoundMatches    string `envconfig:"SOFASCOREAPI_LEAGUE_ROUND_MATCHES_ENDPOINT"`    // /unique-tournament/%d/season/%d/events/round/%d
 }
 type MatchEndpoints struct {
-	MatchLineups    string `envconfig:"SOFASCOREAPI_MATCH_LINEUPS_ENDPOINT"`
-	MatchH2hHistory string `envconfig:"SOFASCOREAPI_MATCH_H2H_HISTORY_ENDPOINT"`
+	MatchLineups    string `envconfig:"SOFASCOREAPI_MATCH_LINEUPS_ENDPOINT"`     // /event/%d/lineups
+	MatchH2hHistory string `envconfig:"SOFASCOREAPI_MATCH_H2H_HISTORY_ENDPOINT"` // /event/%d/h2h
 }
 
 type TeamEndpoints struct {
-	TopTeamsStats    string `envconfig:"SOFASCOREAPI_TOP_TEAMS_OVERALL_STATS_ENDPOINT"`
-	TeamOverallStats string `envconfig:"SOFASCOREAPI_TEAM_OVERALL_STATS_ENDPOINT"`
-	TeamMatchStats   string `envconfig:"SOFASCOREAPI_TEAM_MATCH_STATS_ENDPOINT"`
+	TopTeamsStats    string `envconfig:"SOFASCOREAPI_TOP_TEAMS_OVERALL_STATS_ENDPOINT"` // /unique-tournament/%d/season/%d/top-teams/overall
+	TeamOverallStats string `envconfig:"SOFASCOREAPI_TEAM_OVERALL_STATS_ENDPOINT"`      // /unique-tournament/%d/season/%d/team/%d/statistics/overall
+	TeamMatchStats   string `envconfig:"SOFASCOREAPI_TEAM_MATCH_STATS_ENDPOINT"`        // /event/%d/statistics
 }
 type PlayerEndpoints struct {
-	PlayersStats       string `envconfig:"SOFASCOREAPI_TEAM_PLAYERS_STATS_ENDPOINT"`
-	PlayerSeasonsStats string `envconfig:"SOFASCOREAPI_PLAYER_SEASONS_STATS_ENDPOINT"`
-	PlayerAttributes   string `envconfig:"SOFASCOREAPI_PLAYER_ATTRIBUTES_ENDPOINT"`
+	PlayersStats       string `envconfig:"SOFASCOREAPI_TEAM_PLAYERS_STATS_ENDPOINT"`   // /team/%d/unique-tournament/%d/season/%d/top-players/overall
+	PlayerSeasonsStats string `envconfig:"SOFASCOREAPI_PLAYER_SEASONS_STATS_ENDPOINT"` // /player/%d/statistics
+	PlayerAttributes   string `envconfig:"SOFASCOREAPI_PLAYER_ATTRIBUTES_ENDPOINT"`    // /player/%d/attribute-overviews
 }
 
 func LoadConfig() *SofascoreConfig {

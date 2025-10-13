@@ -21,10 +21,10 @@ func NewTeamRepo(db *sql.DB, teamModel *sofascore_models.TopTeamsMessage) *TeamR
 
 func (r *TeamRepo) InsertTeamOverallStats(stats sofascore_models.TopTeamsMessage) error {
 	query := sq.Insert("teams").Columns(
-		"team_id", "name", "country", "country",
-		"primary_color", "secondary_color",
+		"team_id", "name", "primary_color", "secondary_color",
+		"league_id", "season_id",
 	).Suffix(
-		"ON CONFLICT (team_id, country) DO UPDATE SET " +
+		"ON CONFLICT (team_id, league_id, season_id) DO UPDATE SET " +
 			"name = EXCLUDED.name, " +
 			"primary_color = EXCLUDED.primary_color, " +
 			"secondary_color = EXCLUDED.secondary_color",
@@ -34,9 +34,10 @@ func (r *TeamRepo) InsertTeamOverallStats(stats sofascore_models.TopTeamsMessage
 		query = query.Values(
 			team.Team.ID,
 			team.Team.Name,
-			team.Team.Country,
 			team.Team.Colors.PrimaryColor,
 			team.Team.Colors.SecondaryColor,
+			team.LeagueID,
+			team.SeasonID,
 		)
 	}
 

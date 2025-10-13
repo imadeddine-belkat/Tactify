@@ -19,7 +19,7 @@ type TopTeamsStatsService struct {
 	Producer *kafka.Producer
 }
 
-// TeamStatter interface - any type with GetTeamID method
+// TeamStatter interface
 type TeamStatter interface {
 	GetTeamID() int
 	SetSeasonID(seasonId int)

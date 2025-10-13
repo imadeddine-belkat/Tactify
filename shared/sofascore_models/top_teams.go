@@ -1,12 +1,5 @@
 package sofascore_models
 
-type TeamStat[T int | float64] struct {
-	SeasonID   int               `json:"season"`
-	LeagueID   int               `json:"league"`
-	Team       Team              `json:"team"`
-	Statistics TeamStatistics[T] `json:"statistics"`
-}
-
 // GetTeamID returns the team ID - this makes it easy to use with generics
 func (t *TeamStat[T]) GetTeamID() int {
 	return t.Team.ID
@@ -79,6 +72,13 @@ type TopTeams struct {
 	PenaltyGoals          []TopTeamsPenaltyGoals          `json:"penaltyGoals"`
 	PenaltyGoalsConceded  []TopTeamsPenaltyGoalsConceded  `json:"penaltyGoalsConceded"`
 	CleanSheets           []TopTeamsCleanSheets           `json:"cleanSheets"`
+}
+
+type TeamStat[T int | float64] struct {
+	SeasonID   int               `json:"season"`
+	LeagueID   int               `json:"league"`
+	Team       Team              `json:"team"`
+	Statistics TeamStatistics[T] `json:"statistics"`
 }
 
 type TopTeamsAverageRating = *TeamStat[float64]

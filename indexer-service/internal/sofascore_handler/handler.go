@@ -3,6 +3,7 @@ package sofascore_handler
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 
@@ -35,8 +36,8 @@ func NewHandler(
 	if teamRepo != nil {
 		h.consumers[kafkaCfg.TopicsName.SofascoreTopTeamsStats] = kafka.NewConsumer(
 			kafkaCfg,
-			kafkaCfg.ConsumersGroupID.SofascoreTeamOverallStats,
 			kafkaCfg.TopicsName.SofascoreTopTeamsStats,
+			kafkaCfg.ConsumersGroupID.SofascoreTeamOverallStats,
 		)
 	}
 
@@ -46,17 +47,15 @@ func NewHandler(
 type HandlerFunc func(ctx context.Context)
 
 func (h *Handler) Route(ctx context.Context, topic string) {
-	log.Printf("[INFO] Route called for topic=%s\n", topic)
 
 	handlers := map[string]HandlerFunc{
 		h.kafkaConfig.TopicsName.SofascoreTopTeamsStats: h.handleTopTeamsStats,
 	}
 
 	if fn, ok := handlers[topic]; ok {
-		log.Printf("[INFO] Handler found for topic=%s, launching goroutine\n", topic)
 		go fn(ctx)
 	} else {
-		log.Printf("[WARN] No handler registered for topic=%s\n", topic)
+		log.Printf("[WARN] No handler found for topic=%s\n", topic)
 	}
 }
 
@@ -70,12 +69,8 @@ func batchProcess[T any, K comparable](
 	getKey func(T) K,
 	process func(T) error,
 ) {
-	log.Printf("[INFO] Starting batch processor for topic=%s batchSize=%d flushInterval=%v\n",
-		topicName, batchSize, flushInterval)
 
 	messages, errors := consumer.Subscribe(ctx)
-	log.Printf("[INFO] Subscribed to topic=%s, waiting for messages...\n", topicName)
-
 	batch := make(map[K]T)
 	flushTicker := time.NewTicker(flushInterval)
 	defer flushTicker.Stop()
@@ -96,23 +91,15 @@ func batchProcess[T any, K comparable](
 	for {
 		select {
 		case msg := <-messages:
-			log.Printf("[DEBUG] topic=%s event=message_received offset=%d\n",
-				topicName, msg.Offset)
 
 			var item T
 			if err := json.Unmarshal(msg.Value, &item); err != nil {
-				log.Printf("[ERROR] topic=%s event=unmarshal_failed error=%v raw=%s\n",
-					topicName, err, string(msg.Value))
 				continue
 			}
 
 			batch[getKey(item)] = item
-			log.Printf("[DEBUG] topic=%s event=added_to_batch current_size=%d max_size=%d\n",
-				topicName, len(batch), batchSize)
 
 			if len(batch) >= batchSize {
-				log.Printf("[INFO] topic=%s event=batch_full triggering_flush size=%d\n",
-					topicName, len(batch))
 				flushBatch("inserting")
 			}
 
@@ -195,10 +182,12 @@ func (h *Handler) handleTopTeamsStats(ctx context.Context) {
 	batchProcess(
 		ctx,
 		h.consumers[h.kafkaConfig.TopicsName.SofascoreTopTeamsStats],
-		h.config.BatchSize,
+		1,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.SofascoreTopTeamsStats,
-		func(topT sofascore_models.TopTeamsMessage) int { return topT.TopTeams.AccuratePasses[0].Team.ID },
+		func(topT sofascore_models.TopTeamsMessage) string {
+			return fmt.Sprintf("%d", time.Now().UnixNano())
+		},
 		h.teamRepo.InsertTeamOverallStats,
 	)
 

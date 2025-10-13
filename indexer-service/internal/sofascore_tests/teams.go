@@ -57,6 +57,7 @@ func main() {
 	topic := cfg.Kafka.TopicsName.SofascoreTopTeamsStats
 
 	h.Route(ctx, topic)
+	log.Printf("✅ Handler goroutine launched for topic: %s", topic)
 
 	log.Printf("✅ Sofascore Team indexer started, listening for %s...", topic)
 
