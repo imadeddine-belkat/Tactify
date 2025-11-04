@@ -42,7 +42,11 @@ func main() {
 	log.Println("✅ Database connected")
 
 	// Initialize ONLY fixture repo
-	teamRepo := sofascore_repositories.NewTeamRepo(db, &sofascore_models.StandingMessage{})
+	teamRepo := sofascore_repositories.NewTeamRepo(db,
+		&sofascore_models.StandingMessage{},
+		&sofascore_models.TeamOverallStatsMessage{},
+		&sofascore_models.MatchStatsMessage{},
+	)
 
 	// Initialize sofascore_handler with nil for other repos
 	h := sofascore_handler.NewHandler(
@@ -56,12 +60,15 @@ func main() {
 
 	leagueStandingTopic := cfg.Kafka.TopicsName.SofascoreLeagueStandings
 	overallStatsTopic := cfg.Kafka.TopicsName.SofascoreTeamOverallStats
+	matchStatsTopic := cfg.Kafka.TopicsName.SofascoreTeamMatchStats
 
 	h.Route(ctx, leagueStandingTopic)
 	h.Route(ctx, overallStatsTopic)
+	h.Route(ctx, matchStatsTopic)
 
 	log.Printf("✅ Sofascore Team indexer started, listening for %s...", leagueStandingTopic)
 	log.Printf("✅ Sofascore Team indexer started, listening for %s...", overallStatsTopic)
+	log.Printf("✅ Sofascore Team indexer started, listening for %s...", matchStatsTopic)
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)

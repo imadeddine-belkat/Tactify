@@ -1,17 +1,33 @@
 package sofascore_models
 
 type MatchStatsMessage struct {
-	SeasonId        int               `json:"season_id"`
-	LeagueId        int               `json:"league_id"`
-	Event           int               `json:"event"`
-	MatchID         int               `json:"match_id"`
-	HomeTeamID      int               `json:"homeTeamId"`
-	AwayTeamID      int               `json:"awayTeamId"`
-	MatchStatistics []MatchStatistics `json:"statistics"`
+	SeasonId        int          `json:"season_id"`
+	LeagueId        int          `json:"league_id"`
+	Event           int          `json:"event"`
+	MatchID         int          `json:"match_id"`
+	HomeTeamID      int          `json:"homeTeamId"`
+	AwayTeamID      int          `json:"awayTeamId"`
+	MatchStatistics StatsMessage `json:"statistics"`
 }
 
-type MatchStatistics struct {
-	Period string   `json:"period"`
+type StatsMessage struct {
+	Period         string  `json:"period"`
+	Key            string  `json:"key"`
+	Name           string  `json:"name"`
+	HomeValue      float64 `json:"homeValue"`
+	AwayValue      float64 `json:"awayValue"`
+	CompareCode    int     `json:"compareCode"` //Which team performed better 1-home, 2-away, 3-equal 0-unknown
+	HomeTotal      *int    `json:"homeTotal,omitempty"`
+	AwayTotal      *int    `json:"awayTotal,omitempty"`
+	StatisticsType string  `json:"statisticsType"` //"positive" higher is better,"negative" higher is worse
+	RenderType     int     `json:"renderType"`     // renderType: 1 = raw numbers (e.g., "11" vs "11"), 2 = percentage bar (e.g., "54%" vs "46%"), 3 = fraction with percentage (e.g., "32/78 (41%)"), 4 = percentage only from fraction (e.g., "42%" calculated from 8/19)
+}
+
+type MatchStats struct {
+	MatchPeriods []MatchPeriods `json:"statistics"`
+}
+type MatchPeriods struct {
+	Period string   `json:"period"` //first half -> 1, second half -> 2
 	Groups []Groups `json:"groups"`
 }
 

@@ -8,23 +8,30 @@ import (
 )
 
 type TeamRepo struct {
-	db             *sql.DB
-	LeagueStanding *sofascore_models.StandingMessage
+	db               *sql.DB
+	LeagueStanding   *sofascore_models.StandingMessage
+	TeamOverallStats *sofascore_models.TeamOverallStatsMessage
+	MatchStats       *sofascore_models.MatchStatsMessage
 }
 
-func NewTeamRepo(db *sql.DB, leagueStanding *sofascore_models.StandingMessage) *TeamRepo {
+func NewTeamRepo(db *sql.DB, leagueStanding *sofascore_models.StandingMessage,
+	ovrStats *sofascore_models.TeamOverallStatsMessage,
+	MatchStats *sofascore_models.MatchStatsMessage) *TeamRepo {
 	return &TeamRepo{
-		db:             db,
-		LeagueStanding: leagueStanding,
+		db:               db,
+		LeagueStanding:   leagueStanding,
+		TeamOverallStats: ovrStats,
+		MatchStats:       MatchStats,
 	}
 }
 
 func (r *TeamRepo) InsertTeamInfo(standing sofascore_models.StandingMessage) error {
-	query := sq.Insert("teams").Columns(
-		"team_id", "name", "league_id", "primary_color", "secondary_color",
-	).Suffix(
-		"ON CONFLICT (team_id, league_id) DO NOTHING ",
-	).PlaceholderFormat(sq.Dollar)
+	query := sq.Insert("teams").
+		Columns(
+			"team_id", "name", "league_id", "primary_color", "secondary_color").
+		Suffix(
+			"ON CONFLICT (team_id, league_id) DO NOTHING ").
+		PlaceholderFormat(sq.Dollar)
 
 	query = query.Values(
 		standing.Row.Team.ID,
@@ -47,8 +54,8 @@ func (r *TeamRepo) InsertTeamInfo(standing sofascore_models.StandingMessage) err
 	return nil
 }
 
-func (r *TeamRepo) InsertTeamOverallStats(msg sofascore_models.TeamOverallStatsMessage) error {
-	stats := msg.Stats
+func (r *TeamRepo) InsertTeamOverallStats(ovrStats sofascore_models.TeamOverallStatsMessage) error {
+	stats := ovrStats.Stats
 
 	query := sq.Insert("team_overall_stats").
 		Columns(
@@ -206,9 +213,9 @@ func (r *TeamRepo) InsertTeamOverallStats(msg sofascore_models.TeamOverallStatsM
 		).
 		Values(
 			// Primary Keys
-			msg.TeamID,
-			msg.LeagueID,
-			msg.SeasonID,
+			ovrStats.TeamID,
+			ovrStats.LeagueID,
+			ovrStats.SeasonID,
 
 			// Offensive Stats
 			stats.GoalsScored,
@@ -484,4 +491,66 @@ func (r *TeamRepo) InsertTeamOverallStats(msg sofascore_models.TeamOverallStatsM
 
 	_, err = r.db.Exec(sqlQuery, args...)
 	return err
+}
+
+func periodToNum(period string) int {
+	switch period {
+	case "ALL":
+		return 0
+	case "1ST":
+		return 1
+	case "2ND":
+		return 2
+	}
+	return 9999
+}
+
+func (r *TeamRepo) InsertTeamMatchStats(matchStat sofascore_models.MatchStatsMessage) error {
+	query := sq.Insert("team_match_stats").
+		Columns(
+			"league_id", "season_id", "match_id", "home_team_id", "away_team_id", "event",
+			"stat", "home_value", "away_value", "home_total", "away_total", "compare_code",
+			"stat_type", "render_type", "period").
+		Suffix(
+			"ON CONFLICT (league_id, season_id, match_id, home_team_id, away_team_id, period, stat) " +
+				"DO UPDATE SET" +
+				" home_value = EXCLUDED.home_value, " +
+				" away_value = EXCLUDED.away_value, " +
+				" home_total = EXCLUDED.home_total, " +
+				" away_total = EXCLUDED.away_total, " +
+				"compare_code = EXCLUDED.compare_code, " +
+				"stat_type = EXCLUDED.stat_type, " +
+				"render_type = EXCLUDED.render_type, " +
+				"updated_at = EXCLUDED.updated_at ").
+		PlaceholderFormat(sq.Dollar)
+
+	query = query.Values(
+		matchStat.LeagueId,
+		matchStat.SeasonId,
+		matchStat.MatchID,
+		matchStat.HomeTeamID,
+		matchStat.AwayTeamID,
+		matchStat.Event,
+		matchStat.MatchStatistics.Name,
+		matchStat.MatchStatistics.HomeValue,
+		matchStat.MatchStatistics.AwayValue,
+		matchStat.MatchStatistics.HomeTotal,
+		matchStat.MatchStatistics.AwayTotal,
+		matchStat.MatchStatistics.CompareCode,
+		matchStat.MatchStatistics.StatisticsType,
+		matchStat.MatchStatistics.RenderType,
+		periodToNum(matchStat.MatchStatistics.Period),
+	)
+
+	sqlQuery, args, err := query.ToSql()
+	if err != nil {
+		return err
+	}
+
+	_, err = r.db.Exec(sqlQuery, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -17,7 +17,6 @@ type Event struct {
 }
 
 type Tournament struct {
-	ID               int              `json:"id,omitempty"`
 	Name             string           `json:"name,omitempty"`
 	UniqueTournament UniqueTournament `json:"uniqueTournament,omitempty"`
 }
