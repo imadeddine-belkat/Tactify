@@ -13,9 +13,17 @@ import (
 type SofascoreConfig struct {
 	SofascoreApi SofascoreApi
 	KafkaConfig  kafka.KafkaConfig
+	Tor          TorConfig
 
 	PublishWorkerCount int `envconfig:"WORKER_PUBLISH_POOL_SIZE" default:"100"`
 	FetchWorkerCount   int `envconfig:"WORKER_FETCH_POOL_SIZE" default:"50"`
+}
+
+type TorConfig struct {
+	Enabled     bool   `envconfig:"TOR_ENABLED" default:"false"`
+	SocksAddr   string `envconfig:"TOR_SOCKS_ADDR" default:"127.0.0.1:9050"`
+	ControlAddr string `envconfig:"TOR_CONTROL_ADDR" default:"127.0.0.1:9051"`
+	Password    string `envconfig:"TOR_PASSWORD" default:""`
 }
 
 type SofascoreApi struct {
