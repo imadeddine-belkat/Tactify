@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	kafka "github.com/imadbelkat1/kafka/config"
+	kafka "github.com/imadeddine-belkat/kafka/config"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 )

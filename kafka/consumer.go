@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/imadbelkat1/kafka/config"
+	"github.com/imadeddine-belkat/kafka/config"
 	"github.com/segmentio/kafka-go"
 )
 

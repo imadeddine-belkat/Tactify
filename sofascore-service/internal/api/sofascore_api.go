@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/chromedp/chromedp"
-	"github.com/imadbelkat1/sofascore-service/config"
+	"github.com/imadeddine-belkat/sofascore-service/config"
 	"golang.org/x/net/proxy"
 )
 

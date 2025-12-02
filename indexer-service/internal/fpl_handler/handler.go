@@ -6,11 +6,11 @@ import (
 	"log"
 	"time"
 
-	"github.com/imadbelkat1/indexer-service/config"
-	"github.com/imadbelkat1/indexer-service/internal/fpl_repositories"
-	"github.com/imadbelkat1/kafka"
-	kafkaConfig "github.com/imadbelkat1/kafka/config"
-	"github.com/imadbelkat1/shared/fpl_models"
+	"github.com/imadeddine-belkat/indexer-service/config"
+	"github.com/imadeddine-belkat/indexer-service/internal/fpl_repositories"
+	"github.com/imadeddine-belkat/kafka"
+	kafkaConfig "github.com/imadeddine-belkat/kafka/config"
+	"github.com/imadeddine-belkat/shared/fpl_models"
 )
 
 type Handler struct {

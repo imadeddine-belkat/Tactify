@@ -10,10 +10,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/imadbelkat1/indexer-service/config"
-	"github.com/imadbelkat1/indexer-service/internal/fpl_handler"
-	"github.com/imadbelkat1/indexer-service/internal/fpl_repositories"
-	"github.com/imadbelkat1/shared/fpl_models"
+	"github.com/imadeddine-belkat/indexer-service/config"
+	"github.com/imadeddine-belkat/indexer-service/internal/fpl_handler"
+	"github.com/imadeddine-belkat/indexer-service/internal/fpl_repositories"
+	"github.com/imadeddine-belkat/shared/fpl_models"
 	_ "github.com/lib/pq"
 )
 

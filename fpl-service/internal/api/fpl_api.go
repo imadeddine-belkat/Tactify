@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/imadbelkat1/fpl-service/config"
+	"github.com/imadeddine-belkat/fpl-service/config"
 )
 
 type FplApiClient struct {

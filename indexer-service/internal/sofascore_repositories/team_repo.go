@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/imadbelkat1/indexer-service/internal/sofascore_helper"
-	"github.com/imadbelkat1/shared/sofascore_models"
+	"github.com/imadeddine-belkat/indexer-service/internal/sofascore_helper"
+	"github.com/imadeddine-belkat/shared/sofascore_models"
 )
 
 type TeamRepo struct {

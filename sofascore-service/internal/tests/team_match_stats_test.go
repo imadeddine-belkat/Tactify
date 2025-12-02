@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/imadbelkat1/kafka"
-	"github.com/imadbelkat1/sofascore-service/config"
-	sofascore_api "github.com/imadbelkat1/sofascore-service/internal/api"
-	"github.com/imadbelkat1/sofascore-service/internal/services"
+	"github.com/imadeddine-belkat/kafka"
+	"github.com/imadeddine-belkat/sofascore-service/config"
+	sofascore_api "github.com/imadeddine-belkat/sofascore-service/internal/api"
+	"github.com/imadeddine-belkat/sofascore-service/internal/services"
 )
 
 func TestTeamMatchStatsService(t *testing.T) {

@@ -4,10 +4,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/imadbelkat1/fpl-service/config"
-	fpl_api "github.com/imadbelkat1/fpl-service/internal/api"
-	. "github.com/imadbelkat1/fpl-service/internal/services"
-	"github.com/imadbelkat1/kafka"
+	"github.com/imadeddine-belkat/fpl-service/config"
+	fpl_api "github.com/imadeddine-belkat/fpl-service/internal/api"
+	. "github.com/imadeddine-belkat/fpl-service/internal/services"
+	"github.com/imadeddine-belkat/kafka"
 )
 
 func TestManagersApiService(t *testing.T) {

@@ -5,11 +5,11 @@ import (
 	"log"
 	"testing"
 
-	"github.com/imadbelkat1/fpl-service/config"
-	fpl_api "github.com/imadbelkat1/fpl-service/internal/api"
-	"github.com/imadbelkat1/kafka"
+	"github.com/imadeddine-belkat/fpl-service/config"
+	fpl_api "github.com/imadeddine-belkat/fpl-service/internal/api"
+	"github.com/imadeddine-belkat/kafka"
 
-	teamService "github.com/imadbelkat1/fpl-service/internal/services"
+	teamService "github.com/imadeddine-belkat/fpl-service/internal/services"
 )
 
 func TestTeamApiService(t *testing.T) {

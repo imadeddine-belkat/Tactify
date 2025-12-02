@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/imadbelkat1/shared/fpl_models"
+	"github.com/imadeddine-belkat/shared/fpl_models"
 )
 
 // Services aggregates all service interfaces for FPL data

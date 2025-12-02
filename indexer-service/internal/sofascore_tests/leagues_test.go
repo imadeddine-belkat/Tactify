@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/imadbelkat1/indexer-service/config"
-	"github.com/imadbelkat1/indexer-service/internal/sofascore_handler"
-	"github.com/imadbelkat1/indexer-service/internal/sofascore_repositories"
-	"github.com/imadbelkat1/shared/sofascore_models"
+	"github.com/imadeddine-belkat/indexer-service/config"
+	"github.com/imadeddine-belkat/indexer-service/internal/sofascore_handler"
+	"github.com/imadeddine-belkat/indexer-service/internal/sofascore_repositories"
+	"github.com/imadeddine-belkat/shared/sofascore_models"
 )
 
 func TestLeagueRepo(t *testing.T) {

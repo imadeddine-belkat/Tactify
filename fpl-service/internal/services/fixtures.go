@@ -8,10 +8,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/imadbelkat1/fpl-service/config"
-	fpl_api "github.com/imadbelkat1/fpl-service/internal/api"
-	"github.com/imadbelkat1/kafka"
-	"github.com/imadbelkat1/shared/fpl_models"
+	"github.com/imadeddine-belkat/fpl-service/config"
+	fpl_api "github.com/imadeddine-belkat/fpl-service/internal/api"
+	"github.com/imadeddine-belkat/kafka"
+	"github.com/imadeddine-belkat/shared/fpl_models"
 )
 
 type FixturesApiService struct {

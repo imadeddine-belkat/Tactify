@@ -7,7 +7,7 @@ import (
 	"log"
 	"time"
 
-	kafkaConfig "github.com/imadbelkat1/kafka/config"
+	kafkaConfig "github.com/imadeddine-belkat/kafka/config"
 	"github.com/segmentio/kafka-go"
 )
 

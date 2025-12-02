@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/imadbelkat1/kafka"
-	kafkaConfig "github.com/imadbelkat1/kafka/config"
+	"github.com/imadeddine-belkat/kafka"
+	kafkaConfig "github.com/imadeddine-belkat/kafka/config"
 )
 
 func main() {

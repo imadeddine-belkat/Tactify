@@ -7,10 +7,10 @@ import (
 	"log"
 	"sync"
 
-	"github.com/imadbelkat1/kafka"
-	"github.com/imadbelkat1/shared/sofascore_models"
-	"github.com/imadbelkat1/sofascore-service/config"
-	sofascore_api "github.com/imadbelkat1/sofascore-service/internal/api"
+	"github.com/imadeddine-belkat/kafka"
+	"github.com/imadeddine-belkat/shared/sofascore_models"
+	"github.com/imadeddine-belkat/sofascore-service/config"
+	sofascore_api "github.com/imadeddine-belkat/sofascore-service/internal/api"
 )
 
 type TeamMatchStatsService struct {

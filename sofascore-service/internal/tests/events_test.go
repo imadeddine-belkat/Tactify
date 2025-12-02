@@ -8,10 +8,10 @@ import (
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/sync/semaphore"
 
-	"github.com/imadbelkat1/kafka"
-	"github.com/imadbelkat1/sofascore-service/config"
-	sofascore_api "github.com/imadbelkat1/sofascore-service/internal/api"
-	eventService "github.com/imadbelkat1/sofascore-service/internal/services"
+	"github.com/imadeddine-belkat/kafka"
+	"github.com/imadeddine-belkat/sofascore-service/config"
+	sofascore_api "github.com/imadeddine-belkat/sofascore-service/internal/api"
+	eventService "github.com/imadeddine-belkat/sofascore-service/internal/services"
 )
 
 func TestEventsService(t *testing.T) {

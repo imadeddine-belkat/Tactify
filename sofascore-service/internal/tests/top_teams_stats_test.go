@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/imadbelkat1/kafka"
-	"github.com/imadbelkat1/sofascore-service/config"
-	sofascore_api "github.com/imadbelkat1/sofascore-service/internal/api"
-	"github.com/imadbelkat1/sofascore-service/internal/services"
+	"github.com/imadeddine-belkat/kafka"
+	"github.com/imadeddine-belkat/sofascore-service/config"
+	sofascore_api "github.com/imadeddine-belkat/sofascore-service/internal/api"
+	"github.com/imadeddine-belkat/sofascore-service/internal/services"
 )
 
 func TestTopTeamsStatsService(t *testing.T) {
@@ -25,7 +25,7 @@ func TestTopTeamsStatsService(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	seasonID := cfg.MustGetSeasonID("PREMIERLEAGUE", "2526")
+	seasonID := cfg.MustGetSeasonID("PREMIERLEAGUE", "2425")
 	leagueID := cfg.SofascoreApi.LeaguesID.PremierLeague
 
 	log.Printf("Testing season %d, league %d", seasonID, leagueID)

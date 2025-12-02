@@ -5,7 +5,7 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/imadbelkat1/shared/sofascore_models"
+	"github.com/imadeddine-belkat/shared/sofascore_models"
 )
 
 type MatchRepo struct {

@@ -5,7 +5,7 @@ import (
 	"log"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/imadbelkat1/shared/fpl_models"
+	"github.com/imadeddine-belkat/shared/fpl_models"
 )
 
 type FixtureRepo struct {
