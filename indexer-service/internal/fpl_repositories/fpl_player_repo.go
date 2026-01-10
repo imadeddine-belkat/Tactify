@@ -25,16 +25,6 @@ func NewPlayerRepo(db *sql.DB, playerBootstrapModel *fpl_models.PlayerBootstrap,
 	}
 }
 
-func (r *PlayerRepo) CountPlayers() (int, error) {
-	var count int
-	query := "SELECT COUNT(*) FROM players"
-	err := r.db.QueryRow(query).Scan(&count)
-	if err != nil {
-		return 0, fmt.Errorf("counting players: %w", err)
-	}
-	return count, nil
-}
-
 func nullIfEmpty(s string) interface{} {
 	if s == "" {
 		return nil
@@ -147,7 +137,7 @@ func (r *PlayerRepo) InsertPlayers(players []fpl_models.PlayerBootstrapMessage) 
 	}
 
 	rowsAffected, _ := result.RowsAffected()
-	log.Printf("✅ Players insert completed: %d rows affected", rowsAffected)
+	log.Printf("✅ TeamPlayers insert completed: %d rows affected", rowsAffected)
 
 	return nil
 }

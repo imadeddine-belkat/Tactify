@@ -336,16 +336,6 @@ func (h *Handler) handlePlayerBootstrap(ctx context.Context) {
 		case <-flushTicker.C:
 			flushBatch("flushing")
 
-		case <-verifyTicker.C:
-			if h.playerRepo != nil {
-				count, err := h.playerRepo.CountPlayers()
-				if err != nil {
-					log.Printf("⚠️  Error counting players: %v", err)
-				} else {
-					log.Printf("📊 Players in database: %d (received: %d, processed: %d)", count, totalReceived, totalProcessed)
-				}
-			}
-
 		case err := <-errors:
 			if err != nil {
 				log.Println("Error consuming player bootstrap message:", err)
@@ -353,10 +343,6 @@ func (h *Handler) handlePlayerBootstrap(ctx context.Context) {
 
 		case <-ctx.Done():
 			flushBatch("inserting on shutdown")
-			if h.playerRepo != nil {
-				count, _ := h.playerRepo.CountPlayers()
-				log.Printf("🏁 Final stats - Players in DB: %d, Received: %d, Processed: %d", count, totalReceived, totalProcessed)
-			}
 			return
 		}
 	}

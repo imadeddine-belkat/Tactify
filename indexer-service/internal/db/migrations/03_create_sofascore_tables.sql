@@ -1,5 +1,10 @@
 -- Sofascore Service Database Schema
 \connect sofascore;
+
+-- ==========================================
+-- 1. BASE TABLES
+-- ==========================================
+
 -- Leagues
 CREATE TABLE IF NOT EXISTS leagues (
                                        league_id INTEGER PRIMARY KEY,
@@ -11,11 +16,23 @@ CREATE TABLE IF NOT EXISTS leagues (
 -- Seasons
 CREATE TABLE IF NOT EXISTS seasons (
                                        season_id INTEGER PRIMARY KEY,
-                                       league_id INTEGER,
+                                       league_id INTEGER NOT NULL,
                                        name VARCHAR(255),
                                        year VARCHAR(20),
                                        is_current BOOLEAN,
-                                       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                                       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                       CONSTRAINT fk_seasons_league FOREIGN KEY (league_id) REFERENCES leagues(league_id)
+);
+
+-- Teams
+CREATE TABLE IF NOT EXISTS teams (
+                                     team_id INTEGER NOT NULL,
+                                     league_id INTEGER NOT NULL,
+                                     name VARCHAR(255),
+                                     primary_color VARCHAR(50),
+                                     secondary_color VARCHAR(50),
+                                     PRIMARY KEY (team_id, league_id),
+                                     CONSTRAINT fk_teams_league FOREIGN KEY (league_id) REFERENCES leagues(league_id)
 );
 
 -- Matches
@@ -28,21 +45,21 @@ CREATE TABLE IF NOT EXISTS matches (
                                        home_team_name VARCHAR(255),
                                        away_team_name VARCHAR(255),
                                        start_time TIMESTAMP,
-                                       round VARCHAR(50), -- or INTEGER depending on data
+                                       round VARCHAR(50),
                                        status VARCHAR(50),
                                        status_description VARCHAR(255),
                                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                       PRIMARY KEY (match_id, season_id, league_id)
-);
 
--- Teams (Sofascore)
-CREATE TABLE IF NOT EXISTS teams (
-                                     team_id INTEGER NOT NULL,
-                                     league_id INTEGER NOT NULL,
-                                     name VARCHAR(255),
-                                     primary_color VARCHAR(50),
-                                     secondary_color VARCHAR(50),
-                                     PRIMARY KEY (team_id, league_id)
+                                       PRIMARY KEY (match_id, season_id, league_id),
+    -- Constraint to ensure match_id is unique globally, allowing FK references from stats tables
+                                       CONSTRAINT uq_matches_match_id UNIQUE (match_id),
+
+    -- Foreign Keys
+                                       CONSTRAINT fk_matches_season FOREIGN KEY (season_id) REFERENCES seasons(season_id),
+                                       CONSTRAINT fk_matches_league FOREIGN KEY (league_id) REFERENCES leagues(league_id),
+    -- Link teams using composite key (team + league)
+                                       CONSTRAINT fk_matches_home_team FOREIGN KEY (home_team_id, league_id) REFERENCES teams(team_id, league_id),
+                                       CONSTRAINT fk_matches_away_team FOREIGN KEY (away_team_id, league_id) REFERENCES teams(team_id, league_id)
 );
 
 -- Team Overall Stats
@@ -162,7 +179,7 @@ CREATE TABLE IF NOT EXISTS team_overall_stats (
                                                   matches INTEGER,
                                                   awarded_matches INTEGER,
 
-    -- Stats Against (Defensive Perspective)
+    -- Stats Against
                                                   accurate_final_third_passes_against INTEGER,
                                                   accurate_opposition_half_passes_against INTEGER,
                                                   accurate_own_half_passes_against INTEGER,
@@ -200,77 +217,212 @@ CREATE TABLE IF NOT EXISTS team_overall_stats (
                                                   yellow_cards_against INTEGER,
 
                                                   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                                  PRIMARY KEY (team_id, league_id, season_id)
+                                                  PRIMARY KEY (team_id, league_id, season_id),
+
+    -- Foreign Keys
+                                                  CONSTRAINT fk_ovr_stats_team FOREIGN KEY (team_id, league_id) REFERENCES teams(team_id, league_id),
+                                                  CONSTRAINT fk_ovr_stats_season FOREIGN KEY (season_id) REFERENCES seasons(season_id)
 );
 
--- Match Stats Tables (Columns inferred from base; specific stats are dynamic in code)
+-- ==========================================
+-- 2. DYNAMIC MATCH STATS TABLES
+-- ==========================================
 
+-- Match Overview
 CREATE TABLE IF NOT EXISTS match_overview (
                                               match_id INTEGER NOT NULL,
                                               period VARCHAR(20) NOT NULL,
                                               home_team_id INTEGER,
                                               away_team_id INTEGER,
                                               updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -- Add dynamic stats columns here (e.g. possession, corners)
-                                              PRIMARY KEY (match_id, period)
+
+                                              ball_possession_home DECIMAL,
+                                              ball_possession_away DECIMAL,
+                                              expected_goals_home DECIMAL,
+                                              expected_goals_away DECIMAL,
+                                              big_chances_home INTEGER,
+                                              big_chances_away INTEGER,
+                                              total_shots_home INTEGER,
+                                              total_shots_away INTEGER,
+                                              goalkeeper_saves_home INTEGER,
+                                              goalkeeper_saves_away INTEGER,
+                                              corner_kicks_home INTEGER,
+                                              corner_kicks_away INTEGER,
+                                              fouls_home INTEGER,
+                                              fouls_away INTEGER,
+                                              passes_home INTEGER,
+                                              passes_away INTEGER,
+                                              tackles_home INTEGER,
+                                              tackles_away INTEGER,
+                                              free_kicks_home INTEGER,
+                                              free_kicks_away INTEGER,
+                                              yellow_cards_home INTEGER,
+                                              yellow_cards_away INTEGER,
+
+                                              PRIMARY KEY (match_id, period),
+                                              CONSTRAINT fk_overview_match FOREIGN KEY (match_id) REFERENCES matches(match_id)
 );
 
+-- Match Shots
 CREATE TABLE IF NOT EXISTS match_shots (
                                            match_id INTEGER NOT NULL,
                                            period VARCHAR(20) NOT NULL,
                                            home_team_id INTEGER,
                                            away_team_id INTEGER,
                                            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -- Add dynamic stats columns here (e.g. total_shots, on_target)
-                                           PRIMARY KEY (match_id, period)
+
+                                           total_shots_home INTEGER,
+                                           total_shots_away INTEGER,
+                                           shots_on_target_home INTEGER,
+                                           shots_on_target_away INTEGER,
+                                           hit_woodwork_home INTEGER,
+                                           hit_woodwork_away INTEGER,
+                                           shots_off_target_home INTEGER,
+                                           shots_off_target_away INTEGER,
+                                           blocked_shots_home INTEGER,
+                                           blocked_shots_away INTEGER,
+                                           shots_inside_box_home INTEGER,
+                                           shots_inside_box_away INTEGER,
+                                           shots_outside_box_home INTEGER,
+                                           shots_outside_box_away INTEGER,
+
+                                           PRIMARY KEY (match_id, period),
+                                           CONSTRAINT fk_shots_match FOREIGN KEY (match_id) REFERENCES matches(match_id)
 );
 
+-- Match Attack
 CREATE TABLE IF NOT EXISTS match_attack (
                                             match_id INTEGER NOT NULL,
                                             period VARCHAR(20) NOT NULL,
                                             home_team_id INTEGER,
                                             away_team_id INTEGER,
                                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -- Add dynamic stats columns here
-                                            PRIMARY KEY (match_id, period)
+
+                                            big_chances_scored_home INTEGER,
+                                            big_chances_scored_away INTEGER,
+                                            big_chances_missed_home INTEGER,
+                                            big_chances_missed_away INTEGER,
+                                            through_balls_home INTEGER,
+                                            through_balls_away INTEGER,
+                                            touches_in_penalty_area_home INTEGER,
+                                            touches_in_penalty_area_away INTEGER,
+                                            fouled_in_final_third_home INTEGER,
+                                            fouled_in_final_third_away INTEGER,
+                                            offsides_home INTEGER,
+                                            offsides_away INTEGER,
+
+                                            PRIMARY KEY (match_id, period),
+                                            CONSTRAINT fk_attack_match FOREIGN KEY (match_id) REFERENCES matches(match_id)
 );
 
+-- Match Passes
 CREATE TABLE IF NOT EXISTS match_passes (
                                             match_id INTEGER NOT NULL,
                                             period VARCHAR(20) NOT NULL,
                                             home_team_id INTEGER,
                                             away_team_id INTEGER,
                                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -- Add dynamic stats columns here
-                                            PRIMARY KEY (match_id, period)
+
+                                            accurate_passes_home INTEGER,
+                                            accurate_passes_away INTEGER,
+                                            throw_ins_home INTEGER,
+                                            throw_ins_away INTEGER,
+                                            final_third_entries_home INTEGER,
+                                            final_third_entries_away INTEGER,
+                                            final_third_phase_home INTEGER,
+                                            final_third_phase_away INTEGER,
+                                            final_third_phase_total_home INTEGER,
+                                            final_third_phase_total_away INTEGER,
+                                            long_balls_home INTEGER,
+                                            long_balls_away INTEGER,
+                                            long_balls_total_home INTEGER,
+                                            long_balls_total_away INTEGER,
+                                            crosses_home INTEGER,
+                                            crosses_away INTEGER,
+                                            crosses_total_home INTEGER,
+                                            crosses_total_away INTEGER,
+
+                                            PRIMARY KEY (match_id, period),
+                                            CONSTRAINT fk_passes_match FOREIGN KEY (match_id) REFERENCES matches(match_id)
 );
 
+-- Match Duels
 CREATE TABLE IF NOT EXISTS match_duels (
                                            match_id INTEGER NOT NULL,
                                            period VARCHAR(20) NOT NULL,
                                            home_team_id INTEGER,
                                            away_team_id INTEGER,
                                            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -- Add dynamic stats columns here
-                                           PRIMARY KEY (match_id, period)
+
+                                           duels_won_percent_home DECIMAL,
+                                           duels_won_percent_away DECIMAL,
+                                           dispossessed_home INTEGER,
+                                           dispossessed_away INTEGER,
+                                           ground_duels_home INTEGER,
+                                           ground_duels_away INTEGER,
+                                           ground_duels_total_home INTEGER,
+                                           ground_duels_total_away INTEGER,
+                                           aerial_duels_home INTEGER,
+                                           aerial_duels_away INTEGER,
+                                           aerial_duels_total_home INTEGER,
+                                           aerial_duels_total_away INTEGER,
+                                           dribbles_home INTEGER,
+                                           dribbles_away INTEGER,
+                                           dribbles_total_home INTEGER,
+                                           dribbles_total_away INTEGER,
+
+                                           PRIMARY KEY (match_id, period),
+                                           CONSTRAINT fk_duels_match FOREIGN KEY (match_id) REFERENCES matches(match_id)
 );
 
+-- Match Defending
 CREATE TABLE IF NOT EXISTS match_defending (
                                                match_id INTEGER NOT NULL,
                                                period VARCHAR(20) NOT NULL,
                                                home_team_id INTEGER,
                                                away_team_id INTEGER,
                                                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -- Add dynamic stats columns here
-                                               PRIMARY KEY (match_id, period)
+
+                                               tackles_won_home INTEGER,
+                                               tackles_won_away INTEGER,
+                                               tackles_won_total_home INTEGER,
+                                               tackles_won_total_away INTEGER,
+                                               total_tackles_home INTEGER,
+                                               total_tackles_away INTEGER,
+                                               interceptions_home INTEGER,
+                                               interceptions_away INTEGER,
+                                               recoveries_home INTEGER,
+                                               recoveries_away INTEGER,
+                                               clearances_home INTEGER,
+                                               clearances_away INTEGER,
+                                               errors_lead_to_shot_home INTEGER,
+                                               errors_lead_to_shot_away INTEGER,
+
+                                               PRIMARY KEY (match_id, period),
+                                               CONSTRAINT fk_defending_match FOREIGN KEY (match_id) REFERENCES matches(match_id)
 );
 
+-- Match Goalkeeping
 CREATE TABLE IF NOT EXISTS match_goalkeeping (
                                                  match_id INTEGER NOT NULL,
                                                  period VARCHAR(20) NOT NULL,
                                                  home_team_id INTEGER,
                                                  away_team_id INTEGER,
                                                  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -- Add dynamic stats columns here
-                                                 PRIMARY KEY (match_id, period)
+
+                                                 total_saves_home INTEGER,
+                                                 total_saves_away INTEGER,
+                                                 goals_prevented_home DECIMAL,
+                                                 goals_prevented_away DECIMAL,
+                                                 big_saves_home INTEGER,
+                                                 big_saves_away INTEGER,
+                                                 high_claims_home INTEGER,
+                                                 high_claims_away INTEGER,
+                                                 punches_home INTEGER,
+                                                 punches_away INTEGER,
+                                                 goal_kicks_home INTEGER,
+                                                 goal_kicks_away INTEGER,
+
+                                                 PRIMARY KEY (match_id, period),
+                                                 CONSTRAINT fk_goalkeeping_match FOREIGN KEY (match_id) REFERENCES matches(match_id)
 );

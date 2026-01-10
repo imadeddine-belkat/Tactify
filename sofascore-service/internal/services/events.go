@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 
@@ -16,21 +15,6 @@ type EventsService struct {
 	Config   *config.SofascoreConfig
 	Client   *sofascore_api.SofascoreApiClient
 	Producer *kafka.Producer
-}
-
-func (e *EventsService) GetRoundMatches(ctx context.Context, seasonId, leagueId, round int) (*sofascore_models.Events, error) {
-	event := &sofascore_models.Events{}
-	leagueRoundMatches := e.Config.SofascoreApi.LeagueEndpoints.LeagueRoundMatches //unique-tournament/%d/seasonId/%d/events/round/%d
-	log.Printf("leagueRoundMatches raw: %q", leagueRoundMatches)
-
-	endpoint := fmt.Sprintf(leagueRoundMatches, leagueId, seasonId, round)
-	log.Println(endpoint)
-
-	if err := e.Client.GetAndUnmarshal(ctx, endpoint, event); err != nil {
-		return nil, fmt.Errorf("fetching events data: %w", err)
-	}
-
-	return event, nil
 }
 
 func (e *EventsService) UpdateRoundMatches(ctx context.Context, seasonId, leagueId, round int) error {
@@ -49,17 +33,27 @@ func (e *EventsService) UpdateRoundMatches(ctx context.Context, seasonId, league
 	return nil
 }
 
+func (e *EventsService) GetRoundMatches(ctx context.Context, seasonId, leagueId, round int) (*sofascore_models.Events, error) {
+	event := &sofascore_models.Events{}
+	leagueRoundMatches := e.Config.SofascoreApi.LeagueEndpoints.LeagueRoundMatches //unique-tournament/%d/seasonId/%d/events/round/%d
+	log.Printf("leagueRoundMatches raw: %q", leagueRoundMatches)
+
+	endpoint := fmt.Sprintf(leagueRoundMatches, leagueId, seasonId, round)
+	log.Println(endpoint)
+
+	if err := e.Client.GetAndUnmarshal(ctx, endpoint, event); err != nil {
+		return nil, fmt.Errorf("fetching events data: %w", err)
+	}
+
+	return event, nil
+}
+
 func (e *EventsService) publishRoundMatches(ctx context.Context, event *sofascore_models.Event) error {
 	roundMatchesTopic := e.Config.KafkaConfig.TopicsName.SofascoreLeagueRoundMatches.Name
 
-	value, err := json.Marshal(&event)
-	if err != nil {
-		return fmt.Errorf("error marshalling event id %d: %w", event.ID, err)
-	}
-
 	key := []byte(fmt.Sprintf("%d-%s-%s", event.ID, event.Season.Name, event.Tournament.Name))
 
-	if err := e.Producer.Publish(ctx, roundMatchesTopic, key, value); err != nil {
+	if err := e.Producer.PublishWithProcess(ctx, event, roundMatchesTopic, key); err != nil {
 		return fmt.Errorf("error publishing event: %w", err)
 	}
 

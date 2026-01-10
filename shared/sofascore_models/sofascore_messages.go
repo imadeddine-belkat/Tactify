@@ -8,6 +8,13 @@ type StandingMessage struct {
 	Row      Row `json:"row"`
 }
 
+type PlayerMessage struct {
+	SeasonID int    `json:"seasonId"`
+	LeagueID int    `json:"leagueId"`
+	TeamID   int    `json:"teamId"`
+	Player   Player `json:"player"`
+}
+
 type MatchLineupMessage struct {
 	SeasonID    int         `json:"season"`
 	LeagueID    int         `json:"league"`

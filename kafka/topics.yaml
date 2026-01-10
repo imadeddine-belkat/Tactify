@@ -108,6 +108,10 @@ kafka:
       name: sofascore-player-team-stats
       partitions: 6
 
+    sofascore_player_info:
+      name: sofascore-player-info
+      partitions: 3
+
     sofascore_player_seasons_stats:
       name: sofascore-player-seasons-stats
       partitions: 3

@@ -29,7 +29,13 @@ func TestSeasonService(t *testing.T) {
 		},
 	}
 
-	if err := service.UpdateAllLeaguesSeasons(ctx); err != nil {
+	premierLeagueID := cfg.SofascoreApi.LeaguesID.PremierLeague
+
+	/*if err := service.UpdateAllLeaguesSeasons(ctx); err != nil {
+		t.Fatal(err)
+	}*/
+
+	if err := service.UpdateLeaguesSeasons(ctx, premierLeagueID); err != nil {
 		t.Fatal(err)
 	}
 

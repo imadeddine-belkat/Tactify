@@ -1,0 +1,8 @@
+syntax = "proto3";
+package sofascore;
+
+option go_package = "indexer-service/gRPC/sofascore";
+
+service sofascore {
+  rpc GetLeague;
+}

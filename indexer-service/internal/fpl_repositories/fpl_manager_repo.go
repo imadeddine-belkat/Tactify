@@ -83,7 +83,7 @@ func (r *ManagerRepo) InsertManagerInfo(entry *fpl_models.EntryMessage) error {
 	}
 
 	rowsAffected, _ := result.RowsAffected()
-	log.Printf("✅ Players insert completed: %d rows affected", rowsAffected)
+	log.Printf("✅ TeamPlayers insert completed: %d rows affected", rowsAffected)
 	return err
 }
 

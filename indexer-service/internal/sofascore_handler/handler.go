@@ -89,7 +89,7 @@ func (h *Handler) Route(ctx context.Context, topic string) {
 
 	handlers := map[string]HandlerFunc{
 		h.kafkaConfig.TopicsName.SofascoreLeagueStandings.Name:    h.handleTeamsInfo,
-		h.kafkaConfig.TopicsName.SofascoreTeamOverallStats.Name:   h.handleTeamStats,
+		h.kafkaConfig.TopicsName.SofascoreTeamOverallStats.Name:   h.handleTeamOverallStats,
 		h.kafkaConfig.TopicsName.SofascoreTeamMatchStats.Name:     h.handleTeamMatchStat,
 		h.kafkaConfig.TopicsName.SofascoreLeagueRoundMatches.Name: h.handleLeagueRoundMatches,
 		h.kafkaConfig.TopicsName.SofascoreLeagueIDs.Name:          h.handleLeagueInfo,
@@ -162,66 +162,6 @@ func batchProcess[T any, K comparable](
 	}
 }
 
-// Generic batch processor with slice conversion - for handlers that need to convert map to slice
-func batchProcessWithSlice[T any, K comparable](
-	ctx context.Context,
-	consumer *kafka.Consumer,
-	batchSize int,
-	flushInterval time.Duration,
-	topicName string,
-	getKey func(T) K,
-	processBatch func([]T) error,
-) {
-	messages, errors := consumer.Subscribe(ctx)
-	batch := make(map[K]T)
-	flushTicker := time.NewTicker(flushInterval)
-	defer flushTicker.Stop()
-
-	flushBatch := func(logContext string) {
-		if len(batch) == 0 {
-			return
-		}
-
-		items := make([]T, 0, len(batch))
-		for _, item := range batch {
-			items = append(items, item)
-		}
-
-		if err := processBatch(items); err != nil {
-			log.Printf("Error %s batch for %s: %v\n", logContext, topicName, err)
-		}
-		batch = make(map[K]T)
-	}
-
-	for {
-		select {
-		case msg := <-messages:
-			var item T
-			if err := json.Unmarshal(msg.Value, &item); err != nil {
-				log.Printf("Error unmarshaling %s message: %v, raw: %s\n", topicName, err, string(msg.Value))
-				continue
-			}
-			batch[getKey(item)] = item
-
-			if len(batch) >= batchSize {
-				flushBatch("inserting")
-			}
-
-		case <-flushTicker.C:
-			flushBatch("flushing")
-
-		case err := <-errors:
-			if err != nil {
-				log.Printf("Error consuming %s message: %v\n", topicName, err)
-			}
-
-		case <-ctx.Done():
-			flushBatch("inserting on shutdown")
-			return
-		}
-	}
-}
-
 func (h *Handler) handleTeamsInfo(ctx context.Context) {
 	batchProcess(
 		ctx,
@@ -236,7 +176,7 @@ func (h *Handler) handleTeamsInfo(ctx context.Context) {
 	)
 }
 
-func (h *Handler) handleTeamStats(ctx context.Context) {
+func (h *Handler) handleTeamOverallStats(ctx context.Context) {
 	batchProcess(
 		ctx,
 		h.consumers[h.kafkaConfig.TopicsName.SofascoreTeamOverallStats.Name],
@@ -274,7 +214,7 @@ func (h *Handler) handleLeagueRoundMatches(ctx context.Context) {
 		func(t sofascore_models.Event) string {
 			return fmt.Sprintf("%d", time.Now().UnixNano())
 		},
-		h.matchRepo.InsertRoundMatches,
+		h.matchRepo.InsertLeagueRoundMatches,
 	)
 }
 

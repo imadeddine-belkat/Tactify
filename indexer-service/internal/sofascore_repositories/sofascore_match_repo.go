@@ -23,7 +23,7 @@ func NewMatchRepo(
 	}
 }
 
-func (m *MatchRepo) InsertRoundMatches(match sofascore_models.Event) error {
+func (m *MatchRepo) InsertLeagueRoundMatches(match sofascore_models.Event) error {
 	query := sq.Insert("matches").Columns(
 		"match_id", "season_id", "league_id", "home_team_id", "away_team_id",
 		"home_team_name", "away_team_name", "start_time", "round", "status", "status_description").
@@ -39,10 +39,17 @@ func (m *MatchRepo) InsertRoundMatches(match sofascore_models.Event) error {
 			"updated_at = CURRENT_TIMESTAMP").
 		PlaceholderFormat(sq.Dollar)
 
-	query = query.Values(match.ID, match.Season.ID, match.Tournament.UniqueTournament.ID,
-		match.HomeTeam.ID, match.AwayTeam.ID, match.HomeTeam.Name, match.AwayTeam.Name,
-		time.Unix(match.StartTimestamp, 0), match.RoundInfo.Round,
-		match.Status.Code, match.Status.Description,
+	query = query.Values(match.ID,
+		match.Season.ID,
+		match.Tournament.UniqueTournament.ID,
+		match.HomeTeam.ID,
+		match.AwayTeam.ID,
+		match.HomeTeam.Name,
+		match.AwayTeam.Name,
+		time.Unix(match.StartTimestamp, 0),
+		match.RoundInfo.Round,
+		match.Status.Code,
+		match.Status.Description,
 	)
 
 	sqlQuery, args, err := query.ToSql()

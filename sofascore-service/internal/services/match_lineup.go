@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -47,9 +46,8 @@ func (l *MatchLineupService) UpdatePlayersStats(ctx context.Context, seasonId, l
 			matchLineup, err := l.GetMatchLineup(ctx, event.ID)
 			if err != nil {
 				if isNotFoundError(err) {
-					// Log but don't fail - some matches may not have lineups yet
 					fmt.Printf("Warning: Lineup not found for match %d (this is normal for future/cancelled matches)\n", event.ID)
-					return nil // Continue processing other matches
+					return nil
 				}
 				return fmt.Errorf("failed to get lineup for match %d: %w", event.ID, err)
 			}
@@ -105,18 +103,13 @@ func (l *MatchLineupService) processMatchLineup(lineup *sofascore_models.MatchLi
 func (l *MatchLineupService) publishPlayer(ctx context.Context, player *sofascore_models.PlayerMatchStatsMessage) error {
 	playersStatsTopic := l.Config.KafkaConfig.TopicsName.SofascorePlayerMatchStats.Name
 
-	value, err := json.Marshal(player)
-	if err != nil {
-		return fmt.Errorf("failed to marshal player for match %d: %w", player.MatchID, err)
-	}
-
 	key := []byte(fmt.Sprintf("%s-%d-%d-%d",
 		player.MatchPlayer.Player.Name,
 		player.SeasonID,
 		player.LeagueID,
 		player.Round))
 
-	return l.Producer.Publish(ctx, playersStatsTopic, key, value)
+	return l.Producer.PublishWithProcess(ctx, player, playersStatsTopic, key)
 }
 
 func isNotFoundError(err error) bool {

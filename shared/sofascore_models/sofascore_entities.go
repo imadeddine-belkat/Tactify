@@ -1,22 +1,27 @@
 package sofascore_models
 
 // Core domain entities
-
 type Team struct {
-	ID        int        `json:"id,omitempty"`
-	Name      string     `json:"name,omitempty"`
-	ShortName string     `json:"shortName,omitempty"`
-	NameCode  string     `json:"nameCode,omitempty"`
-	Country   Country    `json:"country,omitempty"`
-	Colors    TeamColors `json:"teamColors,omitempty"`
+	ID         int        `json:"id,omitempty"`
+	Name       string     `json:"name,omitempty"`
+	ShortName  string     `json:"shortName,omitempty"`
+	NameCode   string     `json:"nameCode,omitempty"`
+	Country    Country    `json:"country,omitempty"`
+	Colors     TeamColors `json:"teamColors,omitempty"`
+	Tournament Tournament `json:"tournament,omitempty"`
 }
 
 type Player struct {
-	ID           int    `json:"id"`
-	Name         string `json:"name"`
-	ShortName    string `json:"shortName"`
-	Position     string `json:"position"`
-	JerseyNumber string `json:"jerseyNumber"`
+	ID               int      `json:"id"`
+	Name             string   `json:"name"`
+	ShortName        string   `json:"shortName"`
+	Position         string   `json:"position"`
+	PositionDetailed []string `json:"positionsDetailed"`
+	JerseyNumber     string   `json:"jerseyNumber"`
+	Height           int      `json:"height"`
+	PreferredFoot    string   `json:"preferredFoot"`
+	Country          Country  `json:"country"`
+	Team             Team     `json:"team"`
 }
 
 type LineupPlayer struct {

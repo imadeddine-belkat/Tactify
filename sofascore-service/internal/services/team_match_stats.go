@@ -2,15 +2,14 @@ package services
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
-	"sync"
 
 	"github.com/imadeddine-belkat/kafka"
 	"github.com/imadeddine-belkat/shared/sofascore_models"
 	"github.com/imadeddine-belkat/sofascore-service/config"
 	sofascore_api "github.com/imadeddine-belkat/sofascore-service/internal/api"
+	"golang.org/x/sync/errgroup"
 )
 
 type TeamMatchStatsService struct {
@@ -18,6 +17,25 @@ type TeamMatchStatsService struct {
 	Config   config.SofascoreConfig
 	Client   *sofascore_api.SofascoreApiClient
 	Producer *kafka.Producer
+}
+
+const MaxConcurrentMatches = 20
+
+func (s *TeamMatchStatsService) UpdateLeagueMatchStats(ctx context.Context, seasonId int, leagueId int, round int) error {
+	log.Printf("Starting UpdateLeagueMatchStats for league=%d, season=%d, round=%d", leagueId, seasonId, round)
+
+	roundMatches, err := s.Event.GetRoundMatches(ctx, seasonId, leagueId, round)
+	if err != nil {
+		return fmt.Errorf("getting round matches: %w", err)
+	}
+
+	if err = s.publishTeamMatchStats(ctx, leagueId, seasonId, round, roundMatches); err != nil {
+		return fmt.Errorf("publishing team match stats: %w", err)
+	}
+
+	log.Printf("Successfully updated team match stats for league %d, season %d, round %d", leagueId, seasonId, round)
+
+	return nil
 }
 
 func (s *TeamMatchStatsService) GetTeamMatchStats(ctx context.Context, matchId int) (*sofascore_models.MatchStats, error) {
@@ -33,133 +51,79 @@ func (s *TeamMatchStatsService) GetTeamMatchStats(ctx context.Context, matchId i
 	return teamMatchStats, nil
 }
 
-func (s *TeamMatchStatsService) UpdateLeagueMatchStats(ctx context.Context, seasonId int, leagueId int, round int) error {
+func (s *TeamMatchStatsService) publishTeamMatchStats(ctx context.Context, leagueId, seasonId, round int, roundMatches *sofascore_models.Events) error {
 	teamMatchStatsTopic := s.Config.KafkaConfig.TopicsName.SofascoreTeamMatchStats.Name
 
-	log.Printf("Starting UpdateLeagueMatchStats for league=%d, season=%d, round=%d", leagueId, seasonId, round)
-
-	roundMatches, err := s.Event.GetRoundMatches(ctx, seasonId, leagueId, round)
-	if err != nil {
-		return fmt.Errorf("getting round matches: %w", err)
-	}
-
-	matchCount := len(roundMatches.Events)
-	log.Printf("Found %d matches to process", matchCount)
-
-	if matchCount == 0 {
+	if len(roundMatches.Events) == 0 {
 		log.Printf("No matches found for league %d, season %d, round %d", leagueId, seasonId, round)
 		return nil
 	}
 
-	jobs := make(chan sofascore_models.Event, matchCount)
+	matchCount := len(roundMatches.Events)
+	log.Printf("Starting processing for %d matches (concurrency limit: %d)", matchCount, MaxConcurrentMatches)
 
-	// Use optimal worker count: min(configured workers, number of matches)
-	workerCount := s.Config.PublishWorkerCount
-	if matchCount < workerCount {
-		workerCount = matchCount
-	}
+	g, ctx := errgroup.WithContext(ctx)
+	g.SetLimit(MaxConcurrentMatches)
 
-	log.Printf("Starting %d workers for %d matches", workerCount, matchCount)
+	for _, match := range roundMatches.Events {
+		match := match
 
-	var statsWg sync.WaitGroup
-	for i := 0; i < workerCount; i++ {
-		workerID := i
-		statsWg.Add(1)
-		go func() {
-			defer statsWg.Done()
+		g.Go(func() error {
+			teamMatchStats, err := s.GetTeamMatchStats(ctx, match.ID)
+			if err != nil {
+				log.Printf("Error fetching team match stats for match %d: %v", match.ID, err)
+				return nil
+			}
 
-			processedMatches := 0
-			for match := range jobs {
-				processedMatches++
+			for _, period := range teamMatchStats.MatchPeriods {
+				for _, group := range period.Groups {
+					for _, stat := range group.StatsItems {
 
-				select {
-				case <-ctx.Done():
-					log.Printf("Worker %d cancelled: %v", workerID, ctx.Err())
-					return
-				default:
-				}
+						if ctx.Err() != nil {
+							return ctx.Err()
+						}
 
-				matchStats, err := s.GetTeamMatchStats(ctx, match.ID)
-				if err != nil {
-					log.Printf("Worker %d: error fetching stats for match %d: %v", workerID, match.ID, err)
-					continue
-				}
+						matchStatMsg := &sofascore_models.MatchStatsMessage{
+							SeasonId:   seasonId,
+							LeagueId:   leagueId,
+							MatchID:    match.ID,
+							Event:      round,
+							HomeTeamID: match.HomeTeam.ID,
+							AwayTeamID: match.AwayTeam.ID,
+							GroupName:  group.GroupName,
+							MatchStatistics: sofascore_models.StatsMessage{
+								Period:         period.Period,
+								Key:            stat.Key,
+								Name:           stat.Name,
+								HomeValue:      stat.HomeValue,
+								AwayValue:      stat.AwayValue,
+								HomeTotal:      stat.HomeTotal,
+								AwayTotal:      stat.AwayTotal,
+								CompareCode:    stat.CompareCode,
+								StatisticsType: stat.StatisticsType,
+								RenderType:     stat.RenderType,
+							},
+						}
 
-				// Skip matches without statistics
-				if len(matchStats.MatchPeriods) == 0 {
-					log.Printf("Worker %d: No statistics available for match %d (not played yet)", workerID, match.ID)
-					continue
-				}
+						key := []byte(fmt.Sprintf("%d-%s-%s", match.ID, period.Period, stat.Name))
 
-				publishCount := 0
-				for _, period := range matchStats.MatchPeriods {
-					for _, group := range period.Groups {
-						for _, stat := range group.StatsItems {
-							// Check context before each publish
-							select {
-							case <-ctx.Done():
-								log.Printf("Worker %d cancelled during publish", workerID)
-								return
-							default:
-							}
-
-							msg := &sofascore_models.MatchStatsMessage{
-								SeasonId:   seasonId,
-								LeagueId:   leagueId,
-								MatchID:    match.ID,
-								Event:      round,
-								HomeTeamID: match.HomeTeam.ID,
-								AwayTeamID: match.AwayTeam.ID,
-								GroupName:  group.GroupName,
-								MatchStatistics: sofascore_models.StatsMessage{
-									Period:         period.Period,
-									Key:            stat.Key,
-									Name:           stat.Name,
-									HomeValue:      stat.HomeValue,
-									AwayValue:      stat.AwayValue,
-									HomeTotal:      stat.HomeTotal,
-									AwayTotal:      stat.AwayTotal,
-									CompareCode:    stat.CompareCode,
-									StatisticsType: stat.StatisticsType,
-									RenderType:     stat.RenderType,
-								},
-							}
-
-							value, err := json.Marshal(msg)
-							if err != nil {
-								log.Printf("Worker %d: error marshalling stats for match %d: %v", workerID, match.ID, err)
-								continue
-							}
-
-							key := []byte(fmt.Sprintf("%d-%s-%s", match.ID, period.Period, stat.Name))
-
-							if err := s.Producer.Publish(ctx, teamMatchStatsTopic, key, value); err != nil {
-								log.Printf("Worker %d: error publishing stat for match %d: %v", workerID, match.ID, err)
-								continue
-							}
-
-							publishCount++
+						if err := s.Producer.PublishWithProcess(ctx, matchStatMsg, teamMatchStatsTopic, key); err != nil {
+							log.Printf("Error publishing stat '%s' for match %d: %v", stat.Name, match.ID, err)
+							continue
 						}
 					}
 				}
-
-				log.Printf("Worker %d: Published %d stats for match %d", workerID, publishCount, match.ID)
 			}
 
-			if processedMatches > 0 {
-				log.Printf("Worker %d finished, processed %d matches", workerID, processedMatches)
-			}
-		}()
+			log.Printf("Successfully processed team match stats for match %d", match.ID)
+			return nil
+		})
 	}
 
-	// Enqueue all matches
-	for _, match := range roundMatches.Events {
-		jobs <- match
+	if err := g.Wait(); err != nil {
+		return fmt.Errorf("error in match stats processing group: %w", err)
 	}
-	close(jobs)
 
-	statsWg.Wait()
-	log.Printf("Successfully updated team match stats for league %d, season %d, round %d", leagueId, seasonId, round)
-
+	log.Printf("All workers completed processing for league %d, season %d, round %d", leagueId, seasonId, round)
 	return nil
 }

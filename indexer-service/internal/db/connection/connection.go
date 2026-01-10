@@ -17,11 +17,11 @@ func NewRepository(host string, port int, user, password, dbname, sslmode string
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		return nil, fmt.Errorf("failed to open database: %w", err)
+		return nil, fmt.Errorf("failed to open %s database: %w", dbname, err)
 	}
 
 	if err := db.Ping(); err != nil {
-		return nil, fmt.Errorf("failed to ping database: %w", err)
+		return nil, fmt.Errorf("failed to ping %s database: %w", dbname, err)
 	}
 
 	// Set connection pool settings

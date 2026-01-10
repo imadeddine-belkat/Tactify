@@ -20,8 +20,8 @@ type IndexerConfig struct {
 type PostgresConfig struct {
 	Host              string `envconfig:"DB_HOST" default:"localhost"`
 	Port              int    `envconfig:"DB_PORT" default:"5432"`
-	FplDatabase       string `envconfig:"DB_NAME" default:"fpl"`
-	SofascoreDatabase string `envconfig:"DB_SOFA_DB_NAME" default:"sofascore"`
+	FplDatabase       string `envconfig:"DB_FPL_NAME" default:"fpl"`
+	SofascoreDatabase string `envconfig:"DB_SOFASCORE_NAME" default:"sofascore"`
 	User              string `envconfig:"DB_USER" default:"tactify"`
 	Password          string `envconfig:"DB_PASSWORD" default:"admin"`
 }

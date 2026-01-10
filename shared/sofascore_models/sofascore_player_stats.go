@@ -3,11 +3,11 @@ package sofascore_models
 // Player statistics - match and season level
 
 type PlayerStatistics struct {
-	MinutesPlayed                int     `json:"minutesPlayed"`
-	Rating                       float64 `json:"rating"`
-	Touches                      int     `json:"touches"`
-	TotalPass                    int     `json:"totalPass"`
-	AccuratePass                 int     `json:"accuratePass"`
+	MinutesPlayed                int     `json:"minutesPlayed,omitempty"`
+	Rating                       float64 `json:"rating,omitempty"`
+	Touches                      int     `json:"touches,omitempty"`
+	TotalPass                    int     `json:"totalPass,omitempty"`
+	AccuratePass                 int     `json:"accuratePass,omitempty"`
 	TotalLongBalls               int     `json:"totalLongBalls,omitempty"`
 	AccurateLongBalls            int     `json:"accurateLongBalls,omitempty"`
 	AccurateOwnHalfPasses        int     `json:"accurateOwnHalfPasses,omitempty"`
@@ -19,7 +19,7 @@ type PlayerStatistics struct {
 	KeyPass                      int     `json:"keyPass,omitempty"`
 	GoalAssist                   int     `json:"goalAssist,omitempty"`
 	BigChanceCreated             int     `json:"bigChanceCreated,omitempty"`
-	TotalShots                   int     `json:"totalShots"`
+	TotalShots                   int     `json:"totalShots,omitempty"`
 	ShotOffTarget                int     `json:"shotOffTarget,omitempty"`
 	OnTargetScoringAttempt       int     `json:"onTargetScoringAttempt,omitempty"`
 	BlockedScoringAttempt        int     `json:"blockedScoringAttempt,omitempty"`

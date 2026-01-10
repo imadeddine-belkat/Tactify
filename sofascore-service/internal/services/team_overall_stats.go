@@ -2,8 +2,8 @@ package services
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/imadeddine-belkat/kafka"
 	"github.com/imadeddine-belkat/shared/sofascore_models"
@@ -43,15 +43,10 @@ func (o *TeamOverallStatsService) UpdateTeamOverallStats(ctx context.Context, te
 	teamOverallStats.LeagueID = leagueId
 	teamOverallStats.SeasonID = seasonId
 
-	value, err := json.Marshal(teamOverallStats)
-	if err != nil {
-		return fmt.Errorf("failed to marshal teamOverallStats for team: %d, season: %d, league: %d: %w", teamId, seasonId, leagueId, err)
-	}
-
 	key := []byte(fmt.Sprintf("%d_%d_%d", teamId, leagueId, seasonId))
 
-	if err = o.Producer.Publish(ctx, teamOverallStatsTopic, key, value); err != nil {
-		return fmt.Errorf("failed to publish teamOverallStats to kafkafor team: %d, season: %d, league: %d: %w", teamId, seasonId, leagueId, err)
+	if err = o.Producer.PublishWithProcess(ctx, teamOverallStats, teamOverallStatsTopic, key); err != nil {
+		return fmt.Errorf("failed to publish teamOverallStats to Kafka for team: %d, season: %d, league: %d: %w", teamId, seasonId, leagueId, err)
 	}
 
 	return nil
@@ -60,7 +55,7 @@ func (o *TeamOverallStatsService) UpdateTeamOverallStats(ctx context.Context, te
 func (o *TeamOverallStatsService) UpdateAllTeamsOverallStats(ctx context.Context, leagueId, seasonId int) error {
 	var teamsIds []int
 
-	// get team ids from league standing
+	//get team ids from league standing
 	standing, err := o.Standing.GetLeagueStanding(ctx, seasonId, leagueId)
 	if err != nil {
 		return fmt.Errorf("failed to get league standing for LeagueID %d: %w", seasonId, err)
@@ -75,8 +70,9 @@ func (o *TeamOverallStatsService) UpdateAllTeamsOverallStats(ctx context.Context
 	for _, teamId := range teamsIds {
 		err = o.UpdateTeamOverallStats(ctx, teamId, leagueId, seasonId)
 		if err != nil {
-			fmt.Errorf("failed to update teamOverallStats for TeamID %d, LeagueID %d, SeasonID %d: %w", teamId, leagueId, seasonId, err)
+			log.Printf("failed to update teamOverallStats for TeamID %d, LeagueID %d, SeasonID %d: %w", teamId, leagueId, seasonId, err)
 		}
+
 	}
 
 	return nil

@@ -2,19 +2,43 @@ package services
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/imadeddine-belkat/kafka"
 	"github.com/imadeddine-belkat/shared/sofascore_models"
 	"github.com/imadeddine-belkat/sofascore-service/config"
 	sofascore_api "github.com/imadeddine-belkat/sofascore-service/internal/api"
+	"golang.org/x/sync/errgroup"
 )
 
 type LeagueService struct {
 	Config   *config.SofascoreConfig
 	Client   *sofascore_api.SofascoreApiClient
 	Producer *kafka.Producer
+}
+
+func (l *LeagueService) UpdateLeagueIDs(ctx context.Context) error {
+	leagueCountries, err := l.GetLeagueCountries(ctx)
+	if err != nil {
+		return fmt.Errorf("error getting country countries ids: %w", err)
+	}
+
+	g, ctx := errgroup.WithContext(ctx)
+	g.SetLimit(10)
+	for _, country := range leagueCountries.Categories {
+		country := country
+		g.Go(func() error {
+			uniqueTournament := &sofascore_models.LeagueUniqueTournaments{}
+
+			uniqueTournament, err = l.GetLeagueInfo(ctx, country.ID)
+			if err != nil {
+				return fmt.Errorf("error getting country info id: %d to update tournaments: %w", country.ID, err)
+			}
+			return l.publishLeagueInfo(ctx, country.ID, uniqueTournament)
+		})
+	}
+
+	return g.Wait()
 }
 
 func (l *LeagueService) GetLeagueCountries(ctx context.Context) (*sofascore_models.LeagueCategories, error) {
@@ -41,32 +65,13 @@ func (l *LeagueService) GetLeagueInfo(ctx context.Context, countryId int) (*sofa
 	return league, nil
 }
 
-func (l *LeagueService) UpdateLeagueIDs(ctx context.Context) error {
+func (l *LeagueService) publishLeagueInfo(ctx context.Context, countryId int, uniqueTournament *sofascore_models.LeagueUniqueTournaments) error {
 	leagueIdsTopic := l.Config.KafkaConfig.TopicsName.SofascoreLeagueIDs.Name
 
-	leagueCountries, err := l.GetLeagueCountries(ctx)
-	if err != nil {
-		return fmt.Errorf("error getting country countries ids: %w", err)
-	}
+	key := []byte(fmt.Sprintf("%d", countryId))
 
-	for _, country := range leagueCountries.Categories {
-		uniqueTournament := &sofascore_models.LeagueUniqueTournaments{}
-
-		uniqueTournament, err = l.GetLeagueInfo(ctx, country.ID)
-		if err != nil {
-			return fmt.Errorf("error getting country info id: %d to update tournaments: %w", country.ID, err)
-		}
-
-		value, err := json.Marshal(uniqueTournament)
-		if err != nil {
-			return fmt.Errorf("error marshalling country uniqueTournament id: %d, %w", country.ID, err)
-		}
-
-		key := []byte(fmt.Sprintf("%d", country.ID))
-
-		if err = l.Producer.Publish(ctx, leagueIdsTopic, key, value); err != nil {
-			return fmt.Errorf("error publishing league ids for country id: %d: %w", country.ID, err)
-		}
+	if err := l.Producer.PublishWithProcess(ctx, uniqueTournament, leagueIdsTopic, key); err != nil {
+		return fmt.Errorf("error publishing league ids for country id: %d: %w", countryId, err)
 	}
 
 	return nil

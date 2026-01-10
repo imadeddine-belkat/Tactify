@@ -69,7 +69,7 @@ type TeamEndpoints struct {
 }
 
 type PlayerEndpoints struct {
-	PlayersStats       string `envconfig:"SOFASCOREAPI_PLAYER_INFO_ENDPOINT"`
+	PlayersInfo        string `envconfig:"SOFASCOREAPI_PLAYER_INFO_ENDPOINT"`
 	PlayerSeasonsStats string `envconfig:"SOFASCOREAPI_PLAYER_SEASONS_STATS_ENDPOINT"`
 	PlayerAttributes   string `envconfig:"SOFASCOREAPI_PLAYER_ATTRIBUTES_ENDPOINT"`
 }

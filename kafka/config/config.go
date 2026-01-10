@@ -65,6 +65,7 @@ type Topics struct {
 	SofascoreTopTeamsStats      Topic `yaml:"sofascore_top_teams_stats"`
 	SofascoreTeamOverallStats   Topic `yaml:"sofascore_team_overall_stats"`
 	SofascoreTeamMatchStats     Topic `yaml:"sofascore_team_match_stats"`
+	SofascorePlayerInfo         Topic `yaml:"sofascore_player_info"`
 	SofascorePlayerTeamStats    Topic `yaml:"sofascore_player_team_stats"`
 	SofascorePlayerSeasonsStats Topic `yaml:"sofascore_player_seasons_stats"`
 	SofascorePlayerAttributes   Topic `yaml:"sofascore_player_attributes"`

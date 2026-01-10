@@ -34,15 +34,15 @@ func NewTeamRepo(
 func (t *TeamRepo) InsertTeamInfo(standing sofascore_models.StandingMessage) error {
 	query := sq.Insert("teams").
 		Columns(
-			"team_id", "name", "league_id", "primary_color", "secondary_color").
+			"team_id", "league_id", "name", "primary_color", "secondary_color").
 		Suffix(
 			"ON CONFLICT (team_id, league_id) DO NOTHING ").
 		PlaceholderFormat(sq.Dollar)
 
 	query = query.Values(
 		standing.Row.Team.ID,
-		standing.Row.Team.Name,
 		standing.LeagueID,
+		standing.Row.Team.Name,
 		standing.Row.Team.Colors.PrimaryColor,
 		standing.Row.Team.Colors.SecondaryColor,
 	)
