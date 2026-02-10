@@ -26,7 +26,7 @@ type SofascoreConfig struct {
 }
 
 type TorConfig struct {
-	Enabled     bool   `envconfig:"TOR_ENABLED" default:"false"`
+	Enabled     bool   `envconfig:"TOR_ENABLED" default:"true"`
 	SocksAddr   string `envconfig:"TOR_SOCKS_ADDR" default:"127.0.0.1:9050"`
 	ControlAddr string `envconfig:"TOR_CONTROL_ADDR" default:"127.0.0.1:9051"`
 	Password    string `envconfig:"TOR_PASSWORD" default:""`
@@ -62,10 +62,10 @@ type MatchEndpoints struct {
 }
 
 type TeamEndpoints struct {
-	TopTeamsStats    string `envconfig:"SOFASCOREAPI_TOP_TEAMS_OVERALL_STATS_ENDPOINT"`
-	TeamOverallStats string `envconfig:"SOFASCOREAPI_TEAM_OVERALL_STATS_ENDPOINT"`
-	TeamMatchStats   string `envconfig:"SOFASCOREAPI_TEAM_MATCH_STATS_ENDPOINT"`
-	TeamPlayerStats  string `envconfig:"SOFASCOREAPI_TEAM_PLAYERS_STATS_ENDPOINT"`
+	TopTeamsStats      string `envconfig:"SOFASCOREAPI_TOP_TEAMS_OVERALL_STATS_ENDPOINT"`
+	TeamOverallStats   string `envconfig:"SOFASCOREAPI_TEAM_OVERALL_STATS_ENDPOINT"`
+	TeamMatchStats     string `envconfig:"SOFASCOREAPI_TEAM_MATCH_STATS_ENDPOINT"`
+	TeamTopPlayerStats string `envconfig:"SOFASCOREAPI_TEAM_TOP_PLAYERS_STATS_ENDPOINT"`
 }
 
 type PlayerEndpoints struct {

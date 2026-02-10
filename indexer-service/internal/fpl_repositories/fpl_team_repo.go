@@ -4,7 +4,7 @@ import (
 	"database/sql"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/imadeddine-belkat/shared/fpl_models"
+	"github.com/imadeddine-belkat/tactify-protos/fpl_models"
 )
 
 type TeamRepo struct {
@@ -53,5 +53,6 @@ func (r *TeamRepo) InsertTeams(teams []fpl_models.TeamMessage) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

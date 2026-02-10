@@ -4,7 +4,7 @@ import (
 	"database/sql"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/imadeddine-belkat/shared/sofascore_models"
+	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
 )
 
 type LeagueRepo struct {

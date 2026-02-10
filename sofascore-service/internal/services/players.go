@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	"github.com/imadeddine-belkat/kafka"
-	"github.com/imadeddine-belkat/shared/sofascore_models"
 	"github.com/imadeddine-belkat/sofascore-service/config"
 	sofascoreapi "github.com/imadeddine-belkat/sofascore-service/internal/api"
+	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
 )
 
 type PlayersService struct {
@@ -24,17 +24,18 @@ func (p *PlayersService) UpdateLeaguePlayersInfo(ctx context.Context, seasonId, 
 	}
 
 	for _, team := range *teams {
-		players, err := p.GetPlayersInfo(ctx, team.ID)
+		players, err := p.GetPlayersInfo(ctx, team.ID, leagueId, seasonId)
 		if err != nil {
 			return fmt.Errorf("error getting players info for team %d: %w", team.ID, err)
 		}
 
-		for _, player := range players.TeamPlayers {
+		for _, player := range players.TopPlayers.Rating {
 			pl := player
 			playerMessage := &sofascore_models.PlayerMessage{
 				SeasonID: seasonId,
 				LeagueID: leagueId,
 				TeamID:   team.ID,
+				TeamName: team.Name,
 				Player:   pl.Player,
 			}
 
@@ -67,11 +68,11 @@ func (p *PlayersService) GetTeamIDs(ctx context.Context, seasonId, leagueId int)
 
 	return teams, nil
 }
-func (p *PlayersService) GetPlayersInfo(ctx context.Context, teamId int) (*sofascore_models.TeamPlayers, error) {
-	players := &sofascore_models.TeamPlayers{}
+func (p *PlayersService) GetPlayersInfo(ctx context.Context, teamId, leagueId, seasonId int) (*sofascore_models.TopPlayers, error) {
+	players := &sofascore_models.TopPlayers{}
 
-	playerEndpoint := p.Config.SofascoreApi.PlayerEndpoints.PlayersInfo
-	endpoint := fmt.Sprintf(playerEndpoint, teamId)
+	playerEndpoint := p.Config.SofascoreApi.TeamEndpoints.TeamTopPlayerStats
+	endpoint := fmt.Sprintf(playerEndpoint, teamId, leagueId, seasonId)
 
 	if err := p.Client.GetAndUnmarshal(ctx, endpoint, players); err != nil {
 		return nil, fmt.Errorf("fetching players info data: %w", err)

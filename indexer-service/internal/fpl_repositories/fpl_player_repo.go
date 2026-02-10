@@ -6,7 +6,7 @@ import (
 	"log"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/imadeddine-belkat/shared/fpl_models"
+	"github.com/imadeddine-belkat/tactify-protos/fpl_models"
 )
 
 type PlayerRepo struct {
@@ -38,37 +38,37 @@ func (r *PlayerRepo) InsertPlayerBootstrapComplete(players []fpl_models.PlayerBo
 
 	if err := r.InsertPlayers(players); err != nil {
 		log.Printf("❌ Error inserting players table: %v", err)
-		return fmt.Errorf("inserting players: %w", err)
+		fmt.Errorf("inserting players: %w", err)
 	}
 	log.Printf("Inserted %d players into players table", len(players))
 
 	if err := r.InsertPlayerCosts(players); err != nil {
 		log.Printf("❌ Error inserting player_costs: %v", err)
-		return fmt.Errorf("inserting player costs: %w", err)
+		fmt.Errorf("inserting player costs: %w", err)
 	}
 	log.Printf("Inserted %d records into player_costs", len(players))
 
 	if err := r.InsertPlayerSeasonStats(players); err != nil {
 		log.Printf("❌ Error inserting player_season_stats: %v", err)
-		return fmt.Errorf("inserting player season stats: %w", err)
+		fmt.Errorf("inserting player season stats: %w", err)
 	}
 	log.Printf("Inserted %d records into player_season_stats", len(players))
 
 	if err := r.InsertPlayerICTStats(players); err != nil {
 		log.Printf("❌ Error inserting player_ict_stats: %v", err)
-		return fmt.Errorf("inserting player ICT stats: %w", err)
+		fmt.Errorf("inserting player ICT stats: %w", err)
 	}
 	log.Printf("Inserted %d records into player_ict_stats", len(players))
 
 	if err := r.InsertPlayerExpectedStats(players); err != nil {
 		log.Printf("❌ Error inserting player_expected_stats: %v", err)
-		return fmt.Errorf("inserting player expected stats: %w", err)
+		fmt.Errorf("inserting player expected stats: %w", err)
 	}
 	log.Printf("Inserted %d records into player_expected_stats", len(players))
 
 	if err := r.InsertPlayerRankings(players); err != nil {
 		log.Printf("❌ Error inserting player_rankings: %v", err)
-		return fmt.Errorf("inserting player rankings: %w", err)
+		fmt.Errorf("inserting player rankings: %w", err)
 	}
 	log.Printf("Inserted %d records into player_rankings", len(players))
 
@@ -145,9 +145,9 @@ func (r *PlayerRepo) InsertPlayers(players []fpl_models.PlayerBootstrapMessage) 
 // InsertPlayerCosts inserts/updates player cost information
 func (r *PlayerRepo) InsertPlayerCosts(players []fpl_models.PlayerBootstrapMessage) error {
 	query := sq.Insert("player_costs").Columns(
-		"player_id", "now_cost", "cost_change_event", "cost_change_event_fall",
+		"player_id", "season_id", "now_cost", "cost_change_event", "cost_change_event_fall",
 		"cost_change_start", "cost_change_start_fall",
-	).Suffix("ON CONFLICT (player_id) DO UPDATE SET " +
+	).Suffix("ON CONFLICT (player_id, season_id) DO UPDATE SET " +
 		"now_cost = EXCLUDED.now_cost, " +
 		"cost_change_event = EXCLUDED.cost_change_event, " +
 		"cost_change_event_fall = EXCLUDED.cost_change_event_fall, " +
@@ -158,7 +158,7 @@ func (r *PlayerRepo) InsertPlayerCosts(players []fpl_models.PlayerBootstrapMessa
 
 	for _, p := range players {
 		query = query.Values(
-			p.Player.ID, p.Player.NowCost, p.Player.CostChangeEvent, p.Player.CostChangeEventFall,
+			p.Player.ID, p.SeasonID, p.Player.NowCost, p.Player.CostChangeEvent, p.Player.CostChangeEventFall,
 			p.Player.CostChangeStart, p.Player.CostChangeStartFall,
 		)
 	}
@@ -178,13 +178,13 @@ func (r *PlayerRepo) InsertPlayerCosts(players []fpl_models.PlayerBootstrapMessa
 // InsertPlayerSeasonStats inserts/updates player season statistics
 func (r *PlayerRepo) InsertPlayerSeasonStats(players []fpl_models.PlayerBootstrapMessage) error {
 	query := sq.Insert("player_season_stats").Columns(
-		"player_id", "dreamteam_count", "total_points", "event_points", "points_per_game",
+		"player_id", "season_id", "dreamteam_count", "total_points", "event_points", "points_per_game",
 		"form", "selected_by_percent", "value_form", "value_season",
 		"minutes", "goals_scored", "assists", "clean_sheets", "goals_conceded",
 		"own_goals", "penalties_saved", "penalties_missed", "yellow_cards", "red_cards",
 		"saves", "bonus", "bps", "starts", "clearances_blocks_interceptions",
 		"recoveries", "tackles", "defensive_contribution",
-	).Suffix("ON CONFLICT (player_id) DO UPDATE SET " +
+	).Suffix("ON CONFLICT (player_id, season_id) DO UPDATE SET " +
 		"dreamteam_count = EXCLUDED.dreamteam_count, " +
 		"total_points = EXCLUDED.total_points, " +
 		"event_points = EXCLUDED.event_points, " +
@@ -216,7 +216,7 @@ func (r *PlayerRepo) InsertPlayerSeasonStats(players []fpl_models.PlayerBootstra
 
 	for _, p := range players {
 		query = query.Values(
-			p.Player.ID, p.Player.DreamteamCount, p.Player.TotalPoints, p.Player.EventPoints, p.Player.PointsPerGame,
+			p.Player.ID, p.SeasonID, p.Player.DreamteamCount, p.Player.TotalPoints, p.Player.EventPoints, p.Player.PointsPerGame,
 			p.Player.Form, p.Player.SelectedByPercent, p.Player.ValueForm, p.Player.ValueSeason,
 			p.Player.Minutes, p.Player.GoalsScored, p.Player.Assists, p.Player.CleanSheets, p.Player.GoalsConceded,
 			p.Player.OwnGoals, p.Player.PenaltiesSaved, p.Player.PenaltiesMissed, p.Player.YellowCards, p.Player.RedCards,
@@ -240,10 +240,10 @@ func (r *PlayerRepo) InsertPlayerSeasonStats(players []fpl_models.PlayerBootstra
 // InsertPlayerICTStats inserts/updates player ICT statistics
 func (r *PlayerRepo) InsertPlayerICTStats(players []fpl_models.PlayerBootstrapMessage) error {
 	query := sq.Insert("player_ict_stats").Columns(
-		"player_id", "influence", "creativity", "threat", "ict_index",
+		"player_id", "season_id", "influence", "creativity", "threat", "ict_index",
 		"influence_rank", "influence_rank_type", "creativity_rank", "creativity_rank_type",
 		"threat_rank", "threat_rank_type", "ict_index_rank", "ict_index_rank_type",
-	).Suffix("ON CONFLICT (player_id) DO UPDATE SET " +
+	).Suffix("ON CONFLICT (player_id, season_id) DO UPDATE SET " +
 		"influence = EXCLUDED.influence, " +
 		"creativity = EXCLUDED.creativity, " +
 		"threat = EXCLUDED.threat, " +
@@ -261,7 +261,7 @@ func (r *PlayerRepo) InsertPlayerICTStats(players []fpl_models.PlayerBootstrapMe
 
 	for _, p := range players {
 		query = query.Values(
-			p.Player.ID, p.Player.Influence, p.Player.Creativity, p.Player.Threat, p.Player.ICTIndex,
+			p.Player.ID, p.SeasonID, p.Player.Influence, p.Player.Creativity, p.Player.Threat, p.Player.ICTIndex,
 			p.Player.InfluenceRank, p.Player.InfluenceRankType, p.Player.CreativityRank, p.Player.CreativityRankType,
 			p.Player.ThreatRank, p.Player.ThreatRankType, p.Player.ICTIndexRank, p.Player.ICTIndexRankType,
 		)
@@ -282,11 +282,11 @@ func (r *PlayerRepo) InsertPlayerICTStats(players []fpl_models.PlayerBootstrapMe
 // InsertPlayerExpectedStats inserts/updates player expected statistics
 func (r *PlayerRepo) InsertPlayerExpectedStats(players []fpl_models.PlayerBootstrapMessage) error {
 	query := sq.Insert("player_expected_stats").Columns(
-		"player_id", "expected_goals", "expected_assists", "expected_goal_involvements", "expected_goals_conceded",
+		"player_id", "season_id", "expected_goals", "expected_assists", "expected_goal_involvements", "expected_goals_conceded",
 		"expected_goals_per_90", "expected_assists_per_90", "expected_goal_involvements_per_90",
 		"expected_goals_conceded_per_90", "saves_per_90", "goals_conceded_per_90",
 		"starts_per_90", "clean_sheets_per_90", "defensive_contribution_per_90",
-	).Suffix("ON CONFLICT (player_id) DO UPDATE SET " +
+	).Suffix("ON CONFLICT (player_id, season_id) DO UPDATE SET " +
 		"expected_goals = EXCLUDED.expected_goals, " +
 		"expected_assists = EXCLUDED.expected_assists, " +
 		"expected_goal_involvements = EXCLUDED.expected_goal_involvements, " +
@@ -305,7 +305,7 @@ func (r *PlayerRepo) InsertPlayerExpectedStats(players []fpl_models.PlayerBootst
 
 	for _, p := range players {
 		query = query.Values(
-			p.Player.ID, p.Player.ExpectedGoals, p.Player.ExpectedAssists, p.Player.ExpectedGoalInvolvements, p.Player.ExpectedGoalsConceded,
+			p.Player.ID, p.SeasonID, p.Player.ExpectedGoals, p.Player.ExpectedAssists, p.Player.ExpectedGoalInvolvements, p.Player.ExpectedGoalsConceded,
 			p.Player.ExpectedGoalsPer90, p.Player.ExpectedAssistsPer90, p.Player.ExpectedGoalInvolvementsPer90,
 			p.Player.ExpectedGoalsConcededPer90, p.Player.SavesPer90, p.Player.GoalsConcededPer90,
 			p.Player.StartsPer90, p.Player.CleanSheetsPer90, p.Player.DefensiveContributionPer90,
@@ -327,10 +327,10 @@ func (r *PlayerRepo) InsertPlayerExpectedStats(players []fpl_models.PlayerBootst
 // InsertPlayerRankings inserts/updates player rankings
 func (r *PlayerRepo) InsertPlayerRankings(players []fpl_models.PlayerBootstrapMessage) error {
 	query := sq.Insert("player_rankings").Columns(
-		"player_id", "now_cost_rank", "now_cost_rank_type",
+		"player_id", "season_id", "now_cost_rank", "now_cost_rank_type",
 		"form_rank", "form_rank_type", "points_per_game_rank", "points_per_game_rank_type",
 		"selected_rank", "selected_rank_type",
-	).Suffix("ON CONFLICT (player_id) DO UPDATE SET " +
+	).Suffix("ON CONFLICT (player_id, season_id) DO UPDATE SET " +
 		"now_cost_rank = EXCLUDED.now_cost_rank, " +
 		"now_cost_rank_type = EXCLUDED.now_cost_rank_type, " +
 		"form_rank = EXCLUDED.form_rank, " +
@@ -344,7 +344,7 @@ func (r *PlayerRepo) InsertPlayerRankings(players []fpl_models.PlayerBootstrapMe
 
 	for _, p := range players {
 		query = query.Values(
-			p.Player.ID, p.Player.NowCostRank, p.Player.NowCostRankType,
+			p.Player.ID, p.SeasonID, p.Player.NowCostRank, p.Player.NowCostRankType,
 			p.Player.FormRank, p.Player.FormRankType, p.Player.PointsPerGameRank, p.Player.PointsPerGameRankType,
 			p.Player.SelectedRank, p.Player.SelectedRankType,
 		)

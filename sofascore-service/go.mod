@@ -32,4 +32,4 @@ require (
 
 replace github.com/imadeddine-belkat/kafka => ../kafka
 
-replace github.com/imadeddine-belkat/shared => ../shared
+replace github.com/imadeddine-belkat/shared => ./../protos

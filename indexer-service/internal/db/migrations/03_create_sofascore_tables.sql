@@ -35,6 +35,22 @@ CREATE TABLE IF NOT EXISTS teams (
                                      CONSTRAINT fk_teams_league FOREIGN KEY (league_id) REFERENCES leagues(league_id)
 );
 
+CREATE TABLE IF NOT EXISTS players (
+                                    player_id INTEGER NOT NULL,
+                                    season_id INTEGER NOT NULL,
+                                    team_id INTEGER NOT NULL,
+                                    league_id INTEGER NOT NULL,
+                                    player_name varchar(100) not null,
+                                    player_short_name varchar(50),
+                                    position varchar(50),
+                                    height int,
+                                    preferred_foot varchar(10),
+                                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                    PRIMARY KEY (player_id, season_id, team_id, league_id),
+                                    CONSTRAINT fk_players_season FOREIGN KEY (season_id) REFERENCES seasons(season_id),
+                                    CONSTRAINT fk_players_team FOREIGN KEY (team_id, league_id) REFERENCES teams(team_id, league_id)
+);
+
 -- Matches
 CREATE TABLE IF NOT EXISTS matches (
                                        match_id INTEGER NOT NULL,

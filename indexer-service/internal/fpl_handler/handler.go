@@ -10,7 +10,7 @@ import (
 	"github.com/imadeddine-belkat/indexer-service/internal/fpl_repositories"
 	"github.com/imadeddine-belkat/kafka"
 	kafkaConfig "github.com/imadeddine-belkat/kafka/config"
-	"github.com/imadeddine-belkat/shared/fpl_models"
+	"github.com/imadeddine-belkat/tactify-protos/fpl_models"
 )
 
 type Handler struct {
@@ -280,6 +280,7 @@ func (h *Handler) handleTeams(ctx context.Context) {
 		func(t fpl_models.TeamMessage) int { return t.Team.ID },
 		h.teamRepo.InsertTeams,
 	)
+
 }
 
 func (h *Handler) handlePlayerBootstrap(ctx context.Context) {

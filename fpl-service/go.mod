@@ -3,8 +3,8 @@ module github.com/imadeddine-belkat/fpl-service
 go 1.25
 
 require (
-	github.com/imadeddine-belkat/kafka v0.0.0-00010101000000-000000000000
-	github.com/imadeddine-belkat/shared v0.0.0-00010101000000-000000000000
+	github.com/imadeddine-belkat/tactify-kafka v0.0.0-00010101000000-000000000000
+	github.com/imadeddine-belkat/tactify-protos v0.0.0-00010101000000-000000000000
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
 )

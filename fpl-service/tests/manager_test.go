@@ -21,10 +21,12 @@ func TestManagersApiService(t *testing.T) {
 		Client:   fpl_api.NewFplApiClient(config.LoadConfig()),
 		Producer: kafka.NewProducer(),
 	}
-
-	err := service.UpdateManager(ctx, 2839296, 2)
-	if err != nil {
-		t.Fatalf("UpdateManager with API failed: %v", err)
+	for n := 1; n < 26; n++ {
+		t.Logf("Waiting for API to be ready... (attempt %d)", n+1)
+		err := service.UpdateManager(ctx, 2839296, n)
+		if err != nil {
+			t.Fatalf("UpdateManager with API failed: %v", err)
+		}
 	}
 
 	t.Logf("Real API test completed successfully")

@@ -11,7 +11,7 @@ import (
 	"github.com/imadeddine-belkat/indexer-service/internal/sofascore_repositories"
 	"github.com/imadeddine-belkat/kafka"
 	kafkaConfig "github.com/imadeddine-belkat/kafka/config"
-	"github.com/imadeddine-belkat/shared/sofascore_models"
+	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
 )
 
 type Handler struct {
@@ -19,6 +19,7 @@ type Handler struct {
 	kafkaConfig *kafkaConfig.KafkaConfig
 	consumers   map[string]*kafka.Consumer
 	teamRepo    *sofascore_repositories.TeamRepo
+	playerRepo  *sofascore_repositories.PlayerRepo
 	matchRepo   *sofascore_repositories.MatchRepo
 	leagueRepo  *sofascore_repositories.LeagueRepo
 }
@@ -27,6 +28,7 @@ func NewHandler(
 	cfg *config.IndexerConfig,
 	kafkaCfg *kafkaConfig.KafkaConfig,
 	teamRepo *sofascore_repositories.TeamRepo,
+	playerRepo *sofascore_repositories.PlayerRepo,
 	matchRepo *sofascore_repositories.MatchRepo,
 	leagueRepo *sofascore_repositories.LeagueRepo,
 ) *Handler {
@@ -35,6 +37,7 @@ func NewHandler(
 		kafkaConfig: kafkaCfg,
 		consumers:   make(map[string]*kafka.Consumer),
 		teamRepo:    teamRepo,
+		playerRepo:  playerRepo,
 		matchRepo:   matchRepo,
 		leagueRepo:  leagueRepo,
 	}
@@ -56,6 +59,14 @@ func NewHandler(
 			kafkaCfg,
 			kafkaCfg.TopicsName.SofascoreTeamMatchStats.Name,
 			kafkaCfg.ConsumersGroupID.SofascoreTeamMatchStats,
+		)
+	}
+
+	if playerRepo != nil {
+		h.consumers[kafkaCfg.TopicsName.SofascorePlayerInfo.Name] = kafka.NewConsumer(
+			kafkaCfg,
+			kafkaCfg.TopicsName.SofascorePlayerInfo.Name,
+			kafkaCfg.ConsumersGroupID.SofascorePlayerInfo,
 		)
 	}
 
@@ -91,6 +102,7 @@ func (h *Handler) Route(ctx context.Context, topic string) {
 		h.kafkaConfig.TopicsName.SofascoreLeagueStandings.Name:    h.handleTeamsInfo,
 		h.kafkaConfig.TopicsName.SofascoreTeamOverallStats.Name:   h.handleTeamOverallStats,
 		h.kafkaConfig.TopicsName.SofascoreTeamMatchStats.Name:     h.handleTeamMatchStat,
+		h.kafkaConfig.TopicsName.SofascorePlayerInfo.Name:         h.handlePlayerInfo,
 		h.kafkaConfig.TopicsName.SofascoreLeagueRoundMatches.Name: h.handleLeagueRoundMatches,
 		h.kafkaConfig.TopicsName.SofascoreLeagueIDs.Name:          h.handleLeagueInfo,
 		h.kafkaConfig.TopicsName.SofascoreLeagueSeasons.Name:      h.handleLeagueSeasonsInfo,
@@ -201,6 +213,20 @@ func (h *Handler) handleTeamMatchStat(ctx context.Context) {
 			return fmt.Sprintf("%d", time.Now().UnixNano())
 		},
 		h.teamRepo.InsertTeamMatchStats,
+	)
+}
+
+func (h *Handler) handlePlayerInfo(ctx context.Context) {
+	batchProcess(
+		ctx,
+		h.consumers[h.kafkaConfig.TopicsName.SofascorePlayerInfo.Name],
+		1,
+		h.config.FlushInterval,
+		h.kafkaConfig.TopicsName.SofascorePlayerInfo.Name,
+		func(p sofascore_models.PlayerMessage) string {
+			return fmt.Sprintf("%d", time.Now().UnixNano())
+		},
+		h.playerRepo.InsertPlayerInfo,
 	)
 }
 

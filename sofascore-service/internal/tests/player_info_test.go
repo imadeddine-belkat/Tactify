@@ -2,9 +2,7 @@ package tests
 
 import (
 	"context"
-	"log"
 	"testing"
-	"time"
 
 	"github.com/imadeddine-belkat/kafka"
 	"github.com/imadeddine-belkat/sofascore-service/config"
@@ -18,28 +16,31 @@ func TestPlayersInfoService(t *testing.T) {
 	}
 
 	cfg := config.LoadConfig()
+	apiClient := sofascore_api.NewSofascoreApiClient(cfg)
 	service := &services.PlayersService{
 		Config: *cfg,
-		Client: sofascore_api.NewSofascoreApiClient(cfg),
+		Client: apiClient,
 		Standing: &services.LeagueStandingService{
 			Config:   cfg,
-			Client:   sofascore_api.NewSofascoreApiClient(cfg),
+			Client:   apiClient,
 			Producer: kafka.NewProducer(),
 		},
 		Producer: kafka.NewProducer(),
 	}
 
 	ctx := context.Background()
-	seasonID := cfg.MustGetSeasonID("PREMIERLEAGUE", "2526")
-	leagueID := cfg.SofascoreApi.LeaguesID.PremierLeague
-
-	log.Printf("Testing season %d, league %d", seasonID, leagueID)
-
-	start := time.Now()
-	if err := service.UpdateLeaguePlayersInfo(ctx, seasonID, leagueID); err != nil {
-		t.Fatalf("Error: %v", err)
+	leagues := map[string]int{
+		"LALIGA":        cfg.SofascoreApi.LeaguesID.LaLiga,
+		"PREMIERLEAGUE": cfg.SofascoreApi.LeaguesID.PremierLeague,
 	}
 
-	log.Printf("Completed in %v", time.Since(start))
+	for leagueName, leagueID := range leagues {
+		for _, seasonID := range cfg.AllSeasons(leagueName) {
+			if err := service.UpdateLeaguePlayersInfo(ctx, seasonID, leagueID); err != nil {
+				t.Fatalf("Error: %v", err)
+			}
+		}
+	}
+
 	t.Log("Test completed successfully")
 }

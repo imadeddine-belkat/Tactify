@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/imadeddine-belkat/indexer-service/internal/sofascore_repositories"
-	"github.com/imadeddine-belkat/shared/sofascore_models"
+	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
 	_ "github.com/lib/pq"
 
 	"github.com/imadeddine-belkat/indexer-service/config"
@@ -17,7 +17,7 @@ import (
 	"github.com/imadeddine-belkat/indexer-service/internal/fpl_handler"
 	"github.com/imadeddine-belkat/indexer-service/internal/fpl_repositories"
 	"github.com/imadeddine-belkat/indexer-service/internal/sofascore_handler"
-	"github.com/imadeddine-belkat/shared/fpl_models"
+	"github.com/imadeddine-belkat/tactify-protos/fpl_models"
 )
 
 func main() {

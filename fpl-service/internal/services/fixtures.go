@@ -11,7 +11,7 @@ import (
 	"github.com/imadeddine-belkat/fpl-service/config"
 	fpl_api "github.com/imadeddine-belkat/fpl-service/internal/api"
 	"github.com/imadeddine-belkat/kafka"
-	"github.com/imadeddine-belkat/shared/fpl_models"
+	fpl "github.com/imadeddine-belkat/tactify-protos/go/fpl/v1"
 )
 
 type FixturesApiService struct {

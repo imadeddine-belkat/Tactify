@@ -1,6 +1,6 @@
 package sofascore_helper
 
-import "github.com/imadeddine-belkat/shared/sofascore_models"
+import "github.com/imadeddine-belkat/tactify-protos/sofascore_models"
 
 type Helper struct {
 }

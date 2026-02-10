@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"github.com/imadeddine-belkat/kafka"
-	"github.com/imadeddine-belkat/shared/sofascore_models"
 	"github.com/imadeddine-belkat/sofascore-service/config"
 	sofascore_api "github.com/imadeddine-belkat/sofascore-service/internal/api"
+	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
 	"golang.org/x/sync/errgroup"
 )
 

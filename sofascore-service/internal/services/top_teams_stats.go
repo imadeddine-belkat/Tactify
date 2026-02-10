@@ -8,9 +8,9 @@ import (
 	"sync"
 
 	"github.com/imadeddine-belkat/kafka"
-	"github.com/imadeddine-belkat/shared/sofascore_models"
 	"github.com/imadeddine-belkat/sofascore-service/config"
 	sofascore_api "github.com/imadeddine-belkat/sofascore-service/internal/api"
+	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
 )
 
 type TopTeamsStatsService struct {
@@ -19,14 +19,14 @@ type TopTeamsStatsService struct {
 	Producer *kafka.Producer
 }
 
-// TeamStatter interface
-type TeamStatter interface {
+// TeamStater interface
+type TeamStater interface {
 	GetTeamID() int
 	SetSeasonID(seasonId int)
 	SetLeagueID(leagueId int)
 }
 
-func publishStats[T TeamStatter](
+func publishStats[T TeamStater](
 	ctx context.Context,
 	producer *kafka.Producer,
 	topic string,
@@ -59,7 +59,7 @@ func publishStats[T TeamStatter](
 }
 
 // publishStatsConcurrent wraps publishStats for concurrent execution
-func publishStatsConcurrent[T TeamStatter](
+func publishStatsConcurrent[T TeamStater](
 	ctx context.Context,
 	wg *sync.WaitGroup,
 	producer *kafka.Producer,
