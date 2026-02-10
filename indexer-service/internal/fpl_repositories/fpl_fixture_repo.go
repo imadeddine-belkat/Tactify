@@ -5,15 +5,15 @@ import (
 	"log"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/imadeddine-belkat/tactify-protos/fpl_models"
+	fpl "github.com/imadeddine-belkat/tactify-protos/go/fpl/v1"
 )
 
 type FixtureRepo struct {
 	db           *sql.DB
-	FixtureModel *fpl_models.Fixture
+	FixtureModel *fpl.Fixture
 }
 
-func NewFixtureRepo(db *sql.DB, fixtureModel *fpl_models.Fixture) *FixtureRepo {
+func NewFixtureRepo(db *sql.DB, fixtureModel *fpl.Fixture) *FixtureRepo {
 	return &FixtureRepo{
 		db:           db,
 		FixtureModel: fixtureModel,
@@ -21,7 +21,7 @@ func NewFixtureRepo(db *sql.DB, fixtureModel *fpl_models.Fixture) *FixtureRepo {
 }
 
 // In fpl_fixture_repo.go
-func (r *FixtureRepo) InsertFixtures(fixtures []fpl_models.FixtureMessage) error {
+func (r *FixtureRepo) InsertFixtures(fixtures []*fpl.FixtureMessage) error {
 	if len(fixtures) == 0 {
 		return nil
 	}
@@ -59,27 +59,27 @@ func (r *FixtureRepo) InsertFixtures(fixtures []fpl_models.FixtureMessage) error
 	// Add all fixtures to the batch
 	for _, fixtureMsg := range fixtures {
 		fixtureInsert = fixtureInsert.Values(
-			fixtureMsg.Fixture.ID, fixtureMsg.SeasonID, fixtureMsg.Fixture.Code,
+			fixtureMsg.Fixture.Id, fixtureMsg.SeasonId, fixtureMsg.Fixture.Code,
 			fixtureMsg.Fixture.Event, fixtureMsg.Fixture.TeamH, fixtureMsg.Fixture.TeamA,
 			nullIfEmpty(fixtureMsg.Fixture.KickoffTime), fixtureMsg.Fixture.TeamHScore,
 			fixtureMsg.Fixture.TeamAScore, fixtureMsg.Fixture.Finished,
 			fixtureMsg.Fixture.Minutes, fixtureMsg.Fixture.ProvisionalStartTime,
 			fixtureMsg.Fixture.TeamHDifficulty, fixtureMsg.Fixture.TeamADifficulty,
-			fixtureMsg.Fixture.PulseID,
+			fixtureMsg.Fixture.PulseId,
 		)
 
 		// Add all stats for this fixture
 		for _, stat := range fixtureMsg.Fixture.Stats {
 			for _, p := range stat.H {
 				fixtureStatsInsert = fixtureStatsInsert.Values(
-					fixtureMsg.Fixture.ID, fixtureMsg.SeasonID, p.Element,
+					fixtureMsg.Fixture.Id, fixtureMsg.SeasonId, p.Element,
 					stat.Identifier, p.Value,
 				)
 				hasStats = true
 			}
 			for _, p := range stat.A {
 				fixtureStatsInsert = fixtureStatsInsert.Values(
-					fixtureMsg.Fixture.ID, fixtureMsg.SeasonID, p.Element,
+					fixtureMsg.Fixture.Id, fixtureMsg.SeasonId, p.Element,
 					stat.Identifier, p.Value,
 				)
 				hasStats = true

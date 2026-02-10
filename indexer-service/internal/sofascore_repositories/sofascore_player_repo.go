@@ -4,17 +4,17 @@ import (
 	"database/sql"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
+	sofascore "github.com/imadeddine-belkat/tactify-protos/go/sofascore/v1"
 )
 
 type PlayerRepo struct {
 	db     *sql.DB
-	Player *sofascore_models.PlayerMessage
+	Player *sofascore.PlayerMessage
 }
 
 func NewPlayerRepo(
 	db *sql.DB,
-	Player *sofascore_models.PlayerMessage,
+	Player *sofascore.PlayerMessage,
 ) *PlayerRepo {
 	return &PlayerRepo{
 		db:     db,
@@ -22,7 +22,7 @@ func NewPlayerRepo(
 	}
 }
 
-func (p *PlayerRepo) InsertPlayerInfo(playerMessage sofascore_models.PlayerMessage) error {
+func (p *PlayerRepo) InsertPlayerInfo(playerMessage *sofascore.PlayerMessage) error {
 	query := sq.Insert("players").Columns("player_id", "season_id", "team_id", "team_name", "league_id", "player_name", "player_short_name",
 		"position", "height", "preferred_foot",
 	).Suffix("ON CONFLICT (player_id, season_id, team_id, league_id) DO UPDATE SET " +
@@ -39,11 +39,11 @@ func (p *PlayerRepo) InsertPlayerInfo(playerMessage sofascore_models.PlayerMessa
 	).PlaceholderFormat(sq.Dollar)
 
 	query = query.Values(
-		playerMessage.Player.ID,
-		playerMessage.SeasonID,
-		playerMessage.TeamID,
+		playerMessage.Player.Id,
+		playerMessage.SeasonId,
+		playerMessage.TeamId,
 		playerMessage.TeamName,
-		playerMessage.LeagueID,
+		playerMessage.LeagueId,
 		playerMessage.Player.Name,
 		playerMessage.Player.ShortName,
 		playerMessage.Player.Position,

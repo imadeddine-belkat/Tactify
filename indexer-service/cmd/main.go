@@ -9,7 +9,8 @@ import (
 	"time"
 
 	"github.com/imadeddine-belkat/indexer-service/internal/sofascore_repositories"
-	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
+	fpl "github.com/imadeddine-belkat/tactify-protos/go/fpl/v1"
+	sofascore "github.com/imadeddine-belkat/tactify-protos/go/sofascore/v1"
 	_ "github.com/lib/pq"
 
 	"github.com/imadeddine-belkat/indexer-service/config"
@@ -17,7 +18,6 @@ import (
 	"github.com/imadeddine-belkat/indexer-service/internal/fpl_handler"
 	"github.com/imadeddine-belkat/indexer-service/internal/fpl_repositories"
 	"github.com/imadeddine-belkat/indexer-service/internal/sofascore_handler"
-	"github.com/imadeddine-belkat/tactify-protos/fpl_models"
 )
 
 func main() {
@@ -58,49 +58,49 @@ func main() {
 	// 2. Initialize Repositories
 	fplFixtureRepo := fpl_repositories.NewFixtureRepo(
 		fplDb.DB(),
-		&fpl_models.Fixture{},
+		&fpl.Fixture{},
 	)
 
 	FplTeamRepo := fpl_repositories.NewTeamRepo(
 		fplDb.DB(),
-		&fpl_models.Team{},
+		&fpl.Team{},
 	)
 
 	fplPlayerRepo := fpl_repositories.NewPlayerRepo(
 		fplDb.DB(),
-		&fpl_models.PlayerBootstrap{},
-		&fpl_models.PlayerHistory{},
-		&fpl_models.PlayerPastHistory{},
+		&fpl.PlayerBootstrap{},
+		&fpl.PlayerHistory{},
+		&fpl.PlayerPastHistory{},
 	)
 
 	FplManagerRepo := fpl_repositories.NewManagerRepo(
 		fplDb.DB(),
-		&fpl_models.EntryMessage{},
-		&fpl_models.EntryEventPicksMessage{},
-		&fpl_models.EntryTransfersMessage{},
-		&fpl_models.EntryHistoryMessage{},
+		&fpl.EntryMessage{},
+		&fpl.EntryEventPicksMessage{},
+		&fpl.EntryTransfersMessage{},
+		&fpl.EntryHistoryMessage{},
 	)
 
 	sofascoreTeamReop := sofascore_repositories.NewTeamRepo(
 		sofascoreDb.DB(),
-		&sofascore_models.StandingMessage{},
-		&sofascore_models.TeamOverallStatsMessage{},
-		&sofascore_models.MatchStatsMessage{},
+		&sofascore.StandingMessage{},
+		&sofascore.TeamOverallStatsMessage{},
+		&sofascore.MatchStatsMessage{},
 	)
 
 	sofacorePlayerRepo := sofascore_repositories.NewPlayerRepo(
 		sofascoreDb.DB(),
-		&sofascore_models.PlayerMessage{},
+		&sofascore.PlayerMessage{},
 	)
 
 	sofascoreMatchRepo := sofascore_repositories.NewMatchRepo(
 		sofascoreDb.DB(),
-		&sofascore_models.Event{},
+		&sofascore.Event{},
 	)
 
 	sofascoreLeagueRepo := sofascore_repositories.NewLeagueRepo(
 		sofascoreDb.DB(),
-		&sofascore_models.LeagueUniqueTournaments{},
+		&sofascore.LeagueUniqueTournaments{},
 	)
 
 	// 3. Initialize Handler

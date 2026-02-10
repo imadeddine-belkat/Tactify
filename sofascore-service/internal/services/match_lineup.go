@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/imadeddine-belkat/kafka"
 	"github.com/imadeddine-belkat/sofascore-service/config"
 	sofascore_api "github.com/imadeddine-belkat/sofascore-service/internal/api"
-	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
+	kafka "github.com/imadeddine-belkat/tactify-kafka"
+	sofascore "github.com/imadeddine-belkat/tactify-protos/go/sofascore/v1"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -19,8 +19,8 @@ type MatchLineupService struct {
 	Producer *kafka.Producer
 }
 
-func (l *MatchLineupService) GetMatchLineup(ctx context.Context, matchID int) (*sofascore_models.MatchLineup, error) {
-	matchLineup := &sofascore_models.MatchLineup{}
+func (l *MatchLineupService) GetMatchLineup(ctx context.Context, matchID int) (*sofascore.MatchLineup, error) {
+	matchLineup := &sofascore.MatchLineup{}
 
 	lineup := l.Config.SofascoreApi.MatchEndpoints.MatchLineups //event/%d/lineups
 	endpoint := fmt.Sprintf(lineup, matchID)
@@ -40,21 +40,21 @@ func (l *MatchLineupService) UpdatePlayersStats(ctx context.Context, seasonId, l
 		return fmt.Errorf("failed to get round matches for season %d, league %d, round %d: %w", seasonId, leagueId, round, err)
 	}
 
-	for _, event := range roundMatches.Events {
+	for _, event := range roundMatches {
 		event := event
 		g.Go(func() error {
-			matchLineup, err := l.GetMatchLineup(ctx, event.ID)
+			matchLineup, err := l.GetMatchLineup(ctx, int(event.Id))
 			if err != nil {
 				if isNotFoundError(err) {
-					fmt.Printf("Warning: Lineup not found for match %d (this is normal for future/cancelled matches)\n", event.ID)
+					fmt.Printf("Warning: Lineup not found for match %d (this is normal for future/cancelled matches)\n", event.Id)
 					return nil
 				}
-				return fmt.Errorf("failed to get lineup for match %d: %w", event.ID, err)
+				return fmt.Errorf("failed to get lineup for match %d: %w", event.Id, err)
 			}
 
-			players, err := l.processMatchLineup(matchLineup, seasonId, leagueId, round, event.ID)
+			players, err := l.processMatchLineup(matchLineup, seasonId, leagueId, round, int(event.Id))
 			if err != nil {
-				return fmt.Errorf("failed to process match lineup for match %d: %w", event.ID, err)
+				return fmt.Errorf("failed to process match lineup for match %d: %w", event.Id, err)
 			}
 
 			publishGroup, publishCtx := errgroup.WithContext(ctx)
@@ -72,42 +72,43 @@ func (l *MatchLineupService) UpdatePlayersStats(ctx context.Context, seasonId, l
 	return g.Wait()
 }
 
-func (l *MatchLineupService) processMatchLineup(lineup *sofascore_models.MatchLineup, seasonId, leagueId, round, eventId int) ([]*sofascore_models.PlayerMatchStatsMessage, error) {
-	players := make([]*sofascore_models.PlayerMatchStatsMessage, 0, len(lineup.Home.Players)+len(lineup.Away.Players))
+func (l *MatchLineupService) processMatchLineup(lineup *sofascore.MatchLineup, seasonId, leagueId, round, eventId int) ([]*sofascore.PlayerMatchStatsMessage, error) {
+	players := make([]*sofascore.PlayerMatchStatsMessage, 0, len(lineup.Home.Players)+len(lineup.Away.Players))
 
 	for _, player := range lineup.Home.Players {
-		players = append(players, &sofascore_models.PlayerMatchStatsMessage{
-			PlayerName:  player.Player.Name,
-			SeasonID:    seasonId,
-			LeagueID:    leagueId,
-			MatchID:     eventId,
-			Round:       round,
-			MatchPlayer: player,
+		players = append(players, &sofascore.PlayerMatchStatsMessage{
+			PlayerName: player.Player.Name,
+			SeasonId:   int32(seasonId),
+			LeagueId:   int32(leagueId),
+			MatchId:    int32(eventId),
+			Round:      int32(round),
+			Player:     player,
 		})
 	}
 
 	for _, player := range lineup.Away.Players {
-		players = append(players, &sofascore_models.PlayerMatchStatsMessage{
-			PlayerName:  player.Player.Name,
-			SeasonID:    seasonId,
-			LeagueID:    leagueId,
-			MatchID:     eventId,
-			Round:       round,
-			MatchPlayer: player,
+		players = append(players, &sofascore.PlayerMatchStatsMessage{
+			PlayerName: player.Player.Name,
+			SeasonId:   int32(seasonId),
+			LeagueId:   int32(leagueId),
+			MatchId:    int32(eventId),
+			Round:      int32(round),
+			Player:     player,
 		})
 	}
 
 	return players, nil
 }
 
-func (l *MatchLineupService) publishPlayer(ctx context.Context, player *sofascore_models.PlayerMatchStatsMessage) error {
+func (l *MatchLineupService) publishPlayer(ctx context.Context, player *sofascore.PlayerMatchStatsMessage) error {
 	playersStatsTopic := l.Config.KafkaConfig.TopicsName.SofascorePlayerMatchStats.Name
 
 	key := []byte(fmt.Sprintf("%s-%d-%d-%d",
-		player.MatchPlayer.Player.Name,
-		player.SeasonID,
-		player.LeagueID,
-		player.Round))
+		player.Player.Player.Name,
+		player.SeasonId,
+		player.LeagueId,
+		player.Round,
+	))
 
 	return l.Producer.PublishWithProcess(ctx, player, playersStatsTopic, key)
 }

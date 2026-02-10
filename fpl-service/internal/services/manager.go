@@ -2,15 +2,14 @@ package services
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"sync"
 
 	"github.com/imadeddine-belkat/fpl-service/config"
 	fpl_api "github.com/imadeddine-belkat/fpl-service/internal/api"
-	"github.com/imadeddine-belkat/kafka"
-	"github.com/imadeddine-belkat/tactify-protos/fpl_models"
+	kafka "github.com/imadeddine-belkat/tactify-kafka"
+	fpl "github.com/imadeddine-belkat/tactify-protos/go/fpl/v1"
 )
 
 type ManagersApiService struct {
@@ -47,7 +46,7 @@ func (s *ManagersApiService) UpdateManager(ctx context.Context, managerId int, e
 	return nil
 }
 
-func (s *ManagersApiService) publishManager(ctx context.Context, info *fpl_models.EntryMessage, picks *fpl_models.EntryEventPicksMessage, history *fpl_models.EntryHistoryMessage, transfers *fpl_models.EntryTransfersMessage) error {
+func (s *ManagersApiService) publishManager(ctx context.Context, info *fpl.EntryMessage, picks *fpl.EntryEventPicksMessage, history *fpl.EntryHistoryMessage, transfers *fpl.EntryTransfersMessage) error {
 	entryTopic := s.Config.KafkaConfig.TopicsName.FplEntry.Name
 	entryEventTopic := s.Config.KafkaConfig.TopicsName.FplEntryPicks.Name
 	entryHistoryTopic := s.Config.KafkaConfig.TopicsName.FplEntryHistory.Name
@@ -56,47 +55,35 @@ func (s *ManagersApiService) publishManager(ctx context.Context, info *fpl_model
 	var publishWg sync.WaitGroup
 	publishWg.Add(1)
 	go func() {
-		if info != nil {
-			value, err := json.Marshal(info)
-			if err == nil {
-				key := []byte(fmt.Sprintf("%d", info.Entry.ID))
-				err := s.Producer.Publish(ctx, entryTopic, key, value)
-				if err != nil {
-					fmt.Printf("Failed to publish entry message: %v\n", err)
-				}
+		if &info != nil {
+			key := []byte(fmt.Sprintf("%d-%d", info.Entry.Id, info.SeasonId))
+			err := s.Producer.PublishWithProcess(ctx, info, entryTopic, key)
+			if err != nil {
+				fmt.Printf("Failed to publish entry message: %v\n", err)
 			}
 		}
 
-		if picks != nil {
-			value, err := json.Marshal(picks)
-			if err == nil {
-				key := []byte(fmt.Sprintf("%d_%d", picks.EntryId, picks.EventId))
-				err := s.Producer.Publish(ctx, entryEventTopic, key, value)
-				if err != nil {
-					fmt.Printf("Failed to publish entry event picks message: %v\n", err)
-				}
+		if &picks != nil {
+			key := []byte(fmt.Sprintf("%d-%d", picks.EntryId, picks.Event))
+			err := s.Producer.PublishWithProcess(ctx, picks, entryEventTopic, key)
+			if err != nil {
+				fmt.Printf("Failed to publish entry picks message: %v\n", err)
 			}
 		}
 
-		if history != nil {
-			value, err := json.Marshal(history)
-			if err == nil {
-				key := []byte(fmt.Sprintf("%d-%d", history.EntryId, history.SeasonId))
-				err := s.Producer.Publish(ctx, entryHistoryTopic, key, value)
-				if err != nil {
-					fmt.Printf("Failed to publish entry history message: %v\n", err)
-				}
+		if &history != nil {
+			key := []byte(fmt.Sprintf("%d-%d", history.EntryId, history.SeasonId))
+			err := s.Producer.PublishWithProcess(ctx, history, entryHistoryTopic, key)
+			if err != nil {
+				fmt.Printf("Failed to publish entry history message: %v\n", err)
 			}
 		}
 
-		if transfers != nil {
-			value, err := json.Marshal(transfers)
-			if err == nil {
-				key := []byte(fmt.Sprintf("%d-%d", transfers.EntryId, transfers.SeasonId))
-				err := s.Producer.Publish(ctx, entryTransfersTopic, key, value)
-				if err != nil {
-					fmt.Printf("Failed to publish entry transfers message: %v\n", err)
-				}
+		if &transfers != nil {
+			key := []byte(fmt.Sprintf("%d-%d", transfers.EntryId, transfers.SeasonId))
+			err := s.Producer.PublishWithProcess(ctx, transfers, entryTransfersTopic, key)
+			if err != nil {
+				fmt.Printf("Failed to publish entry transfers message: %v\n", err)
 			}
 		}
 		defer publishWg.Done()
@@ -106,8 +93,8 @@ func (s *ManagersApiService) publishManager(ctx context.Context, info *fpl_model
 	return nil
 }
 
-func (s *ManagersApiService) GetManagerInfo(ctx context.Context, managerId int) (*fpl_models.EntryMessage, error) {
-	var entry fpl_models.EntryMessage
+func (s *ManagersApiService) GetManagerInfo(ctx context.Context, managerId int) (*fpl.EntryMessage, error) {
+	var entry fpl.EntryMessage
 
 	entryEndpoint := s.Config.FplApi.Entry
 	endpoint := fmt.Sprintf(entryEndpoint, managerId)
@@ -122,8 +109,8 @@ func (s *ManagersApiService) GetManagerInfo(ctx context.Context, managerId int) 
 	return &entry, nil
 }
 
-func (s *ManagersApiService) GetManagerPicks(ctx context.Context, managerId int, eventId int) (*fpl_models.EntryEventPicksMessage, error) {
-	var entryEvent fpl_models.EntryEventPicksMessage
+func (s *ManagersApiService) GetManagerPicks(ctx context.Context, managerId int, eventId int) (*fpl.EntryEventPicksMessage, error) {
+	var entryEvent fpl.EntryEventPicksMessage
 
 	entryEventEndpoint := s.Config.FplApi.EntryPicks
 	endpoint := fmt.Sprintf(entryEventEndpoint, managerId, eventId)
@@ -133,15 +120,15 @@ func (s *ManagersApiService) GetManagerPicks(ctx context.Context, managerId int,
 		return nil, err
 	}
 
-	entryEvent.EventId = eventId
-	entryEvent.EntryId = managerId
+	entryEvent.Event = int32(eventId)
+	entryEvent.EntryId = int32(managerId)
 	entryEvent.SeasonId = s.Config.FplApi.CurrentSeasonID
 
 	return &entryEvent, nil
 }
 
-func (s *ManagersApiService) GetManagerHistory(ctx context.Context, managerId int) (*fpl_models.EntryHistoryMessage, error) {
-	var entryHistory fpl_models.EntryHistoryMessage
+func (s *ManagersApiService) GetManagerHistory(ctx context.Context, managerId int) (*fpl.EntryHistoryMessage, error) {
+	var entryHistory fpl.EntryHistoryMessage
 
 	entryHistoryEndpoint := s.Config.FplApi.EntryHistory
 	endpoint := fmt.Sprintf(entryHistoryEndpoint, managerId)
@@ -151,7 +138,7 @@ func (s *ManagersApiService) GetManagerHistory(ctx context.Context, managerId in
 		return nil, err
 	}
 
-	entryHistory.EntryId = managerId
+	entryHistory.EntryId = int32(managerId)
 	entryHistory.SeasonId = s.Config.FplApi.CurrentSeasonID
 	for i := range entryHistory.EntryHistory.Past {
 		seasonID := s.Config.MapSeasonNameToID(entryHistory.EntryHistory.Past[i].SeasonName)
@@ -161,8 +148,8 @@ func (s *ManagersApiService) GetManagerHistory(ctx context.Context, managerId in
 	return &entryHistory, nil
 }
 
-func (s *ManagersApiService) GetManagerTransfers(ctx context.Context, managerId int) (*fpl_models.EntryTransfersMessage, error) {
-	var entryTransfers fpl_models.EntryTransfersMessage
+func (s *ManagersApiService) GetManagerTransfers(ctx context.Context, managerId int) (*fpl.EntryTransfersMessage, error) {
+	var entryTransfers fpl.EntryTransfersMessage
 
 	entryTransfersEndpoint := s.Config.FplApi.EntryTransfers
 	endpoint := fmt.Sprintf(entryTransfersEndpoint, managerId)
@@ -172,7 +159,7 @@ func (s *ManagersApiService) GetManagerTransfers(ctx context.Context, managerId 
 		return nil, err
 	}
 
-	entryTransfers.EntryId = managerId
+	entryTransfers.EntryId = int32(managerId)
 	entryTransfers.SeasonId = s.Config.FplApi.CurrentSeasonID
 
 	return &entryTransfers, nil

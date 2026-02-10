@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/imadeddine-belkat/kafka"
 	"github.com/imadeddine-belkat/sofascore-service/config"
 	sofascore_api "github.com/imadeddine-belkat/sofascore-service/internal/api"
-	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
+	kafka "github.com/imadeddine-belkat/tactify-kafka"
+	sofascore "github.com/imadeddine-belkat/tactify-protos/go/sofascore/v1"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -30,8 +30,8 @@ func (t *LeagueStandingService) UpdateLeagueStanding(ctx context.Context, season
 	return nil
 }
 
-func (t *LeagueStandingService) GetLeagueStanding(ctx context.Context, seasonId, leagueId int) (*sofascore_models.Standings, error) {
-	standing := &sofascore_models.Standings{}
+func (t *LeagueStandingService) GetLeagueStanding(ctx context.Context, seasonId, leagueId int) (*sofascore.Standings, error) {
+	standing := &sofascore.Standings{}
 
 	leagueStandingEndpoint := t.Config.SofascoreApi.LeagueEndpoints.LeagueSeasonStandings // /unique-tournament/%d/season/%d/standings/total
 	endpoint := fmt.Sprintf(leagueStandingEndpoint, leagueId, seasonId)
@@ -43,7 +43,7 @@ func (t *LeagueStandingService) GetLeagueStanding(ctx context.Context, seasonId,
 	return standing, nil
 }
 
-func (t *LeagueStandingService) publishLeagueStanding(ctx context.Context, seasonId int, leagueId int, standing *sofascore_models.Standings) error {
+func (t *LeagueStandingService) publishLeagueStanding(ctx context.Context, seasonId int, leagueId int, standing *sofascore.Standings) error {
 	leagueStandingTopic := t.Config.KafkaConfig.TopicsName.SofascoreLeagueStandings.Name
 
 	g, ctx := errgroup.WithContext(ctx)
@@ -52,12 +52,12 @@ func (t *LeagueStandingService) publishLeagueStanding(ctx context.Context, seaso
 		for _, row := range s.Rows {
 			row := row
 			g.Go(func() error {
-				leagueStanding := &sofascore_models.StandingMessage{
-					SeasonID: seasonId,
-					LeagueID: leagueId,
+				leagueStanding := &sofascore.StandingMessage{
+					SeasonId: int32(seasonId),
+					LeagueId: int32(leagueId),
 					Row:      row,
 				}
-				key := []byte(fmt.Sprintf("%d-%d", leagueId, row.Team.ID))
+				key := []byte(fmt.Sprintf("%d-%d", leagueId, row.Team.Id))
 
 				return t.Producer.PublishWithProcess(ctx, leagueStanding, leagueStandingTopic, key)
 

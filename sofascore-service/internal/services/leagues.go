@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/imadeddine-belkat/kafka"
 	"github.com/imadeddine-belkat/sofascore-service/config"
 	sofascore_api "github.com/imadeddine-belkat/sofascore-service/internal/api"
-	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
+
+	kafka "github.com/imadeddine-belkat/tactify-kafka"
+	sofascore "github.com/imadeddine-belkat/tactify-protos/go/sofascore/v1"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -28,21 +29,21 @@ func (l *LeagueService) UpdateLeagueIDs(ctx context.Context) error {
 	for _, country := range leagueCountries.Categories {
 		country := country
 		g.Go(func() error {
-			uniqueTournament := &sofascore_models.LeagueUniqueTournaments{}
+			uniqueTournament := &sofascore.LeagueUniqueTournaments{}
 
-			uniqueTournament, err = l.GetLeagueInfo(ctx, country.ID)
+			uniqueTournament, err = l.GetLeagueInfo(ctx, int(country.Id))
 			if err != nil {
-				return fmt.Errorf("error getting country info id: %d to update tournaments: %w", country.ID, err)
+				return fmt.Errorf("error getting country info id: %d to update tournaments: %w", country.Id, err)
 			}
-			return l.publishLeagueInfo(ctx, country.ID, uniqueTournament)
+			return l.publishLeagueInfo(ctx, int(country.Id), uniqueTournament)
 		})
 	}
 
 	return g.Wait()
 }
 
-func (l *LeagueService) GetLeagueCountries(ctx context.Context) (*sofascore_models.LeagueCategories, error) {
-	leagueCategories := &sofascore_models.LeagueCategories{}
+func (l *LeagueService) GetLeagueCountries(ctx context.Context) (*sofascore.LeagueCategories, error) {
+	leagueCategories := &sofascore.LeagueCategories{}
 
 	endpoint := l.Config.SofascoreApi.LeagueCountriesIDs
 	if err := l.Client.GetAndUnmarshal(ctx, endpoint, leagueCategories); err != nil {
@@ -52,8 +53,8 @@ func (l *LeagueService) GetLeagueCountries(ctx context.Context) (*sofascore_mode
 	return leagueCategories, nil
 }
 
-func (l *LeagueService) GetLeagueInfo(ctx context.Context, countryId int) (*sofascore_models.LeagueUniqueTournaments, error) {
-	league := &sofascore_models.LeagueUniqueTournaments{}
+func (l *LeagueService) GetLeagueInfo(ctx context.Context, countryId int) (*sofascore.LeagueUniqueTournaments, error) {
+	league := &sofascore.LeagueUniqueTournaments{}
 
 	endpoint := l.Config.SofascoreApi.LeagueCountryLeagueIDs
 	countryLeagues := fmt.Sprintf(endpoint, countryId)
@@ -65,7 +66,7 @@ func (l *LeagueService) GetLeagueInfo(ctx context.Context, countryId int) (*sofa
 	return league, nil
 }
 
-func (l *LeagueService) publishLeagueInfo(ctx context.Context, countryId int, uniqueTournament *sofascore_models.LeagueUniqueTournaments) error {
+func (l *LeagueService) publishLeagueInfo(ctx context.Context, countryId int, uniqueTournament *sofascore.LeagueUniqueTournaments) error {
 	leagueIdsTopic := l.Config.KafkaConfig.TopicsName.SofascoreLeagueIDs.Name
 
 	key := []byte(fmt.Sprintf("%d", countryId))

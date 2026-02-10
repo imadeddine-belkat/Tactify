@@ -5,17 +5,17 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
+	sofascore "github.com/imadeddine-belkat/tactify-protos/go/sofascore/v1"
 )
 
 type MatchRepo struct {
 	db    *sql.DB
-	Event *sofascore_models.Event
+	Event *sofascore.Event
 }
 
 func NewMatchRepo(
 	db *sql.DB,
-	event *sofascore_models.Event,
+	event *sofascore.Event,
 ) *MatchRepo {
 	return &MatchRepo{
 		db:    db,
@@ -23,7 +23,7 @@ func NewMatchRepo(
 	}
 }
 
-func (m *MatchRepo) InsertLeagueRoundMatches(match sofascore_models.Event) error {
+func (m *MatchRepo) InsertLeagueRoundMatches(match *sofascore.Event) error {
 	query := sq.Insert("matches").Columns(
 		"match_id", "season_id", "league_id", "home_team_id", "away_team_id",
 		"home_team_name", "away_team_name", "start_time", "round", "status", "status_description").
@@ -39,11 +39,11 @@ func (m *MatchRepo) InsertLeagueRoundMatches(match sofascore_models.Event) error
 			"updated_at = CURRENT_TIMESTAMP").
 		PlaceholderFormat(sq.Dollar)
 
-	query = query.Values(match.ID,
-		match.Season.ID,
-		match.Tournament.UniqueTournament.ID,
-		match.HomeTeam.ID,
-		match.AwayTeam.ID,
+	query = query.Values(match.Id,
+		match.Season.Id,
+		match.Tournament.UniqueTournament.Id,
+		match.HomeTeam.Id,
+		match.AwayTeam.Id,
 		match.HomeTeam.Name,
 		match.AwayTeam.Name,
 		time.Unix(match.StartTimestamp, 0),

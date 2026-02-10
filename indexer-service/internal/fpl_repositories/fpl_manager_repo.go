@@ -6,18 +6,20 @@ import (
 	"log"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/imadeddine-belkat/tactify-protos/fpl_models"
+	fpl "github.com/imadeddine-belkat/tactify-protos/go/fpl/v1"
 )
 
 type ManagerRepo struct {
 	db             *sql.DB
-	Entry          *fpl_models.EntryMessage
-	EntryPicks     *fpl_models.EntryEventPicksMessage
-	EntryTransfers *fpl_models.EntryTransfersMessage
-	EntryHistory   *fpl_models.EntryHistoryMessage
+	Entry          *fpl.EntryMessage
+	EntryPicks     *fpl.EntryEventPicksMessage
+	EntryTransfers *fpl.EntryTransfersMessage
+	EntryHistory   *fpl.EntryHistoryMessage
 }
 
-func NewManagerRepo(db *sql.DB, entry *fpl_models.EntryMessage, entryPicks *fpl_models.EntryEventPicksMessage, entryTransfers *fpl_models.EntryTransfersMessage, entryHistory *fpl_models.EntryHistoryMessage) *ManagerRepo {
+func NewManagerRepo(db *sql.DB, entry *fpl.EntryMessage, entryPicks *fpl.EntryEventPicksMessage,
+	entryTransfers *fpl.EntryTransfersMessage, entryHistory *fpl.EntryHistoryMessage,
+) *ManagerRepo {
 	return &ManagerRepo{
 		db:             db,
 		Entry:          entry,
@@ -27,7 +29,7 @@ func NewManagerRepo(db *sql.DB, entry *fpl_models.EntryMessage, entryPicks *fpl_
 	}
 }
 
-func (r *ManagerRepo) InsertManagerInfo(entry *fpl_models.EntryMessage) error {
+func (r *ManagerRepo) InsertManagerInfo(entry *fpl.EntryMessage) error {
 	if entry == nil {
 		return nil
 	}
@@ -39,10 +41,10 @@ func (r *ManagerRepo) InsertManagerInfo(entry *fpl_models.EntryMessage) error {
 		"current_event", "name_change_blocked", "last_deadline_bank", "last_deadline_value", "last_deadline_total_transfers",
 		"club_badge_src",
 	).Values(
-		entry.Entry.ID, entry.SeasonId, entry.Entry.Name, entry.Entry.PlayerFirstName, entry.Entry.PlayerLastName, entry.Entry.PlayerRegionID,
-		entry.Entry.PlayerRegionName, entry.Entry.PlayerRegionShort, entry.Entry.PlayerRegionLong, entry.Entry.FavouriteTeam, entry.Entry.JoinedTime,
+		entry.Entry.Id, entry.SeasonId, entry.Entry.Name, entry.Entry.PlayerFirstName, entry.Entry.PlayerLastName, entry.Entry.PlayerRegionId,
+		entry.Entry.PlayerRegionName, entry.Entry.PlayerRegionIsoCodeShort, entry.Entry.PlayerRegionIsoCodeLong, entry.Entry.FavouriteTeam, entry.Entry.JoinedTime,
 		entry.Entry.StartedEvent, entry.Entry.YearsActive, entry.Entry.SummaryOverallPoints, entry.Entry.SummaryOverallRank, entry.Entry.SummaryEventPoints, entry.Entry.SummaryEventRank,
-		entry.Entry.CurrentEvent, entry.Entry.NameChangeBlocked, entry.Entry.LastDeadlineBank, entry.Entry.LastDeadlineValue, entry.Entry.LastDeadlineTransfers,
+		entry.Entry.CurrentEvent, entry.Entry.NameChangeBlocked, entry.Entry.LastDeadlineBank, entry.Entry.LastDeadlineValue, entry.Entry.LastDeadlineTotalTransfers,
 		entry.Entry.ClubBadgeSrc,
 	).Suffix(`ON CONFLICT (manager_id, season_id) DO UPDATE SET 
 		manager_name = EXCLUDED.manager_name,
@@ -87,7 +89,7 @@ func (r *ManagerRepo) InsertManagerInfo(entry *fpl_models.EntryMessage) error {
 	return err
 }
 
-func (r *ManagerRepo) InsertManagerPicks(entryPicks *fpl_models.EntryEventPicksMessage) error {
+func (r *ManagerRepo) InsertManagerPicks(entryPicks *fpl.EntryEventPicksMessage) error {
 	if entryPicks == nil {
 		return nil
 	}
@@ -112,14 +114,14 @@ func (r *ManagerRepo) InsertManagerPicks(entryPicks *fpl_models.EntryEventPicksM
 
 	for _, pick := range entryPicks.Picks.Picks {
 		queryPicks = queryPicks.Values(
-			entryPicks.EntryId, entryPicks.SeasonId, entryPicks.EventId, pick.Element, pick.IsCaptain,
+			entryPicks.EntryId, entryPicks.SeasonId, entryPicks.Event, pick.Element, pick.IsCaptain,
 			pick.IsViceCaptain, pick.Multiplier, pick.Position, pick.ElementType,
 		)
 	}
 
 	for _, sub := range entryPicks.Picks.AutomaticSubs {
 		querySubs = querySubs.Values(
-			entryPicks.EntryId, entryPicks.SeasonId, entryPicks.EventId, sub.ElementOut, sub.ElementIn,
+			entryPicks.EntryId, entryPicks.SeasonId, entryPicks.Event, sub.ElementOut, sub.ElementIn,
 		)
 	}
 
@@ -159,7 +161,7 @@ func (r *ManagerRepo) InsertManagerPicks(entryPicks *fpl_models.EntryEventPicksM
 	return err
 }
 
-func (r *ManagerRepo) InsertManagerTransfers(entryTransfers *fpl_models.EntryTransfersMessage) error {
+func (r *ManagerRepo) InsertManagerTransfers(entryTransfers *fpl.EntryTransfersMessage) error {
 	if entryTransfers == nil {
 		return nil
 	}
@@ -198,7 +200,7 @@ func (r *ManagerRepo) InsertManagerTransfers(entryTransfers *fpl_models.EntryTra
 	return err
 }
 
-func (r *ManagerRepo) InsertManagerFullHistory(entryHistory *fpl_models.EntryHistoryMessage) error {
+func (r *ManagerRepo) InsertManagerFullHistory(entryHistory *fpl.EntryHistoryMessage) error {
 	if entryHistory == nil {
 		return nil
 	}

@@ -9,9 +9,9 @@ import (
 
 	"github.com/imadeddine-belkat/indexer-service/config"
 	"github.com/imadeddine-belkat/indexer-service/internal/sofascore_repositories"
-	"github.com/imadeddine-belkat/kafka"
-	kafkaConfig "github.com/imadeddine-belkat/kafka/config"
-	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
+	kafka "github.com/imadeddine-belkat/tactify-kafka"
+	kafkaConfig "github.com/imadeddine-belkat/tactify-kafka/config"
+	sofascore "github.com/imadeddine-belkat/tactify-protos/go/sofascore/v1"
 )
 
 type Handler struct {
@@ -181,7 +181,7 @@ func (h *Handler) handleTeamsInfo(ctx context.Context) {
 		1,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.SofascoreLeagueStandings.Name,
-		func(t sofascore_models.StandingMessage) string {
+		func(t *sofascore.StandingMessage) string {
 			return fmt.Sprintf("%d", time.Now().UnixNano())
 		},
 		h.teamRepo.InsertTeamInfo,
@@ -195,7 +195,7 @@ func (h *Handler) handleTeamOverallStats(ctx context.Context) {
 		1,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.SofascoreTeamOverallStats.Name,
-		func(t sofascore_models.TeamOverallStatsMessage) string {
+		func(t *sofascore.TeamOverallStatsMessage) string {
 			return fmt.Sprintf("%d", time.Now().UnixNano())
 		},
 		h.teamRepo.InsertTeamOverallStats,
@@ -209,7 +209,7 @@ func (h *Handler) handleTeamMatchStat(ctx context.Context) {
 		1,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.SofascoreTeamMatchStats.Name,
-		func(t sofascore_models.MatchStatsMessage) string {
+		func(t *sofascore.MatchStatsMessage) string {
 			return fmt.Sprintf("%d", time.Now().UnixNano())
 		},
 		h.teamRepo.InsertTeamMatchStats,
@@ -223,7 +223,7 @@ func (h *Handler) handlePlayerInfo(ctx context.Context) {
 		1,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.SofascorePlayerInfo.Name,
-		func(p sofascore_models.PlayerMessage) string {
+		func(p *sofascore.PlayerMessage) string {
 			return fmt.Sprintf("%d", time.Now().UnixNano())
 		},
 		h.playerRepo.InsertPlayerInfo,
@@ -237,7 +237,7 @@ func (h *Handler) handleLeagueRoundMatches(ctx context.Context) {
 		1,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.SofascoreLeagueRoundMatches.Name,
-		func(t sofascore_models.Event) string {
+		func(t *sofascore.Event) string {
 			return fmt.Sprintf("%d", time.Now().UnixNano())
 		},
 		h.matchRepo.InsertLeagueRoundMatches,
@@ -251,7 +251,7 @@ func (h *Handler) handleLeagueInfo(ctx context.Context) {
 		1,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.SofascoreLeagueIDs.Name,
-		func(l sofascore_models.LeagueUniqueTournaments) string {
+		func(l *sofascore.LeagueUniqueTournaments) string {
 			return fmt.Sprintf("%d", time.Now().UnixNano())
 		},
 		h.leagueRepo.InsertLeagueInfo,
@@ -265,7 +265,7 @@ func (h *Handler) handleLeagueSeasonsInfo(ctx context.Context) {
 		1,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.SofascoreLeagueSeasons.Name,
-		func(l sofascore_models.Seasons) string {
+		func(l []*sofascore.Season) string {
 			return fmt.Sprintf("%d", time.Now().UnixNano())
 		},
 		h.leagueRepo.InsertLeagueSeasonsInfo,

@@ -3,7 +3,7 @@ package config
 import (
 	"log"
 
-	kafkaConfig "github.com/imadeddine-belkat/kafka/config"
+	kafkaConfig "github.com/imadeddine-belkat/tactify-kafka/config"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 )
@@ -12,8 +12,8 @@ type FplConfig struct {
 	FplApi      FplApi
 	KafkaConfig kafkaConfig.KafkaConfig
 
-	DeleteWorkerCount  int `envconfig:"WORKER_DELETE_POOL_SIZE" default:"10"`
-	PublishWorkerCount int `envconfig:"WORKER_PUBLISH_POOL_SIZE" default:"100"`
+	DeleteWorkerCount  int32 `envconfig:"WORKER_DELETE_POOL_SIZE" default:"10"`
+	PublishWorkerCount int32 `envconfig:"WORKER_PUBLISH_POOL_SIZE" default:"100"`
 }
 
 type FplApi struct {
@@ -29,31 +29,31 @@ type FplApi struct {
 	LeagueClassicStanding string `envconfig:"FPLAPI_LEAGUE_CLASSIC_STANDING" required:"true"`
 	LeagueH2hStanding     string `envconfig:"FPLAPI_LEAGUE_H2H_STANDING" required:"true"`
 
-	CurrentSeasonID int `envconfig:"FPL_CURRENT_SEASON_ID" required:"true"`
-	Season2526      int `envconfig:"FPL_2526_SEASON_ID" required:"true"`
-	Season2425      int `envconfig:"FPL_2425_SEASON_ID" required:"true"`
-	Season2324      int `envconfig:"FPL_2324_SEASON_ID" required:"true"`
-	Season2223      int `envconfig:"FPL_2223_SEASON_ID" required:"true"`
-	Season2122      int `envconfig:"FPL_2122_SEASON_ID" required:"true"`
-	Season2021      int `envconfig:"FPL_2021_SEASON_ID" required:"true"`
-	Season1920      int `envconfig:"FPL_1920_SEASON_ID" required:"true"`
-	Season1819      int `envconfig:"FPL_1819_SEASON_ID" required:"true"`
-	Season1718      int `envconfig:"FPL_1718_SEASON_ID" required:"true"`
-	Season1617      int `envconfig:"FPL_1617_SEASON_ID" required:"true"`
-	Season1516      int `envconfig:"FPL_1516_SEASON_ID" required:"true"`
-	Season1415      int `envconfig:"FPL_1415_SEASON_ID" required:"true"`
-	Season1314      int `envconfig:"FPL_1314_SEASON_ID" required:"true"`
-	Season1213      int `envconfig:"FPL_1213_SEASON_ID" required:"true"`
-	Season1112      int `envconfig:"FPL_1112_SEASON_ID" required:"true"`
-	Season1011      int `envconfig:"FPL_1011_SEASON_ID" required:"true"`
-	Season0910      int `envconfig:"FPL_0910_SEASON_ID" required:"true"`
-	Season0809      int `envconfig:"FPL_0809_SEASON_ID" required:"true"`
-	Season0708      int `envconfig:"FPL_0708_SEASON_ID" required:"true"`
-	Season0607      int `envconfig:"FPL_0607_SEASON_ID" required:"true"`
+	CurrentSeasonID int32 `envconfig:"FPL_CURRENT_SEASON_ID" required:"true"`
+	Season2526      int32 `envconfig:"FPL_2526_SEASON_ID" required:"true"`
+	Season2425      int32 `envconfig:"FPL_2425_SEASON_ID" required:"true"`
+	Season2324      int32 `envconfig:"FPL_2324_SEASON_ID" required:"true"`
+	Season2223      int32 `envconfig:"FPL_2223_SEASON_ID" required:"true"`
+	Season2122      int32 `envconfig:"FPL_2122_SEASON_ID" required:"true"`
+	Season2021      int32 `envconfig:"FPL_2021_SEASON_ID" required:"true"`
+	Season1920      int32 `envconfig:"FPL_1920_SEASON_ID" required:"true"`
+	Season1819      int32 `envconfig:"FPL_1819_SEASON_ID" required:"true"`
+	Season1718      int32 `envconfig:"FPL_1718_SEASON_ID" required:"true"`
+	Season1617      int32 `envconfig:"FPL_1617_SEASON_ID" required:"true"`
+	Season1516      int32 `envconfig:"FPL_1516_SEASON_ID" required:"true"`
+	Season1415      int32 `envconfig:"FPL_1415_SEASON_ID" required:"true"`
+	Season1314      int32 `envconfig:"FPL_1314_SEASON_ID" required:"true"`
+	Season1213      int32 `envconfig:"FPL_1213_SEASON_ID" required:"true"`
+	Season1112      int32 `envconfig:"FPL_1112_SEASON_ID" required:"true"`
+	Season1011      int32 `envconfig:"FPL_1011_SEASON_ID" required:"true"`
+	Season0910      int32 `envconfig:"FPL_0910_SEASON_ID" required:"true"`
+	Season0809      int32 `envconfig:"FPL_0809_SEASON_ID" required:"true"`
+	Season0708      int32 `envconfig:"FPL_0708_SEASON_ID" required:"true"`
+	Season0607      int32 `envconfig:"FPL_0607_SEASON_ID" required:"true"`
 }
 
 type ProcessedModel struct {
-	ID   int
+	ID   int32
 	Data []byte
 }
 
@@ -76,7 +76,7 @@ func LoadConfig() *FplConfig {
 	return config
 }
 
-func (c *FplConfig) MapSeasonNameToID(seasons string) int {
+func (c *FplConfig) MapSeasonNameToID(seasons string) int32 {
 	switch seasons {
 	case "2025/26":
 		return c.FplApi.Season2526

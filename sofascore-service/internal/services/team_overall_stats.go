@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/imadeddine-belkat/kafka"
 	"github.com/imadeddine-belkat/sofascore-service/config"
 	sofascore_api "github.com/imadeddine-belkat/sofascore-service/internal/api"
-	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
+	kafka "github.com/imadeddine-belkat/tactify-kafka"
+	sofascore "github.com/imadeddine-belkat/tactify-protos/go/sofascore/v1"
 )
 
 type TeamOverallStatsService struct {
@@ -18,8 +18,8 @@ type TeamOverallStatsService struct {
 	Standing *LeagueStandingService
 }
 
-func (o *TeamOverallStatsService) GetTeamOverallStats(ctx context.Context, teamId, leagueId, seasonId int) (*sofascore_models.TeamOverallStatsMessage, error) {
-	teamOverallStats := &sofascore_models.TeamOverallStatsMessage{}
+func (o *TeamOverallStatsService) GetTeamOverallStats(ctx context.Context, teamId, leagueId, seasonId int) (*sofascore.TeamOverallStatsMessage, error) {
+	teamOverallStats := &sofascore.TeamOverallStatsMessage{}
 
 	teamStats := o.Config.SofascoreApi.TeamEndpoints.TeamOverallStats
 	endpoint := fmt.Sprintf(teamStats, teamId, leagueId, seasonId) //team/%d/unique-tournament/%d/season/%d/statistics/overall
@@ -39,9 +39,9 @@ func (o *TeamOverallStatsService) UpdateTeamOverallStats(ctx context.Context, te
 		return err
 	}
 
-	teamOverallStats.TeamID = teamId
-	teamOverallStats.LeagueID = leagueId
-	teamOverallStats.SeasonID = seasonId
+	teamOverallStats.TeamId = int32(teamId)
+	teamOverallStats.LeagueId = int32(leagueId)
+	teamOverallStats.SeasonId = int32(seasonId)
 
 	key := []byte(fmt.Sprintf("%d_%d_%d", teamId, leagueId, seasonId))
 
@@ -63,7 +63,7 @@ func (o *TeamOverallStatsService) UpdateAllTeamsOverallStats(ctx context.Context
 
 	for _, st := range standing.Standings {
 		for _, row := range st.Rows {
-			teamsIds = append(teamsIds, row.Team.ID)
+			teamsIds = append(teamsIds, int(row.Team.Id))
 		}
 	}
 

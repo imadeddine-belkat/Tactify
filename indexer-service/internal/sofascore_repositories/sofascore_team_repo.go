@@ -7,22 +7,22 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/imadeddine-belkat/indexer-service/internal/sofascore_helper"
-	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
+	sofascore "github.com/imadeddine-belkat/tactify-protos/go/sofascore/v1"
 )
 
 type TeamRepo struct {
 	db               *sql.DB
 	Helper           *sofascore_helper.Helper
-	LeagueStanding   *sofascore_models.StandingMessage
-	TeamOverallStats *sofascore_models.TeamOverallStatsMessage
-	MatchStats       *sofascore_models.MatchStatsMessage
+	LeagueStanding   *sofascore.StandingMessage
+	TeamOverallStats *sofascore.TeamOverallStatsMessage
+	MatchStats       *sofascore.MatchStatsMessage
 }
 
 func NewTeamRepo(
 	db *sql.DB,
-	leagueStanding *sofascore_models.StandingMessage,
-	ovrStats *sofascore_models.TeamOverallStatsMessage,
-	MatchStats *sofascore_models.MatchStatsMessage) *TeamRepo {
+	leagueStanding *sofascore.StandingMessage,
+	ovrStats *sofascore.TeamOverallStatsMessage,
+	MatchStats *sofascore.MatchStatsMessage) *TeamRepo {
 	return &TeamRepo{
 		db:               db,
 		LeagueStanding:   leagueStanding,
@@ -31,7 +31,7 @@ func NewTeamRepo(
 	}
 }
 
-func (t *TeamRepo) InsertTeamInfo(standing sofascore_models.StandingMessage) error {
+func (t *TeamRepo) InsertTeamInfo(standing *sofascore.StandingMessage) error {
 	query := sq.Insert("teams").
 		Columns(
 			"team_id", "league_id", "name", "primary_color", "secondary_color").
@@ -40,11 +40,11 @@ func (t *TeamRepo) InsertTeamInfo(standing sofascore_models.StandingMessage) err
 		PlaceholderFormat(sq.Dollar)
 
 	query = query.Values(
-		standing.Row.Team.ID,
-		standing.LeagueID,
+		standing.Row.Team.Id,
+		standing.LeagueId,
 		standing.Row.Team.Name,
-		standing.Row.Team.Colors.PrimaryColor,
-		standing.Row.Team.Colors.SecondaryColor,
+		standing.Row.Team.TeamColors.Primary,
+		standing.Row.Team.TeamColors.Secondary,
 	)
 
 	sqlQuery, args, err := query.ToSql()
@@ -60,8 +60,8 @@ func (t *TeamRepo) InsertTeamInfo(standing sofascore_models.StandingMessage) err
 	return nil
 }
 
-func (r *TeamRepo) InsertTeamOverallStats(ovrStats sofascore_models.TeamOverallStatsMessage) error {
-	stats := ovrStats.Stats
+func (r *TeamRepo) InsertTeamOverallStats(ovrStats *sofascore.TeamOverallStatsMessage) error {
+	stats := ovrStats.Statistics
 
 	query := sq.Insert("team_overall_stats").
 		Columns(
@@ -219,9 +219,9 @@ func (r *TeamRepo) InsertTeamOverallStats(ovrStats sofascore_models.TeamOverallS
 		).
 		Values(
 			// Primary Keys
-			ovrStats.TeamID,
-			ovrStats.LeagueID,
-			ovrStats.SeasonID,
+			ovrStats.TeamId,
+			ovrStats.LeagueId,
+			ovrStats.SeasonId,
 
 			// Offensive Stats
 			stats.GoalsScored,
@@ -299,7 +299,7 @@ func (r *TeamRepo) InsertTeamOverallStats(ovrStats sofascore_models.TeamOverallS
 			stats.Clearances,
 			stats.ClearancesOffLine,
 			stats.LastManTackles,
-			stats.BallRecovery,
+			stats.BallRecoveryStat,
 
 			// Errors
 			stats.ErrorsLeadingToGoal,
@@ -499,17 +499,17 @@ func (r *TeamRepo) InsertTeamOverallStats(ovrStats sofascore_models.TeamOverallS
 	return err
 }
 
-func (r *TeamRepo) InsertTeamMatchStats(matchStat sofascore_models.MatchStatsMessage) error {
+func (r *TeamRepo) InsertTeamMatchStats(matchStat *sofascore.MatchStatsMessage) error {
 	var tableName string
 	columnMap := make(map[string]interface{})
 
 	// Always add base columns
-	columnMap["match_id"] = matchStat.MatchID
-	columnMap["home_team_id"] = matchStat.HomeTeamID
-	columnMap["away_team_id"] = matchStat.AwayTeamID
-	columnMap["period"] = matchStat.MatchStatistics.Period
+	columnMap["match_id"] = matchStat.MatchId
+	columnMap["home_team_id"] = matchStat.HomeTeamId
+	columnMap["away_team_id"] = matchStat.AwayTeamId
+	columnMap["period"] = matchStat.Statistics.Period
 
-	stat := matchStat.MatchStatistics
+	stat := matchStat
 
 	switch matchStat.GroupName {
 	case "Match overview":

@@ -8,9 +8,9 @@ import (
 
 	"github.com/imadeddine-belkat/indexer-service/config"
 	"github.com/imadeddine-belkat/indexer-service/internal/fpl_repositories"
-	"github.com/imadeddine-belkat/kafka"
-	kafkaConfig "github.com/imadeddine-belkat/kafka/config"
-	"github.com/imadeddine-belkat/tactify-protos/fpl_models"
+	kafka "github.com/imadeddine-belkat/tactify-kafka"
+	kafkaConfig "github.com/imadeddine-belkat/tactify-kafka/config"
+	fpl "github.com/imadeddine-belkat/tactify-protos/go/fpl/v1"
 )
 
 type Handler struct {
@@ -265,7 +265,7 @@ func (h *Handler) handleFixtures(ctx context.Context) {
 		h.config.BatchSize,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.FplFixtures.Name,
-		func(f fpl_models.FixtureMessage) int { return f.Fixture.ID },
+		func(f *fpl.FixtureMessage) int { return int(f.Fixture.Id) },
 		h.fixtureRepo.InsertFixtures,
 	)
 }
@@ -277,7 +277,7 @@ func (h *Handler) handleTeams(ctx context.Context) {
 		h.config.BatchSize,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.FplTeams.Name,
-		func(t fpl_models.TeamMessage) int { return t.Team.ID },
+		func(t *fpl.TeamMessage) int { return int(t.Team.Id) },
 		h.teamRepo.InsertTeams,
 	)
 
@@ -286,7 +286,7 @@ func (h *Handler) handleTeams(ctx context.Context) {
 func (h *Handler) handlePlayerBootstrap(ctx context.Context) {
 	consumer := h.consumers[h.kafkaConfig.TopicsName.FplPlayersBootstrap.Name]
 	messages, errors := consumer.Subscribe(ctx)
-	batch := make(map[int]fpl_models.PlayerBootstrapMessage)
+	batch := make(map[int]*fpl.PlayerBootstrapMessage)
 
 	flushTicker := time.NewTicker(h.config.FlushInterval)
 	verifyTicker := time.NewTicker(30 * time.Second)
@@ -301,7 +301,7 @@ func (h *Handler) handlePlayerBootstrap(ctx context.Context) {
 			return
 		}
 
-		players := make([]fpl_models.PlayerBootstrapMessage, 0, len(batch))
+		players := make([]*fpl.PlayerBootstrapMessage, 0, len(batch))
 		for _, p := range batch {
 			players = append(players, p)
 		}
@@ -316,18 +316,18 @@ func (h *Handler) handlePlayerBootstrap(ctx context.Context) {
 				log.Printf("✅ Flush completed. Total received: %d, Total processed: %d", totalReceived, totalProcessed)
 			}
 		}
-		batch = make(map[int]fpl_models.PlayerBootstrapMessage)
+		batch = make(map[int]*fpl.PlayerBootstrapMessage)
 	}
 
 	for {
 		select {
 		case msg := <-messages:
-			var player fpl_models.PlayerBootstrapMessage
+			var player *fpl.PlayerBootstrapMessage
 			if err := json.Unmarshal(msg.Value, &player); err != nil {
 				log.Printf("Error unmarshaling player bootstrap message: %v, raw: %s\n", err, string(msg.Value))
 				continue
 			}
-			batch[player.Player.ID] = player
+			batch[int(player.Player.Id)] = player
 			totalReceived++
 
 			if len(batch) >= h.config.BatchSize {
@@ -356,7 +356,7 @@ func (h *Handler) handlePlayerStats(ctx context.Context) {
 		h.config.BatchSize,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.FplPlayersStats.Name,
-		func(p fpl_models.PlayerBootstrapMessage) int { return p.Player.ID },
+		func(p *fpl.PlayerBootstrapMessage) int { return int(p.Player.Id) },
 		h.playerRepo.InsertPlayerBootstrapComplete,
 	)
 }
@@ -368,8 +368,8 @@ func (h *Handler) handlePlayerMatchStats(ctx context.Context) {
 		h.config.BatchSize,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.FplPlayerMatchStats.Name,
-		func(msg fpl_models.PlayerHistoryMessage) int { return msg.PlayerID },
-		func(histMsg fpl_models.PlayerHistoryMessage) error {
+		func(msg *fpl.PlayerHistoryMessage) int { return int(msg.PlayerId) },
+		func(histMsg *fpl.PlayerHistoryMessage) error {
 			return h.playerRepo.InsertPlayerGameweekStats(histMsg)
 		},
 	)
@@ -383,7 +383,7 @@ func (h *Handler) handlePlayerPastHistory(ctx context.Context) {
 		h.config.BatchSize,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.FplPlayerHistoryStats.Name,
-		func(p fpl_models.PlayerPastHistoryMessage) int { return p.PlayerCode },
+		func(p *fpl.PlayerPastHistoryMessage) int { return int(p.ElementCode) },
 		h.playerRepo.InsertPlayerPastSeasons,
 	)
 }
@@ -395,7 +395,7 @@ func (h *Handler) handlePlayerExplain(ctx context.Context) {
 		h.config.BatchSize,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.FplLiveEvent.Name,
-		func(p fpl_models.LiveEventMessage) int { return p.PlayerID },
+		func(p *fpl.LiveEventMessage) int { return int(p.PlayerId) },
 		h.playerRepo.InsertPlayerGameweekExplain,
 	)
 }
@@ -407,9 +407,9 @@ func (h *Handler) handleManagers(ctx context.Context) {
 		h.config.BatchSize,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.FplEntry.Name,
-		func(e fpl_models.EntryMessage) int { return e.Entry.ID },
-		func(e fpl_models.EntryMessage) error {
-			return h.managerRepo.InsertManagerInfo(&e)
+		func(e *fpl.EntryMessage) int { return int(e.Entry.Id) },
+		func(e *fpl.EntryMessage) error {
+			return h.managerRepo.InsertManagerInfo(e)
 		},
 	)
 }
@@ -421,9 +421,9 @@ func (h *Handler) handleManagerPicks(ctx context.Context) {
 		h.config.BatchSize,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.FplEntryPicks.Name,
-		func(p fpl_models.EntryEventPicksMessage) int { return p.EntryId },
-		func(p fpl_models.EntryEventPicksMessage) error {
-			return h.managerRepo.InsertManagerPicks(&p)
+		func(p *fpl.EntryEventPicksMessage) int { return int(p.EntryId) },
+		func(p *fpl.EntryEventPicksMessage) error {
+			return h.managerRepo.InsertManagerPicks(p)
 		},
 	)
 }
@@ -435,9 +435,9 @@ func (h *Handler) handleManagerTransfers(ctx context.Context) {
 		h.config.BatchSize,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.FplEntryTransfers.Name,
-		func(t fpl_models.EntryTransfersMessage) int { return t.EntryId },
-		func(t fpl_models.EntryTransfersMessage) error {
-			return h.managerRepo.InsertManagerTransfers(&t)
+		func(t *fpl.EntryTransfersMessage) int { return int(t.EntryId) },
+		func(t *fpl.EntryTransfersMessage) error {
+			return h.managerRepo.InsertManagerTransfers(t)
 		},
 	)
 }
@@ -449,9 +449,9 @@ func (h *Handler) handleManagerHistory(ctx context.Context) {
 		h.config.BatchSize,
 		h.config.FlushInterval,
 		h.kafkaConfig.TopicsName.FplEntryHistory.Name,
-		func(hi fpl_models.EntryHistoryMessage) int { return hi.EntryId },
-		func(hi fpl_models.EntryHistoryMessage) error {
-			return h.managerRepo.InsertManagerFullHistory(&hi)
+		func(hi *fpl.EntryHistoryMessage) int { return int(hi.EntryId) },
+		func(hi *fpl.EntryHistoryMessage) error {
+			return h.managerRepo.InsertManagerFullHistory(hi)
 		},
 	)
 }

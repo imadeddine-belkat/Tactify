@@ -2,14 +2,13 @@ package services
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"sync"
 
 	"github.com/imadeddine-belkat/fpl-service/config"
 	fpl_api "github.com/imadeddine-belkat/fpl-service/internal/api"
-	"github.com/imadeddine-belkat/kafka"
-	"github.com/imadeddine-belkat/tactify-protos/fpl_models"
+	kafka "github.com/imadeddine-belkat/tactify-kafka"
+	fpl "github.com/imadeddine-belkat/tactify-protos/go/fpl/v1"
 )
 
 type LiveEventApiService struct {
@@ -31,8 +30,8 @@ func (s *LiveEventApiService) UpdateLiveEvent(ctx context.Context, eventID int) 
 	return nil
 }
 
-func (s *LiveEventApiService) GetLiveEvent(ctx context.Context, eventID int) (*fpl_models.LiveEvent, error) {
-	var liveEvent fpl_models.LiveEvent
+func (s *LiveEventApiService) GetLiveEvent(ctx context.Context, eventID int) (*fpl.LiveEvent, error) {
+	var liveEvent fpl.LiveEvent
 
 	endpoint := fmt.Sprintf(s.Config.FplApi.LiveEvent, eventID)
 
@@ -43,31 +42,30 @@ func (s *LiveEventApiService) GetLiveEvent(ctx context.Context, eventID int) (*f
 	return &liveEvent, nil
 }
 
-func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *fpl_models.LiveEvent, eventID int) error {
+func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *fpl.LiveEvent, eventID int) error {
 	liveEventTopic := s.Config.KafkaConfig.TopicsName.FplLiveEvent.Name
 
-	jobs := make(chan fpl_models.LiveElement, len(liveEvent.Elements))
+	jobs := make(chan *fpl.LiveElement, len(liveEvent.Elements))
 
 	var publishWg sync.WaitGroup
-	for i := 0; i < s.Config.PublishWorkerCount; i++ {
+	for i := 0; i < 10; i++ {
 		publishWg.Add(1)
 		go func() {
 			defer publishWg.Done()
 			for element := range jobs {
-				dto := fpl_models.LiveEventMessage{
-					PlayerID: element.ID,
-					Event:    eventID,
-					SeasonID: s.Config.FplApi.CurrentSeasonID,
+				dto := &fpl.LiveEventMessage{
+					PlayerId: element.Id,
+					Event:    int32(eventID),
+					SeasonId: s.Config.FplApi.CurrentSeasonID,
 					Stats:    element.Stats,
 					Explain:  element.Explain,
 					Modified: false,
 				}
-				key := []byte(fmt.Sprintf("%d-%d", eventID, element.ID))
-				value, err := json.Marshal(dto)
+				key := []byte(fmt.Sprintf("%d-%d", eventID, element.Id))
+				err := s.Producer.PublishWithProcess(ctx, dto, liveEventTopic, key)
 				if err != nil {
-					continue
+					fmt.Printf("failed to publish live event element: %v for player ID: %d and event ID: %d\n", err, element.Id, eventID)
 				}
-				_ = s.Producer.Publish(ctx, liveEventTopic, key, value)
 
 			}
 		}()
@@ -80,5 +78,5 @@ func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *f
 	close(jobs)
 
 	publishWg.Wait()
-	return nil
+	return s.Producer.Close()
 }

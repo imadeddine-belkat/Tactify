@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"sync"
@@ -10,7 +9,7 @@ import (
 
 	"github.com/imadeddine-belkat/fpl-service/config"
 	fpl_api "github.com/imadeddine-belkat/fpl-service/internal/api"
-	"github.com/imadeddine-belkat/kafka"
+	kafka "github.com/imadeddine-belkat/tactify-kafka"
 	fpl "github.com/imadeddine-belkat/tactify-protos/go/fpl/v1"
 )
 
@@ -20,8 +19,8 @@ type FixturesApiService struct {
 	Producer *kafka.Producer
 }
 
-func (s *FixturesApiService) GetFixtures(ctx context.Context) (*fpl_models.Fixtures, error) {
-	var fixtures fpl_models.Fixtures
+func (s *FixturesApiService) GetFixtures(ctx context.Context) ([]*fpl.Fixture, error) {
+	var fixtures []*fpl.Fixture
 
 	fixturesEndpoint := s.Config.FplApi.Fixtures
 
@@ -29,7 +28,7 @@ func (s *FixturesApiService) GetFixtures(ctx context.Context) (*fpl_models.Fixtu
 		return nil, err
 	}
 
-	return &fixtures, nil
+	return fixtures, nil
 }
 
 func (s *FixturesApiService) UpdateFixtures(ctx context.Context) error {
@@ -51,49 +50,37 @@ func (s *FixturesApiService) UpdateFixtures(ctx context.Context) error {
 	return nil
 }
 
-func (s *FixturesApiService) publishFixtures(ctx context.Context, fixtures *fpl_models.Fixtures) error {
+func (s *FixturesApiService) publishFixtures(ctx context.Context, fixtures []*fpl.Fixture) error {
 	fixturesTopic := s.Config.KafkaConfig.TopicsName.FplFixtures.Name
-	//fixtureDetailsTopic := s.Config.KafkaConfig.TopicsName.FplFixtureDetails
 
-	jobs := make(chan fpl_models.Fixture, len(*fixtures))
+	jobs := make(chan *fpl.Fixture, len(fixtures))
 
 	var publishWg sync.WaitGroup
-	for i := 0; i < s.Config.PublishWorkerCount; i++ {
+	for i := 0; i < 10; i++ {
 		publishWg.Add(1)
 		go func() {
 			defer publishWg.Done()
 			for fixture := range jobs {
-				fixtureMessage := fpl_models.FixtureMessage{
+				fixtureMessage := &fpl.FixtureMessage{
 					Fixture:  fixture,
-					SeasonID: s.Config.FplApi.CurrentSeasonID,
-				}
-				value, err := json.Marshal(fixtureMessage)
-				if err != nil {
-					continue
+					SeasonId: s.Config.FplApi.CurrentSeasonID,
 				}
 
-				/*dtoStats := fpl_models.FixtureStatDTO{
-					ID:          fixture.ID,
-					FixtureStat: fixture.Stats,
-				}
-				valueStats, err := json.Marshal(dtoStats)
+				key := []byte(fmt.Sprintf("%d", fixture.Id))
+				err := s.Producer.PublishWithProcess(ctx, fixtureMessage, fixturesTopic, key)
 				if err != nil {
-					continue
-				}*/
-
-				key := []byte(fmt.Sprintf("%d", fixture.ID))
-				_ = s.Producer.Publish(ctx, fixturesTopic, key, value)
-				//_ = s.Producer.Publish(ctx, fixtureDetailsTopic, key, valueStats)
+					fmt.Printf("Failed to publish fixture message for fixture ID %d: %v\n", fixture.Id, err)
+				}
 			}
 
 		}()
 	}
 
-	for _, fixture := range *fixtures {
+	for _, fixture := range fixtures {
 		jobs <- fixture
 	}
 	close(jobs)
 
 	publishWg.Wait()
-	return nil
+	return s.Producer.Close()
 }

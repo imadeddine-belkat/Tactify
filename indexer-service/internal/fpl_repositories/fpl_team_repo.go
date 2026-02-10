@@ -4,22 +4,22 @@ import (
 	"database/sql"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/imadeddine-belkat/tactify-protos/fpl_models"
+	fpl "github.com/imadeddine-belkat/tactify-protos/go/fpl/v1"
 )
 
 type TeamRepo struct {
 	db        *sql.DB
-	TeamModel *fpl_models.Team
+	TeamModel *fpl.Team
 }
 
-func NewTeamRepo(db *sql.DB, teamModel *fpl_models.Team) *TeamRepo {
+func NewTeamRepo(db *sql.DB, teamModel *fpl.Team) *TeamRepo {
 	return &TeamRepo{
 		db:        db,
 		TeamModel: teamModel,
 	}
 }
 
-func (r *TeamRepo) InsertTeams(teams []fpl_models.TeamMessage) error {
+func (r *TeamRepo) InsertTeams(teams []*fpl.TeamMessage) error {
 	query := sq.Insert("teams").Columns("season_id", "team_id", "team_code", "name", "short_name", "strength",
 		"form", "position", "points", "played", "win", "draw", "loss", "team_division", "unavailable",
 		"pulse_id", "strength_overall_home", "strength_overall_away", "strength_attack_home", "strength_attack_away",
@@ -37,9 +37,9 @@ func (r *TeamRepo) InsertTeams(teams []fpl_models.TeamMessage) error {
 
 	for _, team := range teams {
 		query = query.Values(
-			team.SeasonID, team.Team.ID, team.Team.Code, team.Team.Name, team.Team.ShortName, team.Team.Strength,
+			team.SeasonId, team.Team.Id, team.Team.Code, team.Team.Name, team.Team.ShortName, team.Team.Strength,
 			team.Team.Form, team.Team.Position, team.Team.Points, team.Team.Played, team.Team.Win, team.Team.Draw, team.Team.Loss, team.Team.TeamDivision, team.Team.Unavailable,
-			team.Team.PulseID, team.Team.StrengthOverallHome, team.Team.StrengthOverallAway, team.Team.StrengthAttackHome, team.Team.StrengthAttackAway,
+			team.Team.PulseId, team.Team.StrengthOverallHome, team.Team.StrengthOverallAway, team.Team.StrengthAttackHome, team.Team.StrengthAttackAway,
 			team.Team.StrengthDefenceHome, team.Team.StrengthDefenceAway,
 		)
 	}

@@ -7,7 +7,7 @@ import (
 	"github.com/imadeddine-belkat/fpl-service/config"
 	fpl_api "github.com/imadeddine-belkat/fpl-service/internal/api"
 	. "github.com/imadeddine-belkat/fpl-service/internal/services"
-	"github.com/imadeddine-belkat/kafka"
+	kafka "github.com/imadeddine-belkat/tactify-kafka"
 )
 
 func TestManagersApiService(t *testing.T) {

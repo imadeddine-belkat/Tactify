@@ -4,17 +4,17 @@ import (
 	"database/sql"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
+	sofascore "github.com/imadeddine-belkat/tactify-protos/go/sofascore/v1"
 )
 
 type LeagueRepo struct {
 	db     *sql.DB
-	League *sofascore_models.LeagueUniqueTournaments
+	League *sofascore.LeagueUniqueTournaments
 }
 
 func NewLeagueRepo(
 	db *sql.DB,
-	League *sofascore_models.LeagueUniqueTournaments,
+	League *sofascore.LeagueUniqueTournaments,
 ) *LeagueRepo {
 	return &LeagueRepo{
 		db:     db,
@@ -22,7 +22,7 @@ func NewLeagueRepo(
 	}
 }
 
-func (l *LeagueRepo) InsertLeagueInfo(uniqueTournament sofascore_models.LeagueUniqueTournaments) error {
+func (l *LeagueRepo) InsertLeagueInfo(uniqueTournament *sofascore.LeagueUniqueTournaments) error {
 	query := sq.Insert("leagues").
 		Columns(
 			"league_id", "name", "country").
@@ -34,8 +34,8 @@ func (l *LeagueRepo) InsertLeagueInfo(uniqueTournament sofascore_models.LeagueUn
 		).PlaceholderFormat(sq.Dollar)
 
 	for _, group := range uniqueTournament.Groups {
-		for _, league := range group.UniqueTournament {
-			query = query.Values(league.ID, league.Name, league.Category.Name)
+		for _, league := range group.UniqueTournaments {
+			query = query.Values(league.Id, league.Name, league.Category.Name)
 		}
 	}
 
@@ -52,7 +52,7 @@ func (l *LeagueRepo) InsertLeagueInfo(uniqueTournament sofascore_models.LeagueUn
 	return nil
 }
 
-func (l *LeagueRepo) InsertLeagueSeasonsInfo(seasons sofascore_models.Seasons) error {
+func (l *LeagueRepo) InsertLeagueSeasonsInfo(seasons []*sofascore.Season) error {
 	query := sq.Insert("seasons").
 		Columns(
 			"season_id", "league_id", "name", "year", "is_current").
@@ -65,8 +65,8 @@ func (l *LeagueRepo) InsertLeagueSeasonsInfo(seasons sofascore_models.Seasons) e
 				"updated_at= CURRENT_TIMESTAMP").
 		PlaceholderFormat(sq.Dollar)
 
-	for _, season := range seasons.Seasons {
-		query = query.Values(season.ID, seasons.LeagueID,
+	for _, season := range seasons {
+		query = query.Values(season.Id, season.LeagueId,
 			season.Name, season.Year, season.IsCurrent)
 	}
 

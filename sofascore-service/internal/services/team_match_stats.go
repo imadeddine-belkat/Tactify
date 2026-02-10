@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/imadeddine-belkat/kafka"
 	"github.com/imadeddine-belkat/sofascore-service/config"
 	sofascore_api "github.com/imadeddine-belkat/sofascore-service/internal/api"
-	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
+	kafka "github.com/imadeddine-belkat/tactify-kafka"
+	sofascore "github.com/imadeddine-belkat/tactify-protos/go/sofascore/v1"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -38,8 +38,8 @@ func (s *TeamMatchStatsService) UpdateLeagueMatchStats(ctx context.Context, seas
 	return nil
 }
 
-func (s *TeamMatchStatsService) GetTeamMatchStats(ctx context.Context, matchId int) (*sofascore_models.MatchStats, error) {
-	teamMatchStats := &sofascore_models.MatchStats{}
+func (s *TeamMatchStatsService) GetTeamMatchStats(ctx context.Context, matchId int) (*sofascore.MatchStats, error) {
+	teamMatchStats := &sofascore.MatchStats{}
 
 	matchStats := s.Config.SofascoreApi.TeamEndpoints.TeamMatchStats
 	endpoint := fmt.Sprintf(matchStats, matchId)
@@ -51,47 +51,47 @@ func (s *TeamMatchStatsService) GetTeamMatchStats(ctx context.Context, matchId i
 	return teamMatchStats, nil
 }
 
-func (s *TeamMatchStatsService) publishTeamMatchStats(ctx context.Context, leagueId, seasonId, round int, roundMatches *sofascore_models.Events) error {
+func (s *TeamMatchStatsService) publishTeamMatchStats(ctx context.Context, leagueId, seasonId, round int, roundMatches []*sofascore.Event) error {
 	teamMatchStatsTopic := s.Config.KafkaConfig.TopicsName.SofascoreTeamMatchStats.Name
 
-	if len(roundMatches.Events) == 0 {
+	if len(roundMatches) == 0 {
 		log.Printf("No matches found for league %d, season %d, round %d", leagueId, seasonId, round)
 		return nil
 	}
 
-	matchCount := len(roundMatches.Events)
+	matchCount := len(roundMatches)
 	log.Printf("Starting processing for %d matches (concurrency limit: %d)", matchCount, MaxConcurrentMatches)
 
 	g, ctx := errgroup.WithContext(ctx)
 	g.SetLimit(MaxConcurrentMatches)
 
-	for _, match := range roundMatches.Events {
+	for _, match := range roundMatches {
 		match := match
 
 		g.Go(func() error {
-			teamMatchStats, err := s.GetTeamMatchStats(ctx, match.ID)
+			teamMatchStats, err := s.GetTeamMatchStats(ctx, int(match.Id))
 			if err != nil {
-				log.Printf("Error fetching team match stats for match %d: %v", match.ID, err)
+				log.Printf("Error fetching team match stats for match %d: %v", match.Id, err)
 				return nil
 			}
 
-			for _, period := range teamMatchStats.MatchPeriods {
+			for _, period := range teamMatchStats.Statistics {
 				for _, group := range period.Groups {
-					for _, stat := range group.StatsItems {
+					for _, stat := range group.StatisticsItems {
 
 						if ctx.Err() != nil {
 							return ctx.Err()
 						}
 
-						matchStatMsg := &sofascore_models.MatchStatsMessage{
-							SeasonId:   seasonId,
-							LeagueId:   leagueId,
-							MatchID:    match.ID,
-							Event:      round,
-							HomeTeamID: match.HomeTeam.ID,
-							AwayTeamID: match.AwayTeam.ID,
+						matchStatMsg := &sofascore.MatchStatsMessage{
+							SeasonId:   int32(seasonId),
+							LeagueId:   int32(leagueId),
+							MatchId:    match.Id,
+							EventId:    int32(round),
+							HomeTeamId: match.HomeTeam.Id,
+							AwayTeamId: match.AwayTeam.Id,
 							GroupName:  group.GroupName,
-							MatchStatistics: sofascore_models.StatsMessage{
+							Statistics: &sofascore.StatsItem{
 								Period:         period.Period,
 								Key:            stat.Key,
 								Name:           stat.Name,
@@ -105,17 +105,17 @@ func (s *TeamMatchStatsService) publishTeamMatchStats(ctx context.Context, leagu
 							},
 						}
 
-						key := []byte(fmt.Sprintf("%d-%s-%s", match.ID, period.Period, stat.Name))
+						key := []byte(fmt.Sprintf("%d-%s-%s", match.Id, period.Period, stat.Name))
 
 						if err := s.Producer.PublishWithProcess(ctx, matchStatMsg, teamMatchStatsTopic, key); err != nil {
-							log.Printf("Error publishing stat '%s' for match %d: %v", stat.Name, match.ID, err)
+							log.Printf("Error publishing stat '%s' for match %d: %v", stat.Name, match.Id, err)
 							continue
 						}
 					}
 				}
 			}
 
-			log.Printf("Successfully processed team match stats for match %d", match.ID)
+			log.Printf("Successfully processed team match stats for match %d", match.Id)
 			return nil
 		})
 	}

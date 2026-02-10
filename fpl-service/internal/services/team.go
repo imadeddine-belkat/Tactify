@@ -2,14 +2,13 @@ package services
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"sync"
 
 	"github.com/imadeddine-belkat/fpl-service/config"
 	fpl_api "github.com/imadeddine-belkat/fpl-service/internal/api"
-	"github.com/imadeddine-belkat/kafka"
-	"github.com/imadeddine-belkat/tactify-protos/fpl_models"
+	kafka "github.com/imadeddine-belkat/tactify-kafka"
+	fpl "github.com/imadeddine-belkat/tactify-protos/go/fpl/v1"
 )
 
 type TeamApiService struct {
@@ -18,8 +17,8 @@ type TeamApiService struct {
 	Producer *kafka.Producer
 }
 
-func (s *TeamApiService) getBootstrapData(ctx context.Context) (*fpl_models.BootstrapResponse, error) {
-	var bootstrap fpl_models.BootstrapResponse
+func (s *TeamApiService) getBootstrapData(ctx context.Context) (*fpl.BootstrapResponse, error) {
+	var bootstrap fpl.BootstrapResponse
 	endpoint := s.Config.FplApi.Bootstrap
 
 	if err := s.Client.GetAndUnmarshal(ctx, endpoint, &bootstrap); err != nil {
@@ -41,27 +40,26 @@ func (s *TeamApiService) UpdateTeams(ctx context.Context) error {
 	return nil
 }
 
-func (s *TeamApiService) publishTeams(ctx context.Context, teams []fpl_models.Team) error {
+func (s *TeamApiService) publishTeams(ctx context.Context, teams []*fpl.Team) error {
 	teamsTopic := s.Config.KafkaConfig.TopicsName.FplTeams.Name
 
-	jobs := make(chan fpl_models.Team, len(teams))
+	jobs := make(chan *fpl.Team, len(teams))
 
 	var publishWg sync.WaitGroup
-	for i := 0; i < s.Config.PublishWorkerCount; i++ {
+	for i := 0; i < 10; i++ {
 		publishWg.Add(1)
 		go func() {
 			defer publishWg.Done()
 			for team := range jobs {
-				message := fpl_models.TeamMessage{
+				message := &fpl.TeamMessage{
 					Team:     team,
-					SeasonID: s.Config.FplApi.Season2526,
+					SeasonId: s.Config.FplApi.Season2526,
 				}
-				value, err := json.Marshal(message)
+				key := []byte(fmt.Sprintf("%d", team.Id))
+				err := s.Producer.PublishWithProcess(ctx, message, teamsTopic, key)
 				if err != nil {
-					continue
+					fmt.Printf("failed to publish team %d: %v\n", team.Id, err)
 				}
-				key := []byte(fmt.Sprintf("%d", team.ID))
-				_ = s.Producer.Publish(ctx, teamsTopic, key, value)
 			}
 		}()
 	}
@@ -73,5 +71,5 @@ func (s *TeamApiService) publishTeams(ctx context.Context, teams []fpl_models.Te
 
 	publishWg.Wait()
 
-	return nil
+	return s.Producer.Close()
 }

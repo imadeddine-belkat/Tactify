@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/imadeddine-belkat/kafka"
 	"github.com/imadeddine-belkat/sofascore-service/config"
 	sofascoreapi "github.com/imadeddine-belkat/sofascore-service/internal/api"
-	"github.com/imadeddine-belkat/tactify-protos/sofascore_models"
+	kafka "github.com/imadeddine-belkat/tactify-kafka"
+	sofascore "github.com/imadeddine-belkat/tactify-protos/go/sofascore/v1"
 )
 
 type PlayersService struct {
@@ -23,24 +23,24 @@ func (p *PlayersService) UpdateLeaguePlayersInfo(ctx context.Context, seasonId, 
 		return fmt.Errorf("error getting team ids for league %d, season %d: %w", leagueId, seasonId, err)
 	}
 
-	for _, team := range *teams {
-		players, err := p.GetPlayersInfo(ctx, team.ID, leagueId, seasonId)
+	for _, team := range teams {
+		players, err := p.GetPlayersInfo(ctx, int(team.Id), leagueId, seasonId)
 		if err != nil {
-			return fmt.Errorf("error getting players info for team %d: %w", team.ID, err)
+			return fmt.Errorf("error getting players info for team %d: %w", team.Id, err)
 		}
 
 		for _, player := range players.TopPlayers.Rating {
 			pl := player
-			playerMessage := &sofascore_models.PlayerMessage{
-				SeasonID: seasonId,
-				LeagueID: leagueId,
-				TeamID:   team.ID,
+			playerMessage := &sofascore.PlayerMessage{
+				SeasonId: int32(seasonId),
+				LeagueId: int32(leagueId),
+				TeamId:   team.Id,
 				TeamName: team.Name,
 				Player:   pl.Player,
 			}
 
 			if err := p.publishPlayerInfo(ctx, playerMessage); err != nil {
-				return fmt.Errorf("error publishing player info for player %d: %w", pl.Player.ID, err)
+				return fmt.Errorf("error publishing player info for player %d: %w", pl.Player.Id, err)
 			}
 		}
 	}
@@ -48,8 +48,8 @@ func (p *PlayersService) UpdateLeaguePlayersInfo(ctx context.Context, seasonId, 
 	return nil
 }
 
-func (p *PlayersService) GetTeamIDs(ctx context.Context, seasonId, leagueId int) (*[]sofascore_models.Team, error) {
-	teams := &[]sofascore_models.Team{}
+func (p *PlayersService) GetTeamIDs(ctx context.Context, seasonId, leagueId int) ([]*sofascore.Team, error) {
+	var teams []*sofascore.Team
 
 	standing, err := p.Standing.GetLeagueStanding(ctx, seasonId, leagueId)
 	if err != nil {
@@ -58,18 +58,18 @@ func (p *PlayersService) GetTeamIDs(ctx context.Context, seasonId, leagueId int)
 
 	for _, s := range standing.Standings {
 		for _, row := range s.Rows {
-			team := sofascore_models.Team{
-				ID:   row.Team.ID,
+			team := sofascore.Team{
+				Id:   row.Team.Id,
 				Name: row.Team.Name,
 			}
-			*teams = append(*teams, team)
+			teams = append(teams, &team)
 		}
 	}
 
 	return teams, nil
 }
-func (p *PlayersService) GetPlayersInfo(ctx context.Context, teamId, leagueId, seasonId int) (*sofascore_models.TopPlayers, error) {
-	players := &sofascore_models.TopPlayers{}
+func (p *PlayersService) GetPlayersInfo(ctx context.Context, teamId, leagueId, seasonId int) (*sofascore.TopPlayers, error) {
+	players := &sofascore.TopPlayers{}
 
 	playerEndpoint := p.Config.SofascoreApi.TeamEndpoints.TeamTopPlayerStats
 	endpoint := fmt.Sprintf(playerEndpoint, teamId, leagueId, seasonId)
@@ -81,13 +81,13 @@ func (p *PlayersService) GetPlayersInfo(ctx context.Context, teamId, leagueId, s
 	return players, nil
 }
 
-func (p *PlayersService) publishPlayerInfo(ctx context.Context, playerMessage *sofascore_models.PlayerMessage) error {
+func (p *PlayersService) publishPlayerInfo(ctx context.Context, playerMessage *sofascore.PlayerMessage) error {
 	topic := p.Config.KafkaConfig.TopicsName.SofascorePlayerInfo.Name
 
-	key := []byte(fmt.Sprintf("%d-%d", playerMessage.TeamID, playerMessage.Player.ID))
+	key := []byte(fmt.Sprintf("%d-%d", playerMessage.TeamId, playerMessage.Player.Id))
 
 	if err := p.Producer.PublishWithProcess(ctx, playerMessage, topic, key); err != nil {
-		return fmt.Errorf("error publishing player info for player %d: %w", playerMessage.Player.ID, err)
+		return fmt.Errorf("error publishing player info for player %d: %w", playerMessage.Player.Id, err)
 	}
 
 	return nil
