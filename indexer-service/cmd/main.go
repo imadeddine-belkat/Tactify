@@ -88,6 +88,11 @@ func main() {
 		&sofascore_models.MatchStatsMessage{},
 	)
 
+	sofacorePlayerRepo := sofascore_repositories.NewPlayerRepo(
+		sofascoreDb.DB(),
+		&sofascore_models.PlayerMessage{},
+	)
+
 	sofascoreMatchRepo := sofascore_repositories.NewMatchRepo(
 		sofascoreDb.DB(),
 		&sofascore_models.Event{},
@@ -112,6 +117,7 @@ func main() {
 		cfg,
 		kafkaCfg,
 		sofascoreTeamReop,
+		sofacorePlayerRepo,
 		sofascoreMatchRepo,
 		sofascoreLeagueRepo,
 	)
@@ -141,6 +147,7 @@ func main() {
 	sofascoreHandler.Route(ctx, kafkaCfg.TopicsName.SofascoreLeagueStandings.Name)
 	sofascoreHandler.Route(ctx, kafkaCfg.TopicsName.SofascoreTeamOverallStats.Name)
 	sofascoreHandler.Route(ctx, kafkaCfg.TopicsName.SofascoreTeamMatchStats.Name)
+	sofascoreHandler.Route(ctx, kafkaCfg.TopicsName.SofascorePlayerInfo.Name)
 	sofascoreHandler.Route(ctx, kafkaCfg.TopicsName.SofascoreLeagueRoundMatches.Name)
 	sofascoreHandler.Route(ctx, kafkaCfg.TopicsName.SofascoreLeagueIDs.Name)
 	sofascoreHandler.Route(ctx, kafkaCfg.TopicsName.SofascoreLeagueSeasons.Name)

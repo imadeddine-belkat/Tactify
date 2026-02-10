@@ -12,6 +12,7 @@ type PlayerMessage struct {
 	SeasonID int    `json:"seasonId"`
 	LeagueID int    `json:"leagueId"`
 	TeamID   int    `json:"teamId"`
+	TeamName string `json:"teamName"`
 	Player   Player `json:"player"`
 }
 
