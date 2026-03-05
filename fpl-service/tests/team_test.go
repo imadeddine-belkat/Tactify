@@ -18,11 +18,14 @@ func TestTeamApiService(t *testing.T) {
 		t.Skip("Skipping real API test")
 	}
 
+	producer := kafka.NewProducer()
+	defer producer.Close()
+
 	// Setup service with real client
 	service := &teamService.TeamApiService{
 		Config:   config.LoadConfig(),
 		Client:   fpl_api.NewFplApiClient(config.LoadConfig()),
-		Producer: kafka.NewProducer(),
+		Producer: producer,
 	}
 
 	// Test with real API

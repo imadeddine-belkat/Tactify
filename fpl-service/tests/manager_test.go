@@ -16,12 +16,15 @@ func TestManagersApiService(t *testing.T) {
 		t.Skip("Skipping real API test")
 	}
 
+	producer := kafka.NewProducer()
+	defer producer.Close()
+
 	service := &ManagersApiService{
 		Config:   config.LoadConfig(),
 		Client:   fpl_api.NewFplApiClient(config.LoadConfig()),
-		Producer: kafka.NewProducer(),
+		Producer: producer,
 	}
-	for n := 1; n < 26; n++ {
+	for n := 1; n < 29; n++ {
 		t.Logf("Waiting for API to be ready... (attempt %d)", n+1)
 		err := service.UpdateManager(ctx, 2839296, n)
 		if err != nil {

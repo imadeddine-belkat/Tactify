@@ -17,18 +17,23 @@ func TestLiveEventApiService(t *testing.T) {
 		t.Skip("Skipping real API test")
 	}
 
+	producer := kafka.NewProducer()
+	defer producer.Close()
+
 	// Setup service with real client
 	service := &live_event_service.LiveEventApiService{
 		Config:   config.LoadConfig(),
 		Client:   fpl_api.NewFplApiClient(config.LoadConfig()),
-		Producer: kafka.NewProducer(),
+		Producer: producer,
 	}
 
 	// Test with real API
 	log.Println("Calling FPL API...")
-	err := service.UpdateLiveEvent(ctx, 7)
-	if err != nil {
-		t.Fatalf("UpdateLiveEvent(Test) with API failed: %v", err)
+	for i := 1; i <= 29; i++ {
+		err := service.UpdateLiveEvent(ctx, i)
+		if err != nil {
+			t.Fatalf("UpdateLiveEvent(Test) with API failed: %v", err)
+		}
 	}
 
 	t.Log("Real API test completed successfully")

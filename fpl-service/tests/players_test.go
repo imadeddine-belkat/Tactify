@@ -18,10 +18,13 @@ func TestPlayersApiService(t *testing.T) {
 		t.Skip("Skipping real API test")
 	}
 
+	producer := kafka.NewProducer()
+	defer producer.Close()
+
 	service := &playerService.PlayerApiService{
 		Config:   config.LoadConfig(),
 		Client:   fpl_api.NewFplApiClient(config.LoadConfig()),
-		Producer: kafka.NewProducer(),
+		Producer: producer,
 	}
 
 	time.Sleep(200 * time.Millisecond)

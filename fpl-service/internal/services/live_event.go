@@ -59,7 +59,7 @@ func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *f
 					SeasonId: s.Config.FplApi.CurrentSeasonID,
 					Stats:    element.Stats,
 					Explain:  element.Explain,
-					Modified: false,
+					Modified: element.Modified,
 				}
 				key := []byte(fmt.Sprintf("%d-%d", eventID, element.Id))
 				err := s.Producer.PublishWithProcess(ctx, dto, liveEventTopic, key)
@@ -78,5 +78,6 @@ func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *f
 	close(jobs)
 
 	publishWg.Wait()
-	return s.Producer.Close()
+
+	return nil
 }
