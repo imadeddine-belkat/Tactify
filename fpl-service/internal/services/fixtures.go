@@ -66,10 +66,10 @@ func (s *FixturesApiService) publishFixtures(ctx context.Context, fixtures []*fp
 					SeasonId: s.Config.FplApi.CurrentSeasonID,
 				}
 
-				key := []byte(fmt.Sprintf("%d", fixture.Id))
+				key := []byte(fmt.Sprintf("%d", fixture.GetId()))
 				err := s.Producer.PublishWithProcess(ctx, fixtureMessage, fixturesTopic, key)
 				if err != nil {
-					fmt.Printf("Failed to publish fixture message for fixture ID %d: %v\n", fixture.Id, err)
+					fmt.Printf("Failed to publish fixture message for fixture ID %d: %v\n", fixture.GetId(), err)
 				}
 			}
 

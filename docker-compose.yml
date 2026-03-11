@@ -81,8 +81,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./indexer-service/internal/db/migrations/01_init-dbs.sql:/docker-entrypoint-initdb.d/01_init_dbs.sql
-      - ./indexer-service/internal/db/migrations/02_create_fpl_tables.sql:/docker-entrypoint-initdb.d/02_create_fpl_tables.sql
-      - ./indexer-service/internal/db/migrations/03_create_sofascore_tables.sql:/docker-entrypoint-initdb.d/03_create_sofascore_tables.sql
+      - ./indexer-service/internal/db/migrations/04_create_pl_tables.sql:/docker-entrypoint-initdb.d/04_create_pl_tables.sql
 
     networks:
       - app-network

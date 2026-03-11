@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"strconv"
 
 	kafkaConfig "github.com/imadeddine-belkat/tactify-kafka/config"
 	"github.com/joho/godotenv"
@@ -30,26 +31,6 @@ type FplApi struct {
 	LeagueH2hStanding     string `envconfig:"FPLAPI_LEAGUE_H2H_STANDING" required:"true"`
 
 	CurrentSeasonID int32 `envconfig:"FPL_CURRENT_SEASON_ID" required:"true"`
-	Season2526      int32 `envconfig:"FPL_2526_SEASON_ID" required:"true"`
-	Season2425      int32 `envconfig:"FPL_2425_SEASON_ID" required:"true"`
-	Season2324      int32 `envconfig:"FPL_2324_SEASON_ID" required:"true"`
-	Season2223      int32 `envconfig:"FPL_2223_SEASON_ID" required:"true"`
-	Season2122      int32 `envconfig:"FPL_2122_SEASON_ID" required:"true"`
-	Season2021      int32 `envconfig:"FPL_2021_SEASON_ID" required:"true"`
-	Season1920      int32 `envconfig:"FPL_1920_SEASON_ID" required:"true"`
-	Season1819      int32 `envconfig:"FPL_1819_SEASON_ID" required:"true"`
-	Season1718      int32 `envconfig:"FPL_1718_SEASON_ID" required:"true"`
-	Season1617      int32 `envconfig:"FPL_1617_SEASON_ID" required:"true"`
-	Season1516      int32 `envconfig:"FPL_1516_SEASON_ID" required:"true"`
-	Season1415      int32 `envconfig:"FPL_1415_SEASON_ID" required:"true"`
-	Season1314      int32 `envconfig:"FPL_1314_SEASON_ID" required:"true"`
-	Season1213      int32 `envconfig:"FPL_1213_SEASON_ID" required:"true"`
-	Season1112      int32 `envconfig:"FPL_1112_SEASON_ID" required:"true"`
-	Season1011      int32 `envconfig:"FPL_1011_SEASON_ID" required:"true"`
-	Season0910      int32 `envconfig:"FPL_0910_SEASON_ID" required:"true"`
-	Season0809      int32 `envconfig:"FPL_0809_SEASON_ID" required:"true"`
-	Season0708      int32 `envconfig:"FPL_0708_SEASON_ID" required:"true"`
-	Season0607      int32 `envconfig:"FPL_0607_SEASON_ID" required:"true"`
 }
 
 type ProcessedModel struct {
@@ -76,50 +57,15 @@ func LoadConfig() *FplConfig {
 	return config
 }
 
-func (c *FplConfig) MapSeasonNameToID(seasons string) int32 {
-	switch seasons {
-	case "2025/26":
-		return c.FplApi.Season2526
-	case "2024/25":
-		return c.FplApi.Season2425
-	case "2023/24":
-		return c.FplApi.Season2324
-	case "2022/23":
-		return c.FplApi.Season2223
-	case "2021/22":
-		return c.FplApi.Season2122
-	case "2020/21":
-		return c.FplApi.Season2021
-	case "2019/20":
-		return c.FplApi.Season1920
-	case "2018/19":
-		return c.FplApi.Season1819
-	case "2017/18":
-		return c.FplApi.Season1718
-	case "2016/17":
-		return c.FplApi.Season1617
-	case "2015/16":
-		return c.FplApi.Season1516
-	case "2014/15":
-		return c.FplApi.Season1415
-	case "2013/14":
-		return c.FplApi.Season1314
-	case "2012/13":
-		return c.FplApi.Season1213
-	case "2011/12":
-		return c.FplApi.Season1112
-	case "2010/11":
-		return c.FplApi.Season1011
-	case "2009/10":
-		return c.FplApi.Season0910
-	case "2008/09":
-		return c.FplApi.Season0809
-	case "2007/08":
-		return c.FplApi.Season0708
-	case "2006/07":
-		return c.FplApi.Season0607
-
-	default:
-		return 0 // Unknown season
+func (c *FplConfig) MapSeasonNameToID(season string) int32 {
+	if len(season) < 4 {
+		return 0
 	}
+
+	year, err := strconv.Atoi(season[:4])
+	if err != nil {
+		return 0
+	}
+
+	return int32(year)
 }

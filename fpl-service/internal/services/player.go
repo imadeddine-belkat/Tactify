@@ -42,7 +42,7 @@ func (s *PlayerApiService) UpdatePlayers(ctx context.Context) error {
 func (s *PlayerApiService) publishPlayersBootstrap(ctx context.Context, bootstrap *fpl.PlayersBootstrap) error {
 	playersBootstrapTopic := s.Config.KafkaConfig.TopicsName.FplPlayersBootstrap.Name
 
-	log.Printf("Publishing %d player bootstrap records...", len(bootstrap.Elements))
+	log.Printf("Publishing %d player bootstrap records...", len(bootstrap.GetElements()))
 
 	for _, player := range bootstrap.Elements {
 		playerBootstrap := fpl.PlayerBootstrapMessage{
@@ -51,12 +51,12 @@ func (s *PlayerApiService) publishPlayersBootstrap(ctx context.Context, bootstra
 		}
 		valueSummary, err := json.Marshal(&playerBootstrap)
 		if err != nil {
-			fmt.Printf("error marshaling player bootstrap for player ID %d: %v\n", player.Id, err)
+			fmt.Printf("error marshaling player bootstrap for player ID %d: %v\n", player.GetId(), err)
 			continue
 		}
-		playerKey := []byte(fmt.Sprintf("player_%d", player.Id))
+		playerKey := []byte(fmt.Sprintf("player_%d", player.GetId()))
 		if err := s.Producer.Publish(ctx, playersBootstrapTopic, playerKey, valueSummary); err != nil {
-			fmt.Printf("error publishing player bootstrap for player ID %d: %v\n", player.Id, err)
+			fmt.Printf("error publishing player bootstrap for player ID %d: %v\n", player.GetId(), err)
 		}
 	}
 
@@ -69,9 +69,9 @@ func (s *PlayerApiService) publishPlayersHistory(ctx context.Context, bootstrap 
 	playersMatchStatsTopic := s.Config.KafkaConfig.TopicsName.FplPlayerMatchStats.Name
 	playersPastHistoryTopic := s.Config.KafkaConfig.TopicsName.FplPlayerHistoryStats.Name
 
-	log.Printf("Fetching and publishing history for %d players...", len(bootstrap.Elements))
+	log.Printf("Fetching and publishing history for %d players...", len(bootstrap.GetElements()))
 
-	jobHistory := make(chan *fpl.PlayerBootstrap, len(bootstrap.Elements))
+	jobHistory := make(chan *fpl.PlayerBootstrap, len(bootstrap.GetElements()))
 
 	var wg sync.WaitGroup
 	for i := 0; i < 10; i++ {
@@ -88,11 +88,11 @@ func (s *PlayerApiService) publishPlayersHistory(ctx context.Context, bootstrap 
 				// Publish player match history (gameweek stats)
 				if len(playerSummary.History) > 0 {
 					matchStatsPayload := fpl.PlayerHistoryMessage{
-						PlayerId: player.Id,
+						PlayerId: player.GetId(),
 						SeasonId: s.Config.FplApi.CurrentSeasonID,
-						History:  playerSummary.History,
+						History:  playerSummary.GetHistory(),
 					}
-					valueHistory, err := json.Marshal(matchStatsPayload)
+					valueHistory, err := json.Marshal(&matchStatsPayload)
 					if err != nil {
 						fmt.Printf("error marshaling player history for player ID %d: %v\n", player.Id, err)
 						continue
@@ -104,33 +104,33 @@ func (s *PlayerApiService) publishPlayersHistory(ctx context.Context, bootstrap 
 				}
 
 				// Publish player past seasons
-				if len(playerSummary.HistoryPast) > 0 {
+				if len(playerSummary.GetHistoryPast()) > 0 {
 					// Map season names to IDs
-					for i := range playerSummary.HistoryPast {
-						seasonID := s.Config.MapSeasonNameToID(playerSummary.HistoryPast[i].SeasonName)
+					for i, past := range playerSummary.GetHistoryPast() {
+						seasonID := s.Config.MapSeasonNameToID(past.SeasonName)
 						playerSummary.HistoryPast[i].SeasonId = seasonID
 					}
 
 					pastHistoryPayload := fpl.PlayerPastHistoryMessage{
-						ElementCode: player.Code,
-						PastHistory: playerSummary.HistoryPast,
+						ElementCode: player.GetCode(),
+						PastHistory: playerSummary.GetHistoryPast(),
 					}
 
-					valuePastHistory, err := json.Marshal(pastHistoryPayload)
+					valuePastHistory, err := json.Marshal(&pastHistoryPayload)
 					if err != nil {
-						fmt.Printf("error marshaling player past history for player ID %d: %v\n", player.Id, err)
+						fmt.Printf("error marshaling player past history for player ID %d: %v\n", player.GetId(), err)
 						continue
 					}
-					playerPastHistoryKey := []byte(fmt.Sprintf("player_past_%d", player.Code))
+					playerPastHistoryKey := []byte(fmt.Sprintf("player_past_%d", player.GetCode()))
 					if err := s.Producer.Publish(ctx, playersPastHistoryTopic, playerPastHistoryKey, valuePastHistory); err != nil {
-						fmt.Printf("error publishing player past history for player code %d: %v\n", player.Code, err)
+						fmt.Printf("error publishing player past history for player code %d: %v\n", player.GetCode(), err)
 					}
 				}
 			}
 		}()
 	}
 
-	for _, player := range bootstrap.Elements {
+	for _, player := range bootstrap.GetElements() {
 		jobHistory <- player
 	}
 	close(jobHistory)
@@ -159,7 +159,7 @@ func (s *PlayerApiService) getPlayersBootstrap(ctx context.Context) (*fpl.Player
 		return nil, err
 	}
 
-	return &fpl.PlayersBootstrap{Elements: bootstrap.Elements}, nil
+	return &fpl.PlayersBootstrap{Elements: bootstrap.GetElements()}, nil
 }
 
 func (s *PlayerApiService) getBootstrapData(ctx context.Context) (*fpl.BootstrapResponse, error) {

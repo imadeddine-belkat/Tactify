@@ -56,7 +56,7 @@ func (s *ManagersApiService) publishManager(ctx context.Context, info *fpl.Entry
 	publishWg.Add(1)
 	go func() {
 		if &info != nil {
-			key := []byte(fmt.Sprintf("%d-%d", info.Entry.Id, info.SeasonId))
+			key := []byte(fmt.Sprintf("%d-%d", info.GetEntry().GetId(), info.GetSeasonId()))
 			err := s.Producer.PublishWithProcess(ctx, info, entryTopic, key)
 			if err != nil {
 				fmt.Printf("Failed to publish entry message: %v\n", err)
@@ -64,7 +64,7 @@ func (s *ManagersApiService) publishManager(ctx context.Context, info *fpl.Entry
 		}
 
 		if &picks != nil {
-			key := []byte(fmt.Sprintf("%d-%d", picks.EntryId, picks.Event))
+			key := []byte(fmt.Sprintf("%d-%d", picks.GetEntryId(), picks.GetEvent()))
 			err := s.Producer.PublishWithProcess(ctx, picks, entryEventTopic, key)
 			if err != nil {
 				fmt.Printf("Failed to publish entry picks message: %v\n", err)
@@ -72,7 +72,7 @@ func (s *ManagersApiService) publishManager(ctx context.Context, info *fpl.Entry
 		}
 
 		if &history != nil {
-			key := []byte(fmt.Sprintf("%d-%d", history.EntryId, history.SeasonId))
+			key := []byte(fmt.Sprintf("%d-%d", history.GetEntryId(), history.GetSeasonId()))
 			err := s.Producer.PublishWithProcess(ctx, history, entryHistoryTopic, key)
 			if err != nil {
 				fmt.Printf("Failed to publish entry history message: %v\n", err)
@@ -80,7 +80,7 @@ func (s *ManagersApiService) publishManager(ctx context.Context, info *fpl.Entry
 		}
 
 		if &transfers != nil {
-			key := []byte(fmt.Sprintf("%d-%d", transfers.EntryId, transfers.SeasonId))
+			key := []byte(fmt.Sprintf("%d-%d", transfers.GetEntryId(), transfers.GetSeasonId()))
 			err := s.Producer.PublishWithProcess(ctx, transfers, entryTransfersTopic, key)
 			if err != nil {
 				fmt.Printf("Failed to publish entry transfers message: %v\n", err)
@@ -100,7 +100,7 @@ func (s *ManagersApiService) GetManagerInfo(ctx context.Context, managerId int) 
 	endpoint := fmt.Sprintf(entryEndpoint, managerId)
 	log.Println(endpoint)
 
-	if err := s.Client.GetAndUnmarshal(ctx, endpoint, &entry.Entry); err != nil {
+	if err := s.Client.GetAndUnmarshal(ctx, endpoint, entry.GetEntry()); err != nil {
 		return nil, err
 	}
 
@@ -116,7 +116,7 @@ func (s *ManagersApiService) GetManagerPicks(ctx context.Context, managerId int,
 	endpoint := fmt.Sprintf(entryEventEndpoint, managerId, eventId)
 	log.Println(endpoint)
 
-	if err := s.Client.GetAndUnmarshal(ctx, endpoint, &entryEvent.Picks); err != nil {
+	if err := s.Client.GetAndUnmarshal(ctx, endpoint, entryEvent.GetPicks()); err != nil {
 		return nil, err
 	}
 
@@ -134,14 +134,14 @@ func (s *ManagersApiService) GetManagerHistory(ctx context.Context, managerId in
 	endpoint := fmt.Sprintf(entryHistoryEndpoint, managerId)
 	log.Println(endpoint)
 
-	if err := s.Client.GetAndUnmarshal(ctx, endpoint, &entryHistory.EntryHistory); err != nil {
+	if err := s.Client.GetAndUnmarshal(ctx, endpoint, entryHistory.GetEntryHistory()); err != nil {
 		return nil, err
 	}
 
 	entryHistory.EntryId = int32(managerId)
 	entryHistory.SeasonId = s.Config.FplApi.CurrentSeasonID
-	for i := range entryHistory.EntryHistory.Past {
-		seasonID := s.Config.MapSeasonNameToID(entryHistory.EntryHistory.Past[i].SeasonName)
+	for i, past := range entryHistory.GetEntryHistory().GetPast() {
+		seasonID := s.Config.MapSeasonNameToID(past.GetSeasonName())
 		entryHistory.EntryHistory.Past[i].SeasonId = seasonID
 	}
 
@@ -155,7 +155,7 @@ func (s *ManagersApiService) GetManagerTransfers(ctx context.Context, managerId 
 	endpoint := fmt.Sprintf(entryTransfersEndpoint, managerId)
 	log.Println(endpoint)
 
-	if err := s.Client.GetAndUnmarshal(ctx, endpoint, &entryTransfers.Transfers); err != nil {
+	if err := s.Client.GetAndUnmarshal(ctx, endpoint, entryTransfers.GetTransfers()); err != nil {
 		return nil, err
 	}
 

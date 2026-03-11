@@ -45,7 +45,7 @@ func (s *LiveEventApiService) GetLiveEvent(ctx context.Context, eventID int) (*f
 func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *fpl.LiveEvent, eventID int) error {
 	liveEventTopic := s.Config.KafkaConfig.TopicsName.FplLiveEvent.Name
 
-	jobs := make(chan *fpl.LiveElement, len(liveEvent.Elements))
+	jobs := make(chan *fpl.LiveElement, len(liveEvent.GetElements()))
 
 	var publishWg sync.WaitGroup
 	for i := 0; i < 10; i++ {
@@ -54,17 +54,17 @@ func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *f
 			defer publishWg.Done()
 			for element := range jobs {
 				dto := &fpl.LiveEventMessage{
-					PlayerId: element.Id,
+					PlayerId: element.GetId(),
 					Event:    int32(eventID),
 					SeasonId: s.Config.FplApi.CurrentSeasonID,
-					Stats:    element.Stats,
-					Explain:  element.Explain,
-					Modified: element.Modified,
+					Stats:    element.GetStats(),
+					Explain:  element.GetExplain(),
+					Modified: element.GetModified(),
 				}
-				key := []byte(fmt.Sprintf("%d-%d", eventID, element.Id))
+				key := []byte(fmt.Sprintf("%d-%d", eventID, element.GetId()))
 				err := s.Producer.PublishWithProcess(ctx, dto, liveEventTopic, key)
 				if err != nil {
-					fmt.Printf("failed to publish live event element: %v for player ID: %d and event ID: %d\n", err, element.Id, eventID)
+					fmt.Printf("failed to publish live event element: %v for player ID: %d and event ID: %d\n", err, element.GetId(), eventID)
 				}
 
 			}
@@ -72,7 +72,7 @@ func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *f
 	}
 
 	// feed jobs
-	for _, element := range liveEvent.Elements {
+	for _, element := range liveEvent.GetElements() {
 		jobs <- element
 	}
 	close(jobs)

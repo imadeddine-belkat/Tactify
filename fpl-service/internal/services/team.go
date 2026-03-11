@@ -18,13 +18,13 @@ type TeamApiService struct {
 }
 
 func (s *TeamApiService) getBootstrapData(ctx context.Context) (*fpl.BootstrapResponse, error) {
-	var bootstrap fpl.BootstrapResponse
+	var bootstrap *fpl.BootstrapResponse
 	endpoint := s.Config.FplApi.Bootstrap
 
-	if err := s.Client.GetAndUnmarshal(ctx, endpoint, &bootstrap); err != nil {
+	if err := s.Client.GetAndUnmarshal(ctx, endpoint, bootstrap); err != nil {
 		return nil, err
 	}
-	return &bootstrap, nil
+	return bootstrap, nil
 }
 
 func (s *TeamApiService) UpdateTeams(ctx context.Context) error {
@@ -33,7 +33,7 @@ func (s *TeamApiService) UpdateTeams(ctx context.Context) error {
 		return fmt.Errorf("fetching bootstrap data: %w", err)
 	}
 
-	if err := s.publishTeams(ctx, bootstrap.Teams); err != nil {
+	if err := s.publishTeams(ctx, bootstrap.GetTeams()); err != nil {
 		return fmt.Errorf("publishing teams: %w", err)
 	}
 
@@ -53,12 +53,12 @@ func (s *TeamApiService) publishTeams(ctx context.Context, teams []*fpl.Team) er
 			for team := range jobs {
 				message := &fpl.TeamMessage{
 					Team:     team,
-					SeasonId: s.Config.FplApi.Season2526,
+					SeasonId: s.Config.FplApi.CurrentSeasonID,
 				}
-				key := []byte(fmt.Sprintf("%d", team.Id))
+				key := []byte(fmt.Sprintf("%d", team.GetId()))
 				err := s.Producer.PublishWithProcess(ctx, message, teamsTopic, key)
 				if err != nil {
-					fmt.Printf("failed to publish team %d: %v\n", team.Id, err)
+					fmt.Printf("failed to publish team %d: %v\n", team.GetId(), err)
 				}
 			}
 		}()
