@@ -189,7 +189,7 @@ func (c *SofascoreConfig) MustGetSeasonID(league, year string) int {
 	return id
 }
 
-// Legacy helper methods for backward compatibility (if needed)
+// Legacy helpers methods for backward compatibility (if needed)
 func (c *SofascoreConfig) LaLigaSeasonID(year string) int {
 	id, _ := c.GetSeasonID("LALIGA", year)
 	return id

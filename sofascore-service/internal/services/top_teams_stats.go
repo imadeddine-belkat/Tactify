@@ -73,7 +73,7 @@ func (s *TopTeamsStatsService) worker(ctx context.Context, wg *sync.WaitGroup, j
 			continue
 		}
 
-		// Direct access to team ID without helper methods
+		// Direct access to team ID without helpers methods
 		teamID := 0
 		if stat.Team != nil {
 			teamID = int(stat.Team.Id)

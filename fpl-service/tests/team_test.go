@@ -19,7 +19,13 @@ func TestTeamApiService(t *testing.T) {
 	}
 
 	producer := kafka.NewProducer()
-	defer producer.Close()
+	defer func(producer *kafka.Producer) {
+		err := producer.Close()
+		if err != nil {
+			log.Printf("Error closing producer: %v", err)
+			return
+		}
+	}(producer)
 
 	// Setup service with real client
 	service := &teamService.TeamApiService{

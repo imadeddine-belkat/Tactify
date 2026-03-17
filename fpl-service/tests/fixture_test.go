@@ -19,7 +19,13 @@ func TestFixturesApiService(t *testing.T) {
 	}
 
 	producer := kafka.NewProducer()
-	defer producer.Close()
+	defer func(producer *kafka.Producer) {
+		err := producer.Close()
+		if err != nil {
+			log.Printf("Error closing producer: %v", err)
+			return
+		}
+	}(producer)
 
 	service := &fixutreService.FixturesApiService{
 		Config:   config.LoadConfig(),

@@ -14,7 +14,7 @@ import (
 )
 
 type FixturesApiService struct {
-	Config   *config.FplConfig
+	Config   *config.Config
 	Client   *fpl_api.FplApiClient
 	Producer *kafka.Producer
 }
@@ -63,7 +63,7 @@ func (s *FixturesApiService) publishFixtures(ctx context.Context, fixtures []*fp
 			for fixture := range jobs {
 				fixtureMessage := &fpl.FixtureMessage{
 					Fixture:  fixture,
-					SeasonId: s.Config.FplApi.CurrentSeasonID,
+					SeasonId: s.Config.CurrentSeasonID,
 				}
 
 				key := []byte(fmt.Sprintf("%d", fixture.GetId()))

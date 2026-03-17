@@ -9,9 +9,12 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-type FplConfig struct {
+type Config struct {
 	FplApi      FplApi
+	PlApi       PlApi
 	KafkaConfig kafkaConfig.KafkaConfig
+
+	CurrentSeasonID int32 `envconfig:"FPL_CURRENT_SEASON_ID" required:"true"`
 
 	DeleteWorkerCount  int32 `envconfig:"WORKER_DELETE_POOL_SIZE" default:"10"`
 	PublishWorkerCount int32 `envconfig:"WORKER_PUBLISH_POOL_SIZE" default:"100"`
@@ -29,8 +32,14 @@ type FplApi struct {
 	LiveEvent             string `envconfig:"FPLAPI_LIVE_EVENT" required:"true"`
 	LeagueClassicStanding string `envconfig:"FPLAPI_LEAGUE_CLASSIC_STANDING" required:"true"`
 	LeagueH2hStanding     string `envconfig:"FPLAPI_LEAGUE_H2H_STANDING" required:"true"`
+}
 
-	CurrentSeasonID int32 `envconfig:"FPL_CURRENT_SEASON_ID" required:"true"`
+type PlApi struct {
+	BaseUrl      string `envconfig:"PLAPI_BASE_URL" required:"true"`
+	Standing     string `envconfig:"PLAPI_STANDING" required:"true"`
+	FixtureStats string `envconfig:"PLAPI_FIXTURE_STATS" required:"true"`
+	TeamStats    string `envconfig:"PLAPI_TEAM_STATS" required:"true"`
+	PlayerStats  string `envconfig:"PLAPI_PLAYER_STATS" required:"true"`
 }
 
 type ProcessedModel struct {
@@ -38,14 +47,14 @@ type ProcessedModel struct {
 	Data []byte
 }
 
-func LoadConfig() *FplConfig {
+func LoadConfig() *Config {
 	// Load .env file (tries multiple paths)
 	_ = godotenv.Load(".env")
 	_ = godotenv.Load("../.env")
 	_ = godotenv.Load("../../.env")
 	_ = godotenv.Load("../../../.env")
 
-	config := &FplConfig{}
+	config := &Config{}
 
 	// Parse FplApi config with validation
 	if err := envconfig.Process("", config); err != nil {
@@ -57,7 +66,7 @@ func LoadConfig() *FplConfig {
 	return config
 }
 
-func (c *FplConfig) MapSeasonNameToID(season string) int32 {
+func (c *Config) MapSeasonNameToID(season string) int32 {
 	if len(season) < 4 {
 		return 0
 	}

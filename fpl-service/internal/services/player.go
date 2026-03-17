@@ -14,7 +14,7 @@ import (
 )
 
 type PlayerApiService struct {
-	Config   *config.FplConfig
+	Config   *config.Config
 	Client   *fpl_api.FplApiClient
 	Producer *kafka.Producer
 }
@@ -47,7 +47,7 @@ func (s *PlayerApiService) publishPlayersBootstrap(ctx context.Context, bootstra
 	for _, player := range bootstrap.Elements {
 		playerBootstrap := fpl.PlayerBootstrapMessage{
 			Player:   player,
-			SeasonId: s.Config.FplApi.CurrentSeasonID,
+			SeasonId: s.Config.CurrentSeasonID,
 		}
 		valueSummary, err := json.Marshal(&playerBootstrap)
 		if err != nil {
@@ -89,7 +89,7 @@ func (s *PlayerApiService) publishPlayersHistory(ctx context.Context, bootstrap 
 				if len(playerSummary.History) > 0 {
 					matchStatsPayload := fpl.PlayerHistoryMessage{
 						PlayerId: player.GetId(),
-						SeasonId: s.Config.FplApi.CurrentSeasonID,
+						SeasonId: s.Config.CurrentSeasonID,
 						History:  playerSummary.GetHistory(),
 					}
 					valueHistory, err := json.Marshal(&matchStatsPayload)

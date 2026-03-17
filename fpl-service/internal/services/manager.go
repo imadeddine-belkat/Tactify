@@ -13,7 +13,7 @@ import (
 )
 
 type ManagersApiService struct {
-	Config   *config.FplConfig
+	Config   *config.Config
 	Client   *fpl_api.FplApiClient
 	Producer *kafka.Producer
 }
@@ -104,7 +104,7 @@ func (s *ManagersApiService) GetManagerInfo(ctx context.Context, managerId int) 
 		return nil, err
 	}
 
-	entry.SeasonId = s.Config.FplApi.CurrentSeasonID
+	entry.SeasonId = s.Config.CurrentSeasonID
 
 	return &entry, nil
 }
@@ -122,7 +122,7 @@ func (s *ManagersApiService) GetManagerPicks(ctx context.Context, managerId int,
 
 	entryEvent.Event = int32(eventId)
 	entryEvent.EntryId = int32(managerId)
-	entryEvent.SeasonId = s.Config.FplApi.CurrentSeasonID
+	entryEvent.SeasonId = s.Config.CurrentSeasonID
 
 	return &entryEvent, nil
 }
@@ -139,7 +139,7 @@ func (s *ManagersApiService) GetManagerHistory(ctx context.Context, managerId in
 	}
 
 	entryHistory.EntryId = int32(managerId)
-	entryHistory.SeasonId = s.Config.FplApi.CurrentSeasonID
+	entryHistory.SeasonId = s.Config.CurrentSeasonID
 	for i, past := range entryHistory.GetEntryHistory().GetPast() {
 		seasonID := s.Config.MapSeasonNameToID(past.GetSeasonName())
 		entryHistory.EntryHistory.Past[i].SeasonId = seasonID
@@ -160,7 +160,7 @@ func (s *ManagersApiService) GetManagerTransfers(ctx context.Context, managerId 
 	}
 
 	entryTransfers.EntryId = int32(managerId)
-	entryTransfers.SeasonId = s.Config.FplApi.CurrentSeasonID
+	entryTransfers.SeasonId = s.Config.CurrentSeasonID
 
 	return &entryTransfers, nil
 }

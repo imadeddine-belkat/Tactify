@@ -12,7 +12,7 @@ import (
 )
 
 type TeamApiService struct {
-	Config   *config.FplConfig
+	Config   *config.Config
 	Client   *fpl_api.FplApiClient
 	Producer *kafka.Producer
 }
@@ -53,7 +53,7 @@ func (s *TeamApiService) publishTeams(ctx context.Context, teams []*fpl.Team) er
 			for team := range jobs {
 				message := &fpl.TeamMessage{
 					Team:     team,
-					SeasonId: s.Config.FplApi.CurrentSeasonID,
+					SeasonId: s.Config.CurrentSeasonID,
 				}
 				key := []byte(fmt.Sprintf("%d", team.GetId()))
 				err := s.Producer.PublishWithProcess(ctx, message, teamsTopic, key)

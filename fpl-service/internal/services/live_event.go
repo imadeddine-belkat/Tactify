@@ -12,7 +12,7 @@ import (
 )
 
 type LiveEventApiService struct {
-	Config   *config.FplConfig
+	Config   *config.Config
 	Client   *fpl_api.FplApiClient
 	Producer *kafka.Producer
 }
@@ -56,7 +56,7 @@ func (s *LiveEventApiService) publishLiveEvent(ctx context.Context, liveEvent *f
 				dto := &fpl.LiveEventMessage{
 					PlayerId: element.GetId(),
 					Event:    int32(eventID),
-					SeasonId: s.Config.FplApi.CurrentSeasonID,
+					SeasonId: s.Config.CurrentSeasonID,
 					Stats:    element.GetStats(),
 					Explain:  element.GetExplain(),
 					Modified: element.GetModified(),

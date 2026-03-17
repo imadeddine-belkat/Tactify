@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"testing"
 
 	"github.com/imadeddine-belkat/fpl-service/config"
@@ -17,7 +18,13 @@ func TestManagersApiService(t *testing.T) {
 	}
 
 	producer := kafka.NewProducer()
-	defer producer.Close()
+	defer func(producer *kafka.Producer) {
+		err := producer.Close()
+		if err != nil {
+			log.Printf("Error closing producer: %v", err)
+			return
+		}
+	}(producer)
 
 	service := &ManagersApiService{
 		Config:   config.LoadConfig(),

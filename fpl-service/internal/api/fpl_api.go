@@ -11,12 +11,12 @@ import (
 )
 
 type FplApiClient struct {
-	Config     config.FplConfig
+	Config     config.Config
 	HttpClient *http.Client
 	UserAgent  string
 }
 
-func NewFplApiClient(cfg *config.FplConfig) *FplApiClient {
+func NewFplApiClient(cfg *config.Config) *FplApiClient {
 	return &FplApiClient{
 		Config:     *cfg,
 		HttpClient: &http.Client{},

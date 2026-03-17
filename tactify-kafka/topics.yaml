@@ -1,0 +1,67 @@
+version: 1
+
+tactify-kafka:
+  defaults:
+    replication: 1
+
+  topics:
+
+    # ----------------------------
+    # FPL
+    # ----------------------------
+    fpl_players_bootstrap:
+      name: fpl-players-bootstrap
+      partitions: 3
+
+    fpl_players_stats:
+      name: fpl-players
+      partitions: 6
+
+    fpl_player_match_history_stats:
+      name: fpl-player-match-history-stats
+      partitions: 6
+
+    fpl_player_past_history_stats:
+      name: fpl-player-past-history-stats
+      partitions: 3
+
+    fpl_teams:
+      name: fpl-teams
+      partitions: 3
+
+    fpl_fixtures:
+      name: fpl-fixtures
+      partitions: 6
+
+    fpl_fixture_details:
+      name: fpl-fixture-details
+      partitions: 6
+
+    fpl_live_event:
+      name: fpl-live-event
+      partitions: 6
+
+    fpl_entry:
+      name: fpl-entry
+      partitions: 3
+
+    fpl_entry_history:
+      name: fpl-entry-history
+      partitions: 3
+
+    fpl_entry_transfers:
+      name: fpl-entry-transfers
+      partitions: 3
+
+    fpl_entry_picks:
+      name: fpl-entry-picks
+      partitions: 3
+
+    fpl_league_classic_standing:
+      name: fpl-country-classic-standing
+      partitions: 3
+
+    fpl_league_h2h_standing:
+      name: fpl-country-h2h-standing
+      partitions: 3
+

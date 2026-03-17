@@ -26,6 +26,14 @@ type PostgresConfig struct {
 	Password          string `envconfig:"DB_PASSWORD" default:"admin"`
 }
 
+type UpsertOpts struct {
+	Table        string
+	Columns      []string
+	ConflictCols []string
+	SkipUpdate   []string // optional: cols to exclude from SET
+	Rows         [][]any
+}
+
 func LoadConfig() *IndexerConfig {
 	// Load .env file (tries multiple paths)
 	_ = godotenv.Load(".env")

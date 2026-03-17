@@ -1,0 +1,609 @@
+syntax = "proto3";
+
+package pl.v1;
+
+option go_package = "github.com/imadeddine-belkat/tactify-protos/go/pl/v1;plv1";
+
+// =============================================================================
+// Standings
+// =============================================================================
+
+// One message per (team, season, scope). Scope is one of: overall, home, away.
+// Maps to: team_standings table.
+message TeamStanding {
+  int32 team_code = 1;
+  int32 season_code = 2;
+  string scope = 3; // "overall" | "home" | "away"
+  int32 position = 4;
+  int32 played = 5;
+  int32 won = 6;
+  int32 drawn = 7;
+  int32 lost = 8;
+  int32 goals_for = 9;
+  int32 goals_against = 10;
+  int32 goal_difference = 11; // computed: goals_for - goals_against
+  int32 points = 12;
+}
+
+// =============================================================================
+// Fixture Stats — Individual Category Messages
+// =============================================================================
+
+// Maps to: fixture_stats_general
+message FixtureStatsGeneral {
+  double possession_percentage = 1;
+  double touches = 2;
+  double touches_in_opp_box = 3;
+  double total_distance = 4;
+  double duel_won = 5;
+  double duel_lost = 6;
+  double won_contest = 7;
+  double total_contest = 8;
+  double challenge_lost = 9;
+  double dispossessed = 10;
+  double unsuccessful_touch = 11;
+  double overrun = 12;
+  double poss_lost_all = 13;
+  double poss_lost_ctrl = 14;
+  double fk_foul_won = 15;
+  double fk_foul_lost = 16;
+  double attempted_tackle_foul = 17;
+  double yellow_card = 18;
+  double total_yel_card = 19;
+  double red_card = 20;
+  double total_red_card = 21;
+  double subs_made = 22;
+  double subs_goals = 23;
+  double goals = 24;
+  double goals_conceded = 25;
+  double goals_conceded_ibox = 26;
+  double goals_conceded_obox = 27;
+  double own_goals = 28;
+  double winning_goal = 29;
+  double goal_assist = 30;
+  double goal_assist_openplay = 31;
+  double goal_assist_intentional = 32;
+  double fastest_player_speed = 33;
+  string fastest_player_id = 34;
+}
+
+// Maps to: fixture_stats_attacking
+message FixtureStatsAttacking {
+  double expected_goals = 1;
+  double expected_goals_on_target = 2;
+  double expected_goals_on_target_conceded = 3;
+  double expected_assists = 4;
+  double total_scoring_att = 5;
+  double ontarget_scoring_att = 6;
+  double blocked_scoring_att = 7;
+  double shot_off_target = 8;
+  double post_scoring_att = 9;
+  double hit_woodwork = 10;
+  double att_post_high = 11;
+  double attempts_ibox = 12;
+  double attempts_obox = 13;
+  double att_ibox_goal = 14;
+  double att_ibox_target = 15;
+  double att_ibox_miss = 16;
+  double att_ibox_post = 17;
+  double att_ibox_blocked = 18;
+  double att_obox_goal = 19;
+  double att_obox_target = 20;
+  double att_obox_miss = 21;
+  double att_obox_blocked = 22;
+  double att_obx_centre = 23;
+  double att_obp_goal = 24;
+  double att_bx_left = 25;
+  double att_bx_right = 26;
+  double att_bx_centre = 27;
+  double att_openplay = 28;
+  double att_setpiece = 29;
+  double att_corner = 30;
+  double att_fastbreak = 31;
+  double att_freekick_goal = 32;
+  double att_pen_goal = 33;
+  double goals_openplay = 34;
+  double goal_fastbreak = 35;
+  double big_chance_created = 36;
+  double big_chance_scored = 37;
+  double big_chance_missed = 38;
+  double total_att_assist = 39;
+  double ontarget_att_assist = 40;
+  double offtarget_att_assist = 41;
+  double att_assist_openplay = 42;
+  double att_assist_setplay = 43;
+  double shot_fastbreak = 44;
+  double total_fastbreak = 45;
+  double pen_area_entries = 46;
+  double final_third_entries = 47;
+  double put_through = 48;
+  double successful_put_through = 49;
+  double defender_goals = 50;
+  double midfielder_goals = 51;
+  double keeper_goals = 52;
+}
+
+// Maps to: fixture_stats_shooting
+message FixtureStatsShooting {
+  double att_rf_total = 1;
+  double att_rf_target = 2;
+  double att_rf_goal = 3;
+  double att_lf_total = 4;
+  double att_lf_goal = 5;
+  double att_hd_total = 6;
+  double att_hd_target = 7;
+  double att_hd_miss = 8;
+  double att_hd_goal = 9;
+  double att_goal_low_left = 10;
+  double att_goal_low_right = 11;
+  double att_goal_low_centre = 12;
+  double att_goal_high_left = 13;
+  double att_goal_high_right = 14;
+  double att_goal_high_centre = 15;
+  double att_miss_left = 16;
+  double att_miss_right = 17;
+  double att_miss_high = 18;
+  double att_miss_high_left = 19;
+  double att_miss_high_right = 20;
+  double att_sv_low_centre = 21;
+  double att_sv_low_right = 22;
+  double att_sv_high_centre = 23;
+}
+
+// Maps to: fixture_stats_passing
+message FixtureStatsPassing {
+  double total_pass = 1;
+  double accurate_pass = 2;
+  double open_play_pass = 3;
+  double successful_open_play_pass = 4;
+  double fwd_pass = 5;
+  double backward_pass = 6;
+  double passes_left = 7;
+  double passes_right = 8;
+  double leftside_pass = 9;
+  double rightside_pass = 10;
+  double total_fwd_zone_pass = 11;
+  double accurate_fwd_zone_pass = 12;
+  double total_back_zone_pass = 13;
+  double accurate_back_zone_pass = 14;
+  double total_final_third_passes = 15;
+  double successful_final_third_passes = 16;
+  double total_long_balls = 17;
+  double accurate_long_balls = 18;
+  double total_through_ball = 19;
+  double accurate_through_ball = 20;
+  double total_chipped_pass = 21;
+  double accurate_chipped_pass = 22;
+  double total_cross = 23;
+  double accurate_cross = 24;
+  double total_cross_nocorner = 25;
+  double accurate_cross_nocorner = 26;
+  double crosses_18yard = 27;
+  double crosses_18yard_plus = 28;
+  double total_layoffs = 29;
+  double accurate_layoffs = 30;
+  double total_launches = 31;
+  double accurate_launches = 32;
+  double total_flick_on = 33;
+  double accurate_flick_on = 34;
+  double total_pull_back = 35;
+  double long_pass_own_to_opp = 36;
+  double long_pass_own_to_opp_success = 37;
+  double freekick_cross = 38;
+  double accurate_freekick_cross = 39;
+  double blocked_pass = 40;
+}
+
+// Maps to: fixture_stats_defending
+message FixtureStatsDefending {
+  double total_tackle = 1;
+  double won_tackle = 2;
+  double total_clearance = 3;
+  double effective_clearance = 4;
+  double head_clearance = 5;
+  double effective_head_clearance = 6;
+  double clearance_off_line = 7;
+  double interception = 8;
+  double interception_won = 9;
+  double interceptions_ibox = 10;
+  double ball_recovery = 11;
+  double blocked_cross = 12;
+  double effective_blocked_cross = 13;
+  double outfielder_block = 14;
+  double six_yard_block = 15;
+  double aerial_won = 16;
+  double aerial_lost = 17;
+  double poss_won_def_3rd = 18;
+  double poss_won_mid_3rd = 19;
+  double poss_won_att_3rd = 20;
+  double fouled_final_third = 21;
+  double shield_ball_oop = 22;
+  double attempts_conceded_ibox = 23;
+  double attempts_conceded_obox = 24;
+  double error_lead_to_goal = 25;
+}
+
+// Maps to: fixture_stats_goalkeeping
+message FixtureStatsGoalkeeping {
+  double saves = 1;
+  double saved_ibox = 2;
+  double saved_obox = 3;
+  double diving_save = 4;
+  double punches = 5;
+  double good_high_claim = 6;
+  double total_high_claim = 7;
+  double total_keeper_sweeper = 8;
+  double accurate_keeper_sweeper = 9;
+  double keeper_throws = 10;
+  double accurate_keeper_throws = 11;
+  double goal_kicks = 12;
+  double accurate_goal_kicks = 13;
+}
+
+// Maps to: fixture_stats_set_pieces
+message FixtureStatsSetPieces {
+  double corner_taken = 1;
+  double won_corners = 2;
+  double lost_corners = 3;
+  double total_corners_intobox = 4;
+  double accurate_corners_intobox = 5;
+  double total_throws = 6;
+  double accurate_throws = 7;
+  double total_offside = 8;
+}
+
+// Composite: all fixture stat categories for one (fixture, team) pair.
+message FixtureStats {
+  int32 fixture_code = 1;
+  int32 team_code = 2;
+  FixtureStatsGeneral general = 3;
+  FixtureStatsAttacking attacking = 4;
+  FixtureStatsShooting shooting = 5;
+  FixtureStatsPassing passing = 6;
+  FixtureStatsDefending defending = 7;
+  FixtureStatsGoalkeeping goalkeeping = 8;
+  FixtureStatsSetPieces set_pieces = 9;
+}
+
+// =============================================================================
+// Team Season Stats — Individual Category Messages
+// =============================================================================
+
+// Maps to: team_stats_general
+message TeamStatsGeneral {
+  double games_played = 1;
+  double goals = 2;
+  double home_goals = 3;
+  double away_goals = 4;
+  double goals_conceded = 5;
+  double goals_conceded_ibox = 6;
+  double goals_conceded_obox = 7;
+  double own_goals_conceded = 8;
+  double clean_sheets = 9;
+  double expected_goals = 10;
+  double expected_goals_on_target = 11;
+  double expected_goals_on_target_conceded = 12;
+  double expected_goals_freekick = 13;
+  double expected_assists = 14;
+  double goal_assists = 15;
+  double goal_conversion = 16;
+  double possession_percentage = 17;
+  double points_gained_from_losing_positions = 18;
+  double points_dropped_from_winning_positions = 19;
+  double total_fouls_won = 20;
+  double total_fouls_conceded = 21;
+  double foul_attempted_tackle = 22;
+  double foul_won_penalty = 23;
+  double penalties_conceded = 24;
+  double yellow_cards = 25;
+  double total_red_cards = 26;
+  double straight_red_cards = 27;
+  double handballs_conceded = 28;
+  double offsides = 29;
+  double overruns = 30;
+  double total_losses_of_possession = 31;
+  double recoveries = 32;
+}
+
+// Maps to: team_stats_attacking
+message TeamStatsAttacking {
+  double total_shots = 1;
+  double shots_on_target_inc_goals = 2;
+  double shots_off_target_inc_woodwork = 3;
+  double blocked_shots = 4;
+  double hit_woodwork = 5;
+  double shooting_accuracy = 6;
+  double ibox_target = 7;
+  double ibox_blocked = 8;
+  double obox_target = 9;
+  double obox_blocked = 10;
+  double touches_in_opp_box = 11;
+  double right_foot_goals = 12;
+  double left_foot_goals = 13;
+  double headed_goals = 14;
+  double penalty_goals = 15;
+  double penalty_goals_conceded = 16;
+  double set_pieces_goals = 17;
+  double attempts_from_set_pieces = 18;
+  double freekick_total = 19;
+  double key_passes_attempt_assists = 20;
+  double successful_dribbles = 21;
+  double unsuccessful_dribbles = 22;
+}
+
+// Maps to: team_stats_passing
+message TeamStatsPassing {
+  double total_passes = 1;
+  double passing_accuracy = 2;
+  double open_play_passes = 3;
+  double successful_open_play_passes = 4;
+  double successful_short_passes = 5;
+  double unsuccessful_short_passes = 6;
+  double successful_long_passes = 7;
+  double unsuccessful_long_passes = 8;
+  double successful_passes_own_half = 9;
+  double unsuccessful_passes_own_half = 10;
+  double successful_passes_opp_half = 11;
+  double unsuccessful_passes_opp_half = 12;
+  double passing_percent_opp_half = 13;
+  double successful_layoffs = 14;
+  double unsuccessful_layoffs = 15;
+  double successful_launches = 16;
+  double unsuccessful_launches = 17;
+  double successful_crosses_open_play = 18;
+  double unsuccessful_crosses_open_play = 19;
+  double successful_crosses_and_corners = 20;
+  double unsuccessful_crosses_and_corners = 21;
+  double crossing_accuracy = 22;
+  double putthrough_blocked_distribution = 23;
+  double putthrough_blocked_distribution_won = 24;
+}
+
+// Maps to: team_stats_defending
+message TeamStatsDefending {
+  double total_clearances = 1;
+  double clearances_off_the_line = 2;
+  double interceptions = 3;
+  double blocks = 4;
+  double last_player_tackle = 5;
+  double tackles_won = 6;
+  double tackles_lost = 7;
+  double tackle_success = 8;
+  double times_tackled = 9;
+  double duels = 10;
+  double duels_won = 11;
+  double duels_lost = 12;
+  double ground_duels = 13;
+  double ground_duels_won = 14;
+  double ground_duels_lost = 15;
+  double aerial_duels = 16;
+  double aerial_duels_won = 17;
+  double aerial_duels_lost = 18;
+  double total_shots_conceded = 19;
+  double shots_conceded_ibox = 20;
+  double shots_conceded_obox = 21;
+}
+
+// Maps to: team_stats_goalkeeping
+message TeamStatsGoalkeeping {
+  double catches = 1;
+  double drops = 2;
+  double goal_kicks = 3;
+  double gk_successful_distribution = 4;
+  double gk_unsuccessful_distribution = 5;
+}
+
+// Maps to: team_stats_set_pieces
+message TeamStatsSetPieces {
+  double corners_taken_incl_short_corners = 1;
+  double corners_won = 2;
+  double successful_corners_into_box = 3;
+  double unsuccessful_corners_into_box = 4;
+  double throw_ins_to_own_player = 5;
+  double throw_ins_to_opp_player = 6;
+}
+
+// Composite: all team stat categories for one (team, season).
+message TeamStats {
+  int32 team_code = 1;
+  int32 season_code = 2;
+  TeamStatsGeneral general = 3;
+  TeamStatsAttacking attacking = 4;
+  TeamStatsPassing passing = 5;
+  TeamStatsDefending defending = 6;
+  TeamStatsGoalkeeping goalkeeping = 7;
+  TeamStatsSetPieces set_pieces = 8;
+}
+
+// =============================================================================
+// Player Season Stats — Individual Category Messages
+// =============================================================================
+
+// Maps to: player_stats_general
+message PlayerStatsGeneral {
+  double appearances = 1;
+  double games_played = 2;
+  double starts = 3;
+  double time_played = 4;
+  double substitute_on = 5;
+  double substitute_off = 6;
+  double goals = 7;
+  double home_goals = 8;
+  double away_goals = 9;
+  double goals_conceded = 10;
+  double goals_conceded_inside_box = 11;
+  double goals_conceded_outside_box = 12;
+  double own_goal_scored = 13;
+  double clean_sheets = 14;
+  double expected_goals = 15;
+  double expected_goals_on_target = 16;
+  double expected_goals_on_target_conceded = 17;
+  double expected_goals_freekick = 18;
+  double expected_assists = 19;
+  double goal_assists = 20;
+  double second_goal_assists = 21;
+  double total_fouls_won = 22;
+  double total_fouls_conceded = 23;
+  double foul_attempted_tackle = 24;
+  double foul_won_penalty = 25;
+  double penalties_conceded = 26;
+  double yellow_cards = 27;
+  double total_red_cards = 28;
+  double straight_red_cards = 29;
+  double red_cards_2nd_yellow = 30;
+  double handballs_conceded = 31;
+  double offsides = 32;
+  double overruns = 33;
+  double total_losses_of_possession = 34;
+  double recoveries = 35;
+  double penalty_goals_conceded = 36;
+  double touches = 37;
+}
+
+// Maps to: player_stats_attacking
+message PlayerStatsAttacking {
+  double total_shots = 1;
+  double shots_on_target_inc_goals = 2;
+  double shots_off_target_inc_woodwork = 3;
+  double blocked_shots = 4;
+  double hit_woodwork = 5;
+  double ibox_target = 6;
+  double ibox_blocked = 7;
+  double obox_target = 8;
+  double obox_blocked = 9;
+  double total_touches_in_opposition_box = 10;
+  double right_foot_goals = 11;
+  double left_foot_goals = 12;
+  double headed_goals = 13;
+  double penalty_goals = 14;
+  double set_pieces_goals = 15;
+  double set_piece_goals = 16;
+  double assists_intentional = 17;
+  double attempts_from_set_pieces = 18;
+  double freekick_total = 19;
+  double key_passes_attempt_assists = 20;
+  double successful_dribbles = 21;
+  double unsuccessful_dribbles = 22;
+  double winning_goal = 23;
+  double goals_from_inside_box = 24;
+  double goals_from_outside_box = 25;
+  double penalties_taken = 26;
+  double other_goals = 27;
+}
+
+// Maps to: player_stats_passing
+message PlayerStatsPassing {
+  double total_passes = 1;
+  double open_play_passes = 2;
+  double successful_open_play_passes = 3;
+  double successful_short_passes = 4;
+  double unsuccessful_short_passes = 5;
+  double successful_long_passes = 6;
+  double unsuccessful_long_passes = 7;
+  double successful_passes_own_half = 8;
+  double unsuccessful_passes_own_half = 9;
+  double successful_passes_opposition_half = 10;
+  double successful_layoffs = 11;
+  double unsuccessful_layoffs = 12;
+  double successful_launches = 13;
+  double unsuccessful_launches = 14;
+  double successful_crosses_open_play = 15;
+  double unsuccessful_crosses_open_play = 16;
+  double successful_crosses_and_corners = 17;
+  double unsuccessful_crosses_and_corners = 18;
+  double putthrough_blocked_distribution = 19;
+  double putthrough_blocked_distribution_won = 20;
+  double through_balls = 21;
+  double forward_passes = 22;
+  double backward_passes = 23;
+  double leftside_passes = 24;
+  double rightside_passes = 25;
+  double total_successful_passes_excl_crosses_and_corners = 26;
+  double total_unsuccessful_passes_excl_crosses_and_corners = 27;
+}
+
+// Maps to: player_stats_defending
+message PlayerStatsDefending {
+  double total_clearances = 1;
+  double clearances_off_the_line = 2;
+  double interceptions = 3;
+  double blocks = 4;
+  double last_player_tackle = 5;
+  double total_tackles = 6;
+  double tackles_won = 7;
+  double tackles_lost = 8;
+  double times_tackled = 9;
+  double duels = 10;
+  double duels_won = 11;
+  double duels_lost = 12;
+  double ground_duels = 13;
+  double ground_duels_won = 14;
+  double ground_duels_lost = 15;
+  double aerial_duels = 16;
+  double aerial_duels_won = 17;
+  double aerial_duels_lost = 18;
+  double fifty_fifty = 19;
+  double successful_fifty_fifty = 20;
+}
+
+// Maps to: player_stats_goalkeeping
+message PlayerStatsGoalkeeping {
+  double catches = 1;
+  double drops = 2;
+  double goal_kicks = 3;
+  double gk_successful_distribution = 4;
+  double gk_unsuccessful_distribution = 5;
+  double saves_made = 6;
+  double saves_made_caught = 7;
+  double saves_made_parried = 8;
+  double saves_made_from_inside_box = 9;
+  double saves_made_from_outside_box = 10;
+  double saves_from_penalty = 11;
+  double penalties_saved = 12;
+  double penalties_faced = 13;
+  double punches = 14;
+  double crosses_not_claimed = 15;
+  double goalkeeper_smother = 16;
+}
+
+// Maps to: player_stats_set_pieces
+message PlayerStatsSetPieces {
+  double corners_taken_incl_short_corners = 1;
+  double corners_won = 2;
+  double successful_corners_into_box = 3;
+  double unsuccessful_corners_into_box = 4;
+  double throw_ins_to_own_player = 5;
+  double throw_ins_to_opposition_player = 6;
+}
+
+// Composite: all player stat categories for one (player, season).
+message PlayerStats {
+  int32 player_code = 1;
+  int32 season_code = 2;
+  PlayerStatsGeneral general = 3;
+  PlayerStatsAttacking attacking = 4;
+  PlayerStatsPassing passing = 5;
+  PlayerStatsDefending defending = 6;
+  PlayerStatsGoalkeeping goalkeeping = 7;
+  PlayerStatsSetPieces set_pieces = 8;
+}
+
+// =============================================================================
+// Kafka Message Wrappers
+// =============================================================================
+
+message TeamStandingMessage {
+  TeamStanding standing = 1;
+}
+
+message FixtureStatsMessage {
+  FixtureStats stats = 1;
+}
+
+message TeamStatsMessage {
+  TeamStats stats = 1;
+}
+
+message PlayerStatsMessage {
+  PlayerStats stats = 1;
+}
