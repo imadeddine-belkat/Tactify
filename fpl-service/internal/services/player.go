@@ -154,20 +154,10 @@ func (s *PlayerApiService) getPlayerSummary(ctx context.Context, playerId int32)
 }
 
 func (s *PlayerApiService) getPlayersBootstrap(ctx context.Context) (*fpl.PlayersBootstrap, error) {
-	bootstrap, err := s.getBootstrapData(ctx)
+	bootstrap, err := s.Client.GetBootstrapData(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	return &fpl.PlayersBootstrap{Elements: bootstrap.GetElements()}, nil
-}
-
-func (s *PlayerApiService) getBootstrapData(ctx context.Context) (*fpl.BootstrapResponse, error) {
-	var bootstrap fpl.BootstrapResponse
-	endpoint := s.Config.FplApi.Bootstrap
-
-	if err := s.Client.GetAndUnmarshal(ctx, endpoint, &bootstrap); err != nil {
-		return nil, err
-	}
-	return &bootstrap, nil
 }

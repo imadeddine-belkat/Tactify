@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/imadeddine-belkat/fpl-service/config"
+	fplProto "github.com/imadeddine-belkat/tactify-protos/go/fpl/v1"
 )
 
 type FplApiClient struct {
@@ -22,6 +23,38 @@ func NewFplApiClient(cfg *config.Config) *FplApiClient {
 		HttpClient: &http.Client{},
 		UserAgent:  "FPL-Service-Client/1.0",
 	}
+}
+
+func (c *FplApiClient) GetPlayersBootstrap(ctx context.Context) (*fplProto.PlayersBootstrap, error) {
+	bootstrap, err := c.getBootstrapData(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &fplProto.PlayersBootstrap{Elements: bootstrap.GetElements()}, nil
+}
+
+func (c *FplApiClient) getBootstrapData(ctx context.Context) (*fplProto.BootstrapResponse, error) {
+	var bootstrap fplProto.BootstrapResponse
+	endpoint := c.Config.FplApi.Bootstrap
+
+	if err := c.GetAndUnmarshal(ctx, endpoint, &bootstrap); err != nil {
+		return nil, err
+	}
+	return &bootstrap, nil
+}
+
+func (c *FplApiClient) GetAndUnmarshal(ctx context.Context, endpoint string, result any) error {
+	data, err := c.Get(ctx, endpoint)
+	if err != nil {
+		return err
+	}
+
+	if err = json.Unmarshal(data, result); err != nil {
+		return fmt.Errorf("fpl-api: unmarshaling response: %w", err)
+	}
+
+	return nil
 }
 
 func (c *FplApiClient) Get(ctx context.Context, endpoint string) ([]byte, error) {
@@ -58,17 +91,4 @@ func (c *FplApiClient) Get(ctx context.Context, endpoint string) ([]byte, error)
 	}
 
 	return body, nil
-}
-
-func (c *FplApiClient) GetAndUnmarshal(ctx context.Context, endpoint string, result any) error {
-	data, err := c.Get(ctx, endpoint)
-	if err != nil {
-		return err
-	}
-
-	if err = json.Unmarshal(data, result); err != nil {
-		return fmt.Errorf("fpl-api: unmarshaling response: %w", err)
-	}
-
-	return nil
 }

@@ -4,8 +4,8 @@ go 1.25
 
 require (
 	github.com/Masterminds/squirrel v1.5.4
-	github.com/imadeddine-belkat/tactify-kafka v0.1.2 // Replace with actual version/hash
-	github.com/imadeddine-belkat/tactify-protos v0.1.4 // Replace with actual version/hash
+	github.com/imadeddine-belkat/tactify-kafka v0.0.0
+	github.com/imadeddine-belkat/tactify-protos v0.0.0
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.11.2
